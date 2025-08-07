@@ -32,13 +32,15 @@ const HomePage = ({ user }) => {
   const reservedSlots = slots.filter((slot) => slot.status === 'Reserved');
 
   // Reserve a slot
-  const handleReserve = async (slot) => {
+  const handleReserve = async (slot, bookingStart, bookingEnd) => {
     if (!user) return;
     setActionLoading(true);
     try {
       const updated = await updateSlot(slot.id, {
         status: 'Reserved',
         reservedBy: user.id,
+        bookingStart: bookingStart ? new Date(bookingStart).toISOString() : null,
+        bookingEnd: bookingEnd ? new Date(bookingEnd).toISOString() : null,
       });
       setSlots((prev) => prev.map((s) => (s.id === slot.id ? updated : s)));
       setSelectedSlot(null);

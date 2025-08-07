@@ -8,7 +8,7 @@ const Slot = ({ slot }) => {
       case 'Occupied':
         return 'bg-red-500 border-red-700';
       case 'Reserved':
-        return 'bg-yellow-500 border-yellow-700';
+        return 'bg-yellow-400 border-yellow-600';
       default:
         return 'bg-gray-400 border-gray-600';
     }

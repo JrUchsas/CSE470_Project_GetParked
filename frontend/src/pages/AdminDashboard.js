@@ -5,6 +5,8 @@ const AdminDashboard = () => {
   const [slots, setSlots] = useState([]);
   const [location, setLocation] = useState('');
   const [editingSlot, setEditingSlot] = useState(null);
+  const [bookingStart, setBookingStart] = useState('');
+  const [bookingEnd, setBookingEnd] = useState('');
   const [error, setError] = useState('');
 
   const fetchSlots = async () => {
@@ -26,11 +28,17 @@ const AdminDashboard = () => {
     setError('');
     try {
         if (editingSlot) {
-            await updateSlot(editingSlot._id, { location });
+            await updateSlot(editingSlot._id, {
+              location,
+              bookingStart: bookingStart ? new Date(bookingStart).toISOString() : null,
+              bookingEnd: bookingEnd ? new Date(bookingEnd).toISOString() : null,
+            });
         } else {
             await createSlot({ location });
         }
         setLocation('');
+        setBookingStart('');
+        setBookingEnd('');
         setEditingSlot(null);
         fetchSlots(); // Refresh list
     } catch (err) {
@@ -48,6 +56,8 @@ const AdminDashboard = () => {
   const handleEdit = (slot) => {
       setEditingSlot(slot);
       setLocation(slot.location);
+      setBookingStart(slot.bookingStart ? new Date(slot.bookingStart).toISOString().slice(0,16) : '');
+      setBookingEnd(slot.bookingEnd ? new Date(slot.bookingEnd).toISOString().slice(0,16) : '');
   }
 
   return (
@@ -68,6 +78,24 @@ const AdminDashboard = () => {
               placeholder="Enter location"
             />
           </div>
+          {editingSlot && (
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-1">Booking Start</label>
+              <input
+                type="datetime-local"
+                value={bookingStart}
+                onChange={e => setBookingStart(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
+              <label className="block text-gray-700 font-medium mb-1 mt-2">Booking End</label>
+              <input
+                type="datetime-local"
+                value={bookingEnd}
+                onChange={e => setBookingEnd(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
+            </div>
+          )}
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             type="submit"
@@ -95,15 +123,28 @@ const AdminDashboard = () => {
               <tr>
                 <th className="py-2 px-4 text-left font-semibold">Location</th>
                 <th className="py-2 px-4 text-left font-semibold">Status</th>
+                <th className="py-2 px-4 text-left font-semibold">Booking Time</th>
                 <th className="py-2 px-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {slots.map((slot) => (
                 <tr key={slot._id} className="border-b hover:bg-blue-50 transition">
-                  <td className="py-2 px-4 flex items-center gap-2"><span className='text-lg'>🅿️</span> {slot.location}</td>
+                  <td className="py-2 px-4 flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full inline-block mr-2 align-middle ${slot.status === 'Available' ? 'bg-green-500' : slot.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-400'}`}></span>
+                    <span className='text-lg'>🅿️</span> {slot.location}
+                  </td>
                   <td className="py-2 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${slot.status === 'Available' ? 'bg-green-100 text-green-700' : slot.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{slot.status}</span>
+                  </td>
+                  <td className="py-2 px-4 text-xs">
+                    {slot.bookingStart && slot.bookingEnd ? (
+                      <>
+                        {new Date(slot.bookingStart).toLocaleString()}<br/>to<br/>{new Date(slot.bookingEnd).toLocaleString()}
+                      </>
+                    ) : (
+                      <span className="text-gray-400">N/A</span>
+                    )}
                   </td>
                   <td className="py-2 px-4">
                     <button onClick={() => handleEdit(slot)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>

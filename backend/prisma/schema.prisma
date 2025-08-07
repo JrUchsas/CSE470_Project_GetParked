@@ -8,13 +8,15 @@ datasource db {
 }
 
 model Slot {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  location   String   @unique
-  status     String   @default("Available")
-  reservedBy String?  @db.ObjectId
-  user       User?    @relation("Slot_user", fields: [reservedBy], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  location     String   @unique
+  status       String   @default("Available")
+  reservedBy   String?  @db.ObjectId
+  user         User?    @relation("Slot_user", fields: [reservedBy], references: [id])
+  bookingStart DateTime?
+  bookingEnd   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // NEW User Model
