@@ -37,7 +37,7 @@ function App() {
         ) : view === 'admin' && user.role === 'admin' ? (
           <AdminDashboard />
         ) : (
-          <HomePage />
+          <HomePage user={user} />
         )}
       </main>
     </div>

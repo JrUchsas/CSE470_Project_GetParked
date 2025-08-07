@@ -10,6 +10,7 @@ const getSlots = async (req, res) => {
       orderBy: {
         location: 'asc',
       },
+      include: { user: true },
     });
     res.json(slots);
   } catch (error) {
@@ -48,24 +49,25 @@ const createSlot = async (req, res) => {
   }
 };
 
-// @desc    Update a slot
+// @desc    Update a slot (location, status, reservedBy)
 // @route   PUT /api/slots/:id
-// @access  Private/Admin
+// @access  Private/Admin or Authenticated (for reservation)
 const updateSlot = async (req, res) => {
   const { id } = req.params;
-  const { location, status } = req.body;
+  const { location, status, reservedBy } = req.body;
 
   try {
     const updatedSlot = await prisma.slot.update({
       where: { id },
       data: {
-        location,
-        status,
+        ...(location && { location }),
+        ...(status && { status }),
+        reservedBy: reservedBy === undefined ? undefined : reservedBy,
       },
+      include: { user: true },
     });
     res.json(updatedSlot);
   } catch (error) {
-    // Prisma throws an error if the record to update is not found
     res.status(404).json({ message: 'Slot not found', error: error.message });
   }
 };

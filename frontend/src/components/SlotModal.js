@@ -1,0 +1,58 @@
+
+import React from 'react';
+
+const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) => {
+  const isReserved = slot.status === 'Reserved';
+  const isReservedByUser = user && slot.user && slot.user.id === user.id;
+  const isAdmin = user && user.role === 'admin';
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 z-50">
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-full max-w-xs text-center">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold"
+        >
+          &times;
+        </button>
+        <div className="flex flex-col items-center gap-1">
+          <h3 className="text-xl font-bold mb-1">{slot.location}</h3>
+          <p className="mb-3 text-sm text-gray-700">Parking slot at {slot.location}.</p>
+          {isReserved && (
+            <p className="mb-2 text-xs text-gray-500">Reserved by: {slot.user?.name || 'Unknown'}</p>
+          )}
+          <div className="flex gap-2 justify-center mt-2">
+            {!isReserved && (
+              <button
+                onClick={() => onReserve(slot)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded"
+                disabled={actionLoading}
+              >
+                {actionLoading ? 'Reserving...' : 'Reserve'}
+              </button>
+            )}
+            {(isReservedByUser || isAdmin) && isReserved && (
+              <button
+                onClick={() => onCancel(slot)}
+                className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded"
+                disabled={actionLoading}
+              >
+                {actionLoading ? 'Cancelling...' : 'Cancel Reservation'}
+              </button>
+            )}
+            {isReserved && !isReservedByUser && !isAdmin && (
+              <button
+                className="bg-gray-300 text-gray-500 font-semibold py-1 px-3 rounded cursor-not-allowed"
+                disabled
+              >
+                Reserved
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SlotModal;

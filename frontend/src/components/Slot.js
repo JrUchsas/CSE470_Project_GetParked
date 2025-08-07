@@ -15,10 +15,11 @@ const Slot = ({ slot }) => {
   };
 
   return (
-    <div className={`p-4 rounded-xl text-white text-center font-bold shadow-xl border-b-4 ${getStatusColor()} transition-transform transform hover:scale-105 flex flex-col items-center gap-2`}>
-      <span className="text-3xl">🅿️</span>
-      <p className="text-lg tracking-wide">{slot.location}</p>
-      <p className="text-xs uppercase tracking-wider bg-white/20 px-2 py-1 rounded-full mt-1">{slot.status}</p>
+    <div
+      className={`px-3 py-2 rounded-lg text-white text-center font-semibold shadow border-b-2 ${getStatusColor()} transition-transform transform flex flex-col items-center group hover:scale-105 hover:shadow-lg hover:z-10 cursor-pointer`}
+      style={{ transition: 'box-shadow 0.15s, transform 0.15s', minWidth: 0 }}
+    >
+      <span className="text-base tracking-wide group-hover:underline whitespace-nowrap">{slot.location}</span>
     </div>
   );
 };
