@@ -73,8 +73,8 @@ const HomePage = ({ user }) => {
   };
 
   return (
-    <div className="user-home-container flex flex-col items-center justify-center w-full text-center mx-auto">
-      <h2 className="user-section-title">Available slots:</h2>
+    <div className="flex flex-col w-full mx-auto">
+      <h2 className="">Available slots:</h2>
       {loading && <p className="text-center">Loading slots...</p>}
       {error && <p className="text-red-500 bg-red-100 p-3 rounded-lg">{error}</p>}
       <div className="user-slot-list">
