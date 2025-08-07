@@ -59,6 +59,8 @@ const HomePage = ({ user }) => {
       const updated = await updateSlot(slot.id, {
         status: 'Available',
         reservedBy: null,
+        bookingStart: null,
+        bookingEnd: null
       });
       setSlots((prev) => prev.map((s) => (s.id === slot.id ? updated : s)));
       setSelectedSlot(null);

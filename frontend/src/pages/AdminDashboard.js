@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     setError('');
     try {
         if (editingSlot) {
-            await updateSlot(editingSlot._id, {
+            await updateSlot(editingSlot.id, {
               location,
               bookingStart: bookingStart ? new Date(bookingStart).toISOString() : null,
               bookingEnd: bookingEnd ? new Date(bookingEnd).toISOString() : null,
@@ -80,6 +80,7 @@ const AdminDashboard = () => {
           </div>
           {editingSlot && (
             <div className="mb-4">
+              <div className="mb-2 text-blue-700 font-semibold text-lg">Selected Slot: {editingSlot.location}</div>
               <label className="block text-gray-700 font-medium mb-1">Booking Start</label>
               <input
                 type="datetime-local"
@@ -94,23 +95,38 @@ const AdminDashboard = () => {
                 onChange={e => setBookingEnd(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               />
+              <div className="flex flex-col gap-2 mt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                >
+                  Update Slot
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(editingSlot.id)}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                >
+                  Delete Slot
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEditingSlot(null); setLocation(''); setError(''); }}
+                  className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                >
+                  Cancel Edit
+                </button>
+              </div>
             </div>
           )}
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-          >
-            {editingSlot ? "Update Slot" : "Create Slot"}
-          </button>
-          {editingSlot && (
-              <button
-                type="button"
-                onClick={() => { setEditingSlot(null); setLocation(''); setError(''); }}
-                className="w-full mt-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
-              >
-                Cancel Edit
-              </button>
+          {!editingSlot && (
+            <button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+            >
+              Create Slot
+            </button>
           )}
         </form>
       </div>
@@ -124,12 +140,13 @@ const AdminDashboard = () => {
                 <th className="py-2 px-4 text-left font-semibold">Location</th>
                 <th className="py-2 px-4 text-left font-semibold">Status</th>
                 <th className="py-2 px-4 text-left font-semibold">Booking Time</th>
+                <th className="py-2 px-4 text-left font-semibold">Booked By</th>
                 <th className="py-2 px-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {slots.map((slot) => (
-                <tr key={slot._id} className="border-b hover:bg-blue-50 transition">
+                <tr key={slot.id} className="border-b hover:bg-blue-50 transition">
                   <td className="py-2 px-4 flex items-center gap-2">
                     <span className={`w-3 h-3 rounded-full inline-block mr-2 align-middle ${slot.status === 'Available' ? 'bg-green-500' : slot.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-400'}`}></span>
                     <span className='text-lg'>🅿️</span> {slot.location}
@@ -141,14 +158,33 @@ const AdminDashboard = () => {
                     {slot.bookingStart && slot.bookingEnd ? (
                       <>
                         {new Date(slot.bookingStart).toLocaleString()}<br/>to<br/>{new Date(slot.bookingEnd).toLocaleString()}
+                        <br/>
+                        <span className="text-blue-700 font-semibold">
+                          Duration: {(() => {
+                            const start = new Date(slot.bookingStart);
+                            const end = new Date(slot.bookingEnd);
+                            const diffMs = end - start;
+                            if (diffMs <= 0) return 'Invalid';
+                            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                            const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                            return `${hours}h ${mins}m`;
+                          })()}
+                        </span>
                       </>
+                    ) : (
+                      <span className="text-gray-400">N/A</span>
+                    )}
+                  </td>
+                  <td className="py-2 px-4 text-xs">
+                    {slot.user && slot.status === 'Reserved' ? (
+                      <span>{slot.user.name}</span>
                     ) : (
                       <span className="text-gray-400">N/A</span>
                     )}
                   </td>
                   <td className="py-2 px-4">
                     <button onClick={() => handleEdit(slot)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>
-                    <button onClick={() => handleDelete(slot._id)} className="text-red-600 hover:underline font-medium">Delete</button>
+                    <button onClick={() => handleDelete(slot.id)} className="text-red-600 hover:underline font-medium">Delete</button>
                   </td>
                 </tr>
               ))}

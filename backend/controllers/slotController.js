@@ -54,7 +54,7 @@ const createSlot = async (req, res) => {
 // @access  Private/Admin or Authenticated (for reservation)
 const updateSlot = async (req, res) => {
   const { id } = req.params;
-  const { location, status, reservedBy } = req.body;
+  const { location, status, reservedBy, bookingStart, bookingEnd } = req.body;
 
   try {
     const updatedSlot = await prisma.slot.update({
@@ -63,6 +63,8 @@ const updateSlot = async (req, res) => {
         ...(location && { location }),
         ...(status && { status }),
         reservedBy: reservedBy === undefined ? undefined : reservedBy,
+        bookingStart: bookingStart === undefined ? undefined : bookingStart,
+        bookingEnd: bookingEnd === undefined ? undefined : bookingEnd,
       },
       include: { user: true },
     });

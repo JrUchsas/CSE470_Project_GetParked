@@ -45,7 +45,15 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
             </div>
           )}
           {isReserved && (
-            <p className="mb-2 text-xs text-gray-500">Reserved by: {slot.user?.name || 'Unknown'}</p>
+            <>
+              <p className="mb-2 text-xs text-gray-500">Reserved by: {slot.user?.name || 'Unknown'}</p>
+              {slot.bookingStart && slot.bookingEnd && (
+                <div className="mb-2 text-xs text-gray-600">
+                  <div>Start: {new Date(slot.bookingStart).toLocaleString()}</div>
+                  <div>End: {new Date(slot.bookingEnd).toLocaleString()}</div>
+                </div>
+              )}
+            </>
           )}
           <div className="flex gap-2 justify-center mt-2">
             {!isReserved && (
