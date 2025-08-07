@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import '../custom-slotmodal.css';
 
 const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) => {
   const isReserved = slot.status === 'Reserved';
@@ -15,11 +16,11 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 z-50">
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-full max-w-xs text-center">
+    <div className="slot-modal-overlay">
+      <div className="slot-modal-card">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold"
+          className="slot-modal-close"
         >
           &times;
         </button>
@@ -27,18 +28,18 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
           <h3 className="text-xl font-bold mb-1">{slot.location}</h3>
           <p className="mb-3 text-sm text-gray-700">Parking slot at {slot.location}.</p>
           {!isReserved && (
-            <div className="w-full flex flex-col gap-2 mb-2">
-              <label className="text-xs text-gray-600 text-left">Start Time</label>
+            <div className="w-full flex flex-col gap-3 mb-2">
+              <label className="slot-modal-label">Start Time</label>
               <input
                 type="datetime-local"
-                className="w-full border rounded px-2 py-1"
+                className="slot-modal-input"
                 value={bookingStart}
                 onChange={e => setBookingStart(e.target.value)}
               />
-              <label className="text-xs text-gray-600 text-left">End Time</label>
+              <label className="slot-modal-label mt-2">End Time</label>
               <input
                 type="datetime-local"
-                className="w-full border rounded px-2 py-1"
+                className="slot-modal-input"
                 value={bookingEnd}
                 onChange={e => setBookingEnd(e.target.value)}
               />

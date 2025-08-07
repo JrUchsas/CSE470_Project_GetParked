@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSlots, updateSlot } from '../services/api';
 import Slot from '../components/Slot';
 import SlotModal from '../components/SlotModal';
+import '../custom-styles.css';
 
 const HomePage = ({ user }) => {
   const [slots, setSlots] = useState([]);
@@ -72,47 +73,50 @@ const HomePage = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full text-center mx-auto">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Available slots:</h2>
+    <div className="user-home-container flex flex-col items-center justify-center w-full text-center mx-auto">
+      <h2 className="user-section-title">Available slots:</h2>
       {loading && <p className="text-center">Loading slots...</p>}
       {error && <p className="text-red-500 bg-red-100 p-3 rounded-lg">{error}</p>}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 w-full justify-center mx-auto mb-8">
+      <div className="user-slot-list">
         {availableSlots.map((slot) => (
           <div
             key={slot.id}
-            className="cursor-pointer group"
+            className="user-slot-card"
             onClick={() => setSelectedSlot(slot)}
           >
             <Slot slot={slot} />
+            <div className="user-slot-status">Available</div>
           </div>
         ))}
       </div>
       {reservedSlots.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">Reserved slots:</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 w-full justify-center mx-auto">
+          <h2 className="user-section-title" style={{fontSize:'1.5rem'}}>Reserved slots:</h2>
+          <div className="user-slot-list">
             {reservedSlots.map((slot) => (
               <div
                 key={slot.id}
-                className="cursor-pointer group"
+                className="user-slot-card"
                 onClick={() => setSelectedSlot(slot)}
               >
                 <Slot slot={slot} />
-                <div className="text-xs text-gray-600 mt-1">Reserved by: {slot.user?.name || 'Unknown'}</div>
+                <div className="user-reserved-label">Reserved by: {slot.user?.name || 'Unknown'}</div>
               </div>
             ))}
           </div>
         </>
       )}
       {selectedSlot && (
-        <SlotModal
-          slot={selectedSlot}
-          user={user}
-          onClose={() => setSelectedSlot(null)}
-          onReserve={handleReserve}
-          onCancel={handleCancel}
-          actionLoading={actionLoading}
-        />
+        <div className="user-modal">
+          <SlotModal
+            slot={selectedSlot}
+            user={user}
+            onClose={() => setSelectedSlot(null)}
+            onReserve={handleReserve}
+            onCancel={handleCancel}
+            actionLoading={actionLoading}
+          />
+        </div>
       )}
     </div>
   );

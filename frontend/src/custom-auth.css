@@ -1,0 +1,112 @@
+/* AuthPage (Login/Signup) custom styles */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%);
+}
+.auth-card {
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 6px 32px 0 rgba(37,99,235,0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+.auth-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.auth-subtitle {
+  text-align: center;
+  color: #334155;
+  margin-bottom: 1.2rem;
+  font-size: 1.08rem;
+  font-weight: 500;
+}
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.auth-form > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.auth-label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 130px;
+}
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.auth-label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+}
+.auth-input {
+  padding: 0.7rem 1rem;
+  border-radius: 0.6rem;
+  border: 1.5px solid #cbd5e1;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.auth-input:focus {
+  border-color: #2563eb;
+}
+.auth-btn {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 0.8rem 0;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+@media (max-width: 400px) {
+  .auth-input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+.auth-btn:hover {
+  background: #1d4ed8;
+}
+.auth-switch {
+  text-align: center;
+  margin-top: 1rem;
+  color: #64748b;
+  font-size: 0.98rem;
+}
+.auth-switch span {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 0.3rem;
+}
+.auth-error {
+  color: #ef4444;
+  background: #fee2e2;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}

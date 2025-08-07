@@ -19,15 +19,21 @@ const Header = ({ user, setView, onLogout }) => {
 
   return (
     <header className="bg-white shadow-md">
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-center min-h-[64px] text-center relative">
-        {/* Left column: invisible, matches right width for centering */}
-        <div className="flex-1 invisible"></div>
-        {/* Center column: logo */}
-        <div className="flex-1 flex justify-center items-center">
-          <h1 className="text-2xl font-bold text-blue-600 cursor-pointer select-none" onClick={() => setView('home')}>GetParked</h1>
-        </div>
-        {/* Right column: user info/buttons */}
-        <div className="flex-1 flex flex-col justify-center items-center h-full z-20 text-center">
+      <div className="w-full flex flex-col items-center justify-center py-6">
+        <h1
+          className="text-4xl font-extrabold text-blue-600 cursor-pointer select-none text-center mb-1"
+          onClick={() => setView('home')}
+        >
+          GetParked
+        </h1>
+        {user && (
+          <div className="text-lg text-gray-700 font-bold mb-2 text-center tracking-wide uppercase">A SMART WAY TO PARK</div>
+        )}
+      </div>
+      <nav className="container mx-auto px-4 flex items-center justify-center min-h-[32px] text-center relative">
+        <div className="flex-1"></div>
+        <div className="flex-1"></div>
+        <div className="flex-1 flex flex-col justify-center items-end h-full z-20 text-center">
           {user ? (
             <>
               <span className="mb-1 font-medium text-gray-700">Welcome, {user.name}</span>

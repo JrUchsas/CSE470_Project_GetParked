@@ -19,7 +19,9 @@ const Slot = ({ slot }) => {
       className={`px-3 py-2 rounded-lg text-white text-center font-semibold shadow border-b-2 ${getStatusColor()} transition-transform transform flex flex-col items-center group hover:scale-105 hover:shadow-lg hover:z-10 cursor-pointer`}
       style={{ transition: 'box-shadow 0.15s, transform 0.15s', minWidth: 0 }}
     >
-      <span className="text-base tracking-wide group-hover:underline whitespace-nowrap">{slot.location}</span>
+      <span className="text-base tracking-wide group-hover:underline whitespace-nowrap flex items-center justify-center w-full text-center">
+        <span className="text-lg mr-1">🅿️</span> {slot.location}
+      </span>
     </div>
   );
 };

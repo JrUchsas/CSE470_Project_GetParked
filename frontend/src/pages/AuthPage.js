@@ -1,7 +1,28 @@
 import React, { useState } from 'react';
 import { signupUser, loginUser } from '../services/api';
+import '../custom-auth.css';
 
-const AuthPage = ({ onLogin }) => {
+const AuthPage = ({ onLogin, onLogout }) => {
+  // Auto logout on tab/browser close: clear user from storage
+  React.useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Remove user/session data from localStorage/sessionStorage
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
+      // Call backend logout API to invalidate session/cookie
+      try {
+        // Use sendBeacon for reliability on tab/browser close
+        navigator.sendBeacon && navigator.sendBeacon('/api/logout');
+      } catch (e) {
+        // Fallback: fetch (may not always complete)
+        fetch('/api/logout', { method: 'POST', credentials: 'include', keepalive: true });
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
   const [isLoginView, setIsLoginView] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -13,6 +34,7 @@ const AuthPage = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
 
   const { name, email, contact, password } = formData;
+  const [showPassword, setShowPassword] = useState(false);
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,56 +59,71 @@ const AuthPage = ({ onLogin }) => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-64px)] bg-gray-100 text-center">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl card-shadow flex flex-col items-center justify-center shadow-2xl border border-gray-200 text-center mx-auto">
-        <h2 className="text-3xl font-extrabold text-blue-700 mb-2 tracking-tight uppercase">
-          {isLoginView ? 'WELCOME' : 'Create an Account'}
-        </h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2 className="auth-title">{isLoginView ? 'WELCOME' : 'Create an Account'}</h2>
         {isLoginView && (
-          <div className="text-gray-600 mb-4 text-base font-medium">Please login to continue</div>
+          <div className="auth-subtitle">Please login to continue</div>
         )}
-        <div className="w-full bg-gray-50 rounded-xl shadow-inner p-6 mb-2 text-center mx-auto">
-          <form className="space-y-6 text-center mx-auto" onSubmit={onSubmit}>
-            {!isLoginView && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <span role="img" aria-label="user">👤</span> Name
-                </label>
-                <input type="text" name="name" value={name} onChange={onChange} required className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg shadow focus:ring-blue-400 focus:border-blue-400 transition"/>
-              </div>
-            )}
+        <form className="auth-form" onSubmit={onSubmit}>
+          {!isLoginView && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                <span role="img" aria-label="email">✉️</span> Email
+              <label className="auth-label flex items-center gap-2">
+                <span role="img" aria-label="user">👤</span> Name
               </label>
-              <input type="email" name="email" value={email} onChange={onChange} required className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg shadow focus:ring-blue-400 focus:border-blue-400 transition"/>
+              <input type="text" name="name" value={name} onChange={onChange} required className="auth-input"/>
             </div>
-            {!isLoginView && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <span role="img" aria-label="phone">📞</span> Contact Number
-                </label>
-                <input type="text" name="contact" value={contact} onChange={onChange} className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg shadow focus:ring-blue-400 focus:border-blue-400 transition"/>
-              </div>
-            )}
+          )}
+          <div>
+            <label className="auth-label flex items-center gap-2">
+              <span role="img" aria-label="email">✉️</span> Email
+            </label>
+            <input type="email" name="email" value={email} onChange={onChange} required className="auth-input"/>
+          </div>
+          {!isLoginView && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                <span role="img" aria-label="password">🔒</span> Password
+              <label className="auth-label flex items-center gap-2">
+                <span role="img" aria-label="phone">📞</span> Contact Number
               </label>
-              <input type="password" name="password" value={password} onChange={onChange} required className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-lg shadow focus:ring-blue-400 focus:border-blue-400 transition"/>
+              <input type="text" name="contact" value={contact} onChange={onChange} className="auth-input"/>
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 shadow-lg">
-                {loading ? 'Processing...' : isLoginView ? 'Login' : 'Sign Up'}
-              </button>
+          )}
+          <div>
+            <label className="auth-label flex items-center gap-2">
+              <span role="img" aria-label="password">🔒</span> Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={password}
+              onChange={onChange}
+              required
+              className="auth-input"
+              style={{ width: '100%' }}
+            />
+            <div className="flex items-center mt-2">
+              <input
+                type="checkbox"
+                id="showPassword"
+                checked={showPassword}
+                onChange={() => setShowPassword((prev) => !prev)}
+                className="mr-2"
+              />
+              <label htmlFor="showPassword" className="text-sm text-gray-700 select-none cursor-pointer">
+                Show/hide password
+              </label>
             </div>
-          </form>
-        </div>
-        <div className="text-sm text-center">
-          <button onClick={() => setIsLoginView(!isLoginView)} className="font-medium text-blue-600 hover:text-blue-500">
-            {isLoginView ? 'Need an account? Sign Up' : 'Already have an account? Login'}
+          </div>
+          {error && <p className="auth-error">{error}</p>}
+          <button type="submit" disabled={loading} className="auth-btn">
+            {loading ? 'Processing...' : isLoginView ? 'Login' : 'Sign Up'}
           </button>
+        </form>
+        <div className="auth-switch">
+          {isLoginView ? 'Need an account?' : 'Already have an account?'}
+          <span onClick={() => setIsLoginView(!isLoginView)}>
+            {isLoginView ? 'Sign Up' : 'Login'}
+          </span>
         </div>
       </div>
     </div>

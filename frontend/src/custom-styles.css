@@ -1,0 +1,52 @@
+/* HomePage (User View) custom styles */
+.user-home-container {
+  background: linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+.user-section-title {
+  color: #1e293b;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+.user-slot-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.user-slot-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
+  padding: 1.2rem 0.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.user-slot-card:hover {
+  box-shadow: 0 6px 24px 0 rgba(37,99,235,0.10);
+  border-color: #2563eb;
+  transform: translateY(-2px) scale(1.03);
+}
+.user-slot-status {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 0.3rem;
+}
+.user-reserved-label {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 0.2rem;
+}
+.user-modal {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.13);
+  padding: 2rem 1.5rem;
+  max-width: 350px;
+  margin: 0 auto;
+}
