@@ -1,0 +1,90 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// @desc    Fetch all slots
+// @route   GET /api/slots
+// @access  Public
+const getSlots = async (req, res) => {
+  try {
+    const slots = await prisma.slot.findMany({
+      orderBy: {
+        location: 'asc',
+      },
+    });
+    res.json(slots);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Create a slot
+// @route   POST /api/slots
+// @access  Private/Admin
+const createSlot = async (req, res) => {
+  const { location } = req.body;
+
+  if (!location) {
+    return res.status(400).json({ message: 'Location is required' });
+  }
+
+  try {
+    const slotExists = await prisma.slot.findUnique({
+      where: { location },
+    });
+
+    if (slotExists) {
+      return res.status(400).json({ message: 'Slot location already exists' });
+    }
+
+    const newSlot = await prisma.slot.create({
+      data: {
+        location,
+        status: 'Available',
+      },
+    });
+    res.status(201).json(newSlot);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error: error.message });
+  }
+};
+
+// @desc    Update a slot
+// @route   PUT /api/slots/:id
+// @access  Private/Admin
+const updateSlot = async (req, res) => {
+  const { id } = req.params;
+  const { location, status } = req.body;
+
+  try {
+    const updatedSlot = await prisma.slot.update({
+      where: { id },
+      data: {
+        location,
+        status,
+      },
+    });
+    res.json(updatedSlot);
+  } catch (error) {
+    // Prisma throws an error if the record to update is not found
+    res.status(404).json({ message: 'Slot not found', error: error.message });
+  }
+};
+
+// @desc    Delete a slot
+// @route   DELETE /api/slots/:id
+// @access  Private/Admin
+const deleteSlot = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.slot.delete({
+      where: { id },
+    });
+    res.json({ message: 'Slot removed' });
+  } catch (error) {
+    // Prisma throws an error if the record to delete is not found
+    res.status(404).json({ message: 'Slot not found', error: error.message });
+  }
+};
+
+module.exports = { getSlots, createSlot, updateSlot, deleteSlot };
