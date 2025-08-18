@@ -32,6 +32,12 @@ const Header = ({ user, setView, onLogout, view }) => {
             <span className="mb-1 font-medium text-gray-700">Welcome, {user.name}</span>
             <div className="flex items-center">
               <button
+                onClick={() => setView('home')}
+                className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+              >
+                Home
+              </button>
+              <button
                 onClick={() => setView('vehicles')}
                 className="text-gray-700 hover:text-blue-600 font-medium mr-4"
               >

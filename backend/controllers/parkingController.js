@@ -5,6 +5,17 @@ const prisma = new PrismaClient();
 const checkIn = async (req, res) => {
   const { vehicleId, slotId } = req.body;
   try {
+    const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
+    const slot = await prisma.slot.findUnique({ where: { id: slotId } });
+
+    if (!vehicle || !slot) {
+      return res.status(404).json({ error: 'Vehicle or Slot not found' });
+    }
+
+    if (slot.type && vehicle.type !== slot.type) {
+      return res.status(400).json({ error: `Vehicle type (${vehicle.type}) does not match slot type (${slot.type})` });
+    }
+
     const parkingSession = await prisma.parkingSession.create({
       data: {
         vehicle: { connect: { id: vehicleId } },

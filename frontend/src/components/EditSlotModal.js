@@ -12,6 +12,7 @@ const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => 
   };
 
   const [location, setLocation] = useState(slot.location || '');
+  const [type, setType] = useState(slot.type || 'car');
   const [bookingStart, setBookingStart] = useState(toLocalDatetime(slot.bookingStart));
   const [bookingEnd, setBookingEnd] = useState(toLocalDatetime(slot.bookingEnd));
 
@@ -27,6 +28,7 @@ const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => 
     onUpdate({
       ...slot,
       location,
+      type,
       bookingStart: toUTCISOString(bookingStart),
       bookingEnd: toUTCISOString(bookingEnd),
     });
@@ -46,6 +48,19 @@ const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => 
             onChange={e => setLocation(e.target.value)}
             required
           />
+          <label className="edit-slot-modal-label mt-2">Slot Type</label>
+          <select
+            className="edit-slot-modal-input"
+            value={type}
+            onChange={e => setType(e.target.value)}
+            required
+          >
+            <option value="car">Car</option>
+            <option value="bike">Bike</option>
+            <option value="suv">SUV</option>
+            <option value="van">Van</option>
+            <option value="minibus">Minibus</option>
+          </select>
           <label className="edit-slot-modal-label mt-2">Booking Start</label>
           <input
             type="datetime-local"

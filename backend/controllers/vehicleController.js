@@ -66,9 +66,30 @@ const deleteVehicle = async (req, res) => {
   }
 };
 
+// Get all vehicles
+const getAllVehicles = async (req, res) => {
+  try {
+    const vehicles = await prisma.vehicle.findMany({
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+    res.json(vehicles);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get all vehicles' });
+  }
+};
+
 module.exports = {
   createVehicle,
   getVehiclesByOwner,
   updateVehicle,
   deleteVehicle,
+  getAllVehicles,
 };

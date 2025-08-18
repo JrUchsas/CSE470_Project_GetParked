@@ -51,27 +51,36 @@ const VehiclePage = () => {
   };
 
   return (
-    <div>
-      <h1>My Vehicles</h1>
-      <button onClick={() => setIsModalOpen(true)}>Add Vehicle</button>
-      <table>
-        
-        <tbody>
-          {vehicles.map((vehicle) => (
-            <tr key={vehicle.id}>
-              <td>{vehicle.licensePlate}</td>
-              
-              <td>{vehicle.model}</td>
-              <td>{vehicle.type}</td>
-              <td>{vehicle.color}</td>
-              <td>
-                <button onClick={() => handleEdit(vehicle)}>Edit</button>
-                <button onClick={() => handleDelete(vehicle.id)}>Delete</button>
-              </td>
+    <div className="flex flex-col w-full mx-auto">
+      <h1 className="text-2xl font-bold mb-4 mx-auto">My Vehicles</h1>
+      <button onClick={() => setIsModalOpen(true)} className="admin-btn update">Add Vehicle</button>
+      <div className="overflow-x-auto w-full mx-auto">
+        <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
+          <thead>
+            <tr>
+              <th>License Plate</th>
+              <th>Model</th>
+              <th>Type</th>
+              <th>Color</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {vehicles.map((vehicle) => (
+              <tr key={vehicle.id}>
+                <td>{vehicle.licensePlate || ''}</td>
+                <td>{vehicle.model || ''}</td>
+                <td>{vehicle.type === 'suv' ? 'SUV' : (vehicle.type ? vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1) : '')}</td>
+                <td>{vehicle.color || ''}</td>
+                <td>
+                  <button onClick={() => handleEdit(vehicle)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>
+                  <button onClick={() => handleDelete(vehicle.id)} className="text-red-600 hover:underline font-medium">Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       {isModalOpen && (
         <VehicleForm vehicle={selectedVehicle} onClose={handleModalClose} ownerId={user.id} />
       )}
@@ -164,4 +173,5 @@ const VehicleForm = ({ vehicle, onClose, ownerId }) => {
   );
 };
 
+export { VehicleForm };
 export default VehiclePage;

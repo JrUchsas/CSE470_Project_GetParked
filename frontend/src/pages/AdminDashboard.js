@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { getSlots, createSlot, updateSlot, deleteSlot } from '../services/api';
+import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, updateVehicle, deleteVehicle } from '../services/api';
 import EditSlotModal from '../components/EditSlotModal';
+import CreateSlotModal from '../components/CreateSlotModal';
+import { VehicleForm } from './VehiclePage'; // Reusing VehicleForm from VehiclePage
 import '../custom-admin.css';
 
 const AdminDashboard = () => {
   const [slots, setSlots] = useState([]);
-  const [location, setLocation] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingSlot, setEditingSlot] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const [vehicles, setVehicles] = useState([]);
+  const [editingVehicle, setEditingVehicle] = useState(null);
 
   const fetchSlots = async () => {
     try {
@@ -19,22 +24,37 @@ const AdminDashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchSlots();
-  }, []);
+  const fetchVehicles = async () => {
+    try {
+      const data = await getAllVehicles();
+      setVehicles(data);
+    } catch (err) {
+      setError('Could not fetch vehicles.');
+    }
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!location) return;
+  const handleCreateSlotClick = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateSlot = async ({ location, type }) => {
+    console.log('Attempting to create slot with:', { location, type });
     setError('');
     try {
-      await createSlot({ location });
-      setLocation('');
+      await createSlot({ location, type });
+      console.log('Slot created successfully!');
       fetchSlots();
+      setIsCreateModalOpen(false);
     } catch (err) {
+      console.error('Error creating slot:', err);
       setError(err.response?.data?.message || 'An error occurred.');
     }
   };
+
+  useEffect(() => {
+    fetchSlots();
+    fetchVehicles();
+  }, []);
 
   const handleEdit = (slot) => {
     setEditingSlot(slot);
@@ -46,6 +66,7 @@ const AdminDashboard = () => {
     try {
       await updateSlot(updatedSlot.id, {
         location: updatedSlot.location,
+        type: updatedSlot.type, // Include type in the update
         bookingStart: updatedSlot.bookingStart ? new Date(updatedSlot.bookingStart).toISOString() : null,
         bookingEnd: updatedSlot.bookingEnd ? new Date(updatedSlot.bookingEnd).toISOString() : null,
       });
@@ -80,32 +101,50 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleEditVehicle = (vehicle) => {
+    setEditingVehicle(vehicle);
+  };
+
+  const handleUpdateVehicle = async (updatedVehicle) => {
+    setActionLoading(true);
+    setError('');
+    try {
+      await updateVehicle(updatedVehicle.id, updatedVehicle);
+      setEditingVehicle(null);
+      fetchVehicles();
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteVehicle = async (id) => {
+    if (window.confirm('Are you sure you want to delete this vehicle?')) {
+      setActionLoading(true);
+      try {
+        await deleteVehicle(id);
+        fetchVehicles();
+      } catch (err) {
+        setError('Could not delete vehicle.');
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
 
 
   return (
     <div className="admin-dashboard-container grid grid-cols-1 md:grid-cols-3 gap-8 w-full text-center items-center justify-center mx-auto">
       <div className="md:col-span-1 admin-card flex flex-col items-center mx-auto">
-        <h3 className="text-2xl font-bold mb-4 mx-auto">Create New Slot</h3>
-        <form onSubmit={handleSubmit} className="w-full max-w-xs mx-auto flex flex-col items-center text-center">
-          <label htmlFor="location" className="block text-gray-700 font-medium mb-1 flex items-center gap-2 justify-center text-center">
-            <span role="img" aria-label="slot">🅿️</span> Slot Location (e.g., A-01)
-          </label>
-          <input
-            type="text"
-            id="location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition mb-2 text-center mx-auto"
-            placeholder="Enter location"
-          />
-          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-          <button
-            type="submit"
-            className="admin-btn update w-full mt-2 mx-auto"
-          >
-            Create Slot
-          </button>
-        </form>
+        <h3 className="text-2xl font-bold mb-4 mx-auto">Slot Management</h3>
+        <button
+          onClick={handleCreateSlotClick}
+          className="admin-btn update"
+        >
+          Create New Slot
+        </button>
       </div>
       {editingSlot && (
         <EditSlotModal
@@ -124,6 +163,7 @@ const AdminDashboard = () => {
             <thead>
               <tr>
                 <th>Location</th>
+                <th>Type</th>
                 <th>Status</th>
                 <th>Booking Time</th>
                 <th>Booked By</th>
@@ -142,6 +182,7 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                   </td>
+                  <td>{slot.type === 'suv' ? 'SUV' : (slot.type ? slot.type.charAt(0).toUpperCase() + slot.type.slice(1) : '')}</td>
                   <td>
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${slot.status === 'Available' ? 'bg-green-100 text-green-700' : slot.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{slot.status}</span>
                   </td>
@@ -183,6 +224,58 @@ const AdminDashboard = () => {
           </table>
         </div>
       </div>
+
+      <div className="md:col-span-3 admin-card flex flex-col items-center mx-auto">
+        <h3 className="text-2xl font-bold mb-4 mx-auto">Manage Existing Vehicles</h3>
+        <div className="overflow-x-auto w-full mx-auto">
+          <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
+            <thead>
+              <tr>
+                <th>License Plate</th>
+                <th>Model</th>
+                <th>Type</th>
+                <th>Color</th>
+                <th>Owner</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vehicles.map((vehicle) => (
+                <tr key={vehicle.id}>
+                  <td>{vehicle.licensePlate}</td>
+                  <td>{vehicle.model}</td>
+                  <td>{vehicle.type === 'suv' ? 'SUV' : (vehicle.type ? vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1) : '')}</td>
+                  <td>{vehicle.color}</td>
+                  <td>{vehicle.owner ? vehicle.owner.name : 'N/A'}</td>
+                  <td>
+                    <button onClick={() => handleEditVehicle(vehicle)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>
+                    <button onClick={() => handleDeleteVehicle(vehicle.id)} className="text-red-600 hover:underline font-medium">Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {editingVehicle && (
+        <VehicleForm
+          vehicle={editingVehicle}
+          onClose={() => {
+            setEditingVehicle(null);
+            fetchVehicles(); // Re-fetch vehicles after closing the modal
+          }}
+          ownerId={editingVehicle.ownerId} // Pass ownerId for update
+          onUpdate={handleUpdateVehicle}
+        />
+      )}
+
+      {isCreateModalOpen && (
+        <CreateSlotModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreateSlot={handleCreateSlot}
+        />
+      )}
     </div>
   );
 };

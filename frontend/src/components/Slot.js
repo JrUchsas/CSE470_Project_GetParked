@@ -22,6 +22,7 @@ const Slot = ({ slot }) => {
       <span className="text-base tracking-wide group-hover:underline whitespace-nowrap flex items-center justify-center w-full text-center">
         <span className="text-lg mr-1">🅿️</span> {slot.location}
       </span>
+      
     </div>
   );
 };

@@ -65,6 +65,11 @@ export const deleteVehicle = async (id) => {
   return data;
 };
 
+export const getAllVehicles = async () => {
+  const { data } = await API.get('/vehicles');
+  return data;
+};
+
 // --- PARKING API CALLS ---
 export const checkIn = async (checkInData) => {
   const { data } = await API.post('/parking/check-in', checkInData);

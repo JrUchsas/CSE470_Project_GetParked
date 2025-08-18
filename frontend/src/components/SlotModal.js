@@ -1,18 +1,64 @@
 
-import React, { useState } from 'react';
-import '../custom-slotmodal.css';
+import React, { useState, useEffect } from 'react';
+import { getVehiclesByOwner } from '../services/api';
+import ErrorModal from './ErrorModal'; // Import ErrorModal
+import '../custom-slotmodal.css'; // Reusing styles for consistency
 
-const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) => {
+const formatVehicleType = (type) => {
+  if (type === 'suv') {
+    return 'SUV';
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1);
+};
+
+const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) => { // Removed setError prop
   const isReserved = slot.status === 'Reserved';
   const isReservedByUser = user && slot.user && slot.user.id === user.id;
   const isAdmin = user && user.role === 'admin';
 
+  // Internal error state for SlotModal
+  const [error, setError] = useState(''); // Add internal error state
+
   // Booking time state
   const [bookingStart, setBookingStart] = useState("");
   const [bookingEnd, setBookingEnd] = useState("");
+  const [userVehicles, setUserVehicles] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState('');
+
+  useEffect(() => {
+    const fetchUserVehicles = async () => {
+      if (user && user.id) {
+        try {
+          const vehicles = await getVehiclesByOwner(user.id);
+          setUserVehicles(vehicles);
+          if (vehicles.length > 0) {
+            setSelectedVehicleId(vehicles[0].id); // Select first vehicle by default
+          }
+        } catch (error) {
+          console.error('Failed to fetch user vehicles:', error);
+        }
+      }
+    };
+    fetchUserVehicles();
+  }, [user]);
 
   const handleReserveClick = () => {
-    onReserve(slot, bookingStart, bookingEnd);
+
+    const selectedVehicle = userVehicles.find(v => v.id === selectedVehicleId);
+
+    if (!selectedVehicle) {
+      setError('Please select a vehicle.');
+      return;
+    }
+
+    // Type validation
+    if (selectedVehicle.type !== slot.type) {
+      setError(`Cannot park ${formatVehicleType(selectedVehicle.type)} vehicle in a ${formatVehicleType(slot.type)} slot.
+                Please choose a ${formatVehicleType(selectedVehicle.type)} vehicle slot for parking.`);
+      return;
+    }
+
+    onReserve(slot, bookingStart, bookingEnd, selectedVehicleId);
   };
 
   return (
@@ -25,10 +71,27 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
           &times;
         </button>
         <div className="flex flex-col items-center gap-1">
-          <h3 className="text-xl font-bold mb-1">{slot.location}</h3>
-          <p className="mb-3 text-sm text-gray-700">Parking slot at {slot.location}.</p>
+          <h3 className="text-2xl font-bold mb-2">{slot.location}</h3>
+          <p className="mb-4 text-base text-gray-700">Parking slot at {slot.location}.</p>
           {!isReserved && (
-            <div className="w-full flex flex-col gap-3 mb-2">
+            <div className="w-full flex flex-col gap-4 mb-4">
+              <label className="slot-modal-label">Choose Vehicle</label>
+              <select
+                className="slot-modal-input"
+                value={selectedVehicleId}
+                onChange={(e) => setSelectedVehicleId(e.target.value)}
+                required
+              >
+                {userVehicles.length > 0 ? (
+                  userVehicles.map((vehicle) => (
+                    <option key={vehicle.id} value={vehicle.id}>
+                      {vehicle.licensePlate} ({vehicle.model} - {formatVehicleType(vehicle.type)})
+                    </option>
+                  ))
+                ) : (
+                  <option value="">No vehicles registered</option>
+                )}
+              </select>
               <label className="slot-modal-label">Start Time</label>
               <input
                 type="datetime-local"
@@ -36,7 +99,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
                 value={bookingStart}
                 onChange={e => setBookingStart(e.target.value)}
               />
-              <label className="slot-modal-label mt-2">End Time</label>
+              <label className="slot-modal-label">End Time</label>
               <input
                 type="datetime-local"
                 className="slot-modal-input"
@@ -60,8 +123,8 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
             {!isReserved && (
               <button
                 onClick={handleReserveClick}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded"
-                disabled={actionLoading || !bookingStart || !bookingEnd}
+                className="slot-modal-btn"
+                disabled={actionLoading || !bookingStart || !bookingEnd || !selectedVehicleId}
               >
                 {actionLoading ? 'Reserving...' : 'Reserve'}
               </button>
@@ -69,7 +132,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
             {(isReservedByUser || isAdmin) && isReserved && (
               <button
                 onClick={() => onCancel(slot)}
-                className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-1 px-3 rounded"
+                className="slot-modal-btn" style={{ backgroundColor: '#ccc', marginTop: '10px' }}
                 disabled={actionLoading}
               >
                 {actionLoading ? 'Cancelling...' : 'Cancel Reservation'}
@@ -86,6 +149,12 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
           </div>
         </div>
       </div>
+      {error && (
+        <ErrorModal
+          errorMessage={error}
+          onClose={() => setError('')}
+        />
+      )}
     </div>
   );
 };

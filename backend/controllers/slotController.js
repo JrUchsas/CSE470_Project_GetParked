@@ -22,7 +22,7 @@ const getSlots = async (req, res) => {
 // @route   POST /api/slots
 // @access  Private/Admin
 const createSlot = async (req, res) => {
-  const { location } = req.body;
+  const { location, type } = req.body;
 
   if (!location) {
     return res.status(400).json({ message: 'Location is required' });
@@ -41,6 +41,7 @@ const createSlot = async (req, res) => {
       data: {
         location,
         status: 'Available',
+        type, // Add type to the slot
       },
     });
     res.status(201).json(newSlot);
@@ -54,7 +55,7 @@ const createSlot = async (req, res) => {
 // @access  Private/Admin or Authenticated (for reservation)
 const updateSlot = async (req, res) => {
   const { id } = req.params;
-  const { location, status, reservedBy, bookingStart, bookingEnd } = req.body;
+  const { location, status, reservedBy, bookingStart, bookingEnd, type, vehicleId } = req.body;
 
   try {
     const updatedSlot = await prisma.slot.update({
@@ -62,9 +63,11 @@ const updateSlot = async (req, res) => {
       data: {
         ...(location && { location }),
         ...(status && { status }),
+        ...(type && { type }), // Add type to the slot
         reservedBy: reservedBy === undefined ? undefined : reservedBy,
         bookingStart: bookingStart === undefined ? undefined : bookingStart,
         bookingEnd: bookingEnd === undefined ? undefined : bookingEnd,
+        ...(vehicleId && { vehicleId }),
       },
       include: { user: true },
     });

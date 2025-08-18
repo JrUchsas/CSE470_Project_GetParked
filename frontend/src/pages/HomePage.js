@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSlots, updateSlot } from '../services/api';
 import Slot from '../components/Slot';
 import SlotModal from '../components/SlotModal';
+import ErrorModal from '../components/ErrorModal';
 import '../custom-styles.css';
 
 const HomePage = ({ user }) => {
@@ -33,7 +34,7 @@ const HomePage = ({ user }) => {
   const reservedSlots = slots.filter((slot) => slot.status === 'Reserved');
 
   // Reserve a slot
-  const handleReserve = async (slot, bookingStart, bookingEnd) => {
+  const handleReserve = async (slot, bookingStart, bookingEnd, selectedVehicleId) => {
     if (!user) return;
     setActionLoading(true);
     try {
@@ -42,6 +43,7 @@ const HomePage = ({ user }) => {
         reservedBy: user.id,
         bookingStart: bookingStart ? new Date(bookingStart).toISOString() : null,
         bookingEnd: bookingEnd ? new Date(bookingEnd).toISOString() : null,
+        vehicleId: selectedVehicleId,
       });
       setSlots((prev) => prev.map((s) => (s.id === slot.id ? updated : s)));
       setSelectedSlot(null);
@@ -76,7 +78,12 @@ const HomePage = ({ user }) => {
     <div className="flex flex-col w-full mx-auto">
       <h2 className="">Available slots:</h2>
       {loading && <p className="text-center">Loading slots...</p>}
-      {error && <p className="text-red-500 bg-red-100 p-3 rounded-lg">{error}</p>}
+      {error && (
+        <ErrorModal
+          errorMessage={error}
+          onClose={() => setError('')}
+        />
+      )}
       <div className="user-slot-list">
         {availableSlots.map((slot) => (
           <div
@@ -85,7 +92,14 @@ const HomePage = ({ user }) => {
             onClick={() => setSelectedSlot(slot)}
           >
             <Slot slot={slot} />
-            <div className="user-slot-status">Available</div>
+            <div className="user-slot-status">
+              <div>Available</div>
+              {slot.type && (
+                <div className="text-xs mt-1">
+                  Type: {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
