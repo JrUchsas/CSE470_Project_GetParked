@@ -43,3 +43,45 @@ export const deleteSlot = async (id) => {
   const { data } = await API.delete(`/slots/${id}`);
   return data;
 };
+
+// --- VEHICLE API CALLS ---
+export const getVehiclesByOwner = async (ownerId) => {
+  const { data } = await API.get(`/vehicles/owner/${ownerId}`);
+  return data;
+};
+
+export const createVehicle = async (vehicleData) => {
+  const { data } = await API.post('/vehicles', vehicleData);
+  return data;
+};
+
+export const updateVehicle = async (id, vehicleData) => {
+  const { data } = await API.put(`/vehicles/${id}`, vehicleData);
+  return data;
+};
+
+export const deleteVehicle = async (id) => {
+  const { data } = await API.delete(`/vehicles/${id}`);
+  return data;
+};
+
+// --- PARKING API CALLS ---
+export const checkIn = async (checkInData) => {
+  const { data } = await API.post('/parking/check-in', checkInData);
+  return data;
+};
+
+export const checkOut = async (id) => {
+  const { data } = await API.put(`/parking/check-out/${id}`);
+  return data;
+};
+
+export const getParkingSessionBySlot = async (slotId) => {
+  const { data } = await API.get(`/parking/slot/${slotId}`);
+  return data;
+};
+
+export const getParkingSessionsByUser = async (userId) => {
+  const { data } = await API.get(`/parking/user/${userId}`);
+  return data;
+};

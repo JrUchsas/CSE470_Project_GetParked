@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const slotRoutes = require('./routes/slotRoutes');
 const authRoutes = require('./routes/authRoutes'); // NEW
+const vehicleRoutes = require('./routes/vehicleRoutes');
+const parkingRoutes = require('./routes/parkingRoutes');
 
 dotenv.config();
 
@@ -18,6 +20,8 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes); // NEW
 app.use('/api/slots', slotRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/parking', parkingRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

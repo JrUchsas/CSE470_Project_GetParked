@@ -3,6 +3,9 @@ import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthPage from './pages/AuthPage'; // NEW
 import Header from './components/Header';
+import VehiclePage from './pages/VehiclePage';
+import EntryExitPage from './pages/EntryExitPage';
+import ReservationHistoryPage from './pages/ReservationHistoryPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -28,18 +31,32 @@ function App() {
     setView('home'); // Reset view to home on logout
   };
 
+  const renderView = () => {
+    if (!user) {
+      return <AuthPage onLogin={handleLogin} />;
+    }
+
+    switch (view) {
+      case 'admin':
+        return user.role === 'admin' ? <AdminDashboard /> : <HomePage user={user} />;
+      case 'vehicles':
+        return <VehiclePage />;
+      case 'entry-exit':
+        return <EntryExitPage />;
+      case 'reservation-history':
+        return <ReservationHistoryPage />;
+      case 'home':
+      default:
+        return <HomePage user={user} />;
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
       
-      <Header user={user} setView={setView} onLogout={handleLogout} />
+      <Header user={user} setView={setView} onLogout={handleLogout} view={view} />
       <main className="w-full max-w-3xl flex flex-col items-center justify-center p-4 md:p-8 text-center">
-        {!user ? (
-          <AuthPage onLogin={handleLogin} />
-        ) : view === 'admin' && user.role === 'admin' ? (
-          <AdminDashboard />
-        ) : (
-          <HomePage user={user} />
-        )}
+        {renderView()}
       </main>
     </div>
   );

@@ -7,19 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Slot {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  location     String   @unique
-  status       String   @default("Available")
-  reservedBy   String?  @db.ObjectId
-  user         User?    @relation("Slot_user", fields: [reservedBy], references: [id])
-  bookingStart DateTime?
-  bookingEnd   DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
 
-// NEW User Model
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
@@ -29,4 +17,45 @@ model User {
   role      String   @default("user") // 'user' or 'admin'
   createdAt DateTime @default(now())
   slots     Slot[]   @relation("Slot_user")
+  vehicles  Vehicle[] @relation("User_vehicles")
+}
+
+model Vehicle {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  licensePlate String   @unique
+  model        String
+  color        String
+  type         String // New field for vehicle type
+  ownerId      String   @db.ObjectId
+  owner        User     @relation("User_vehicles", fields: [ownerId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  parkingSessions ParkingSession[]
+}
+
+model ParkingSession {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  vehicleId   String   @db.ObjectId
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  slotId      String   @db.ObjectId
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  checkInTime DateTime @default(now())
+  checkOutTime DateTime?
+  duration    Int? // Duration in minutes
+  fee         Int? // Calculated parking fee
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Slot {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  location        String           @unique
+  status          String           @default("Available")
+  reservedBy      String?          @db.ObjectId
+  user            User?            @relation("Slot_user", fields: [reservedBy], references: [id])
+  bookingStart    DateTime?
+  bookingEnd      DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  parkingSessions ParkingSession[]
 }
