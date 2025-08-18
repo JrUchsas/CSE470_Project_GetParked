@@ -1,52 +1,57 @@
 /* HomePage (User View) custom styles */
 .user-home-container {
-  background: linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%);
-  min-height: 100vh;
   padding: 2rem 0;
 }
+
 .user-section-title {
   color: #1e293b;
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 2rem; /* Adjusted font size */
+  font-weight: 700; /* Adjusted font weight */
   margin-bottom: 1.5rem;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px; /* Adjusted letter spacing */
 }
+
 .user-slot-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1.2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adjusted minmax */
+  gap: 1.5rem; /* Adjusted gap */
+  margin-bottom: 2.5rem; /* Adjusted margin */
 }
+
 .user-slot-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 0.75rem;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
-  padding: 1.2rem 0.5rem;
-  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Adjusted box shadow */
+  padding: 1.5rem 1rem; /* Adjusted padding */
+  transition: all 0.3s ease-in-out; /* Smoother transition */
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 1px solid #e2e8f0; /* Softer border */
 }
+
 .user-slot-card:hover {
-  box-shadow: 0 6px 24px 0 rgba(37,99,235,0.10);
-  border-color: #2563eb;
-  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(67, 56, 202, 0.1); /* Adjusted hover shadow */
+  border-color: #4f46e5; /* Indigo color on hover */
+  transform: translateY(-4px) scale(1.03); /* Adjusted transform */
 }
+
 .user-slot-status {
-  font-size: 0.95rem;
-  color: #64748b;
-  margin-top: 0.3rem;
+  font-size: 0.875rem; /* Adjusted font size */
+  color: #475569; /* Adjusted color */
+  margin-top: 0.5rem; /* Adjusted margin */
 }
+
 .user-reserved-label {
-  color: #ef4444;
+  color: #c2410c; /* Darker orange for better contrast */
   font-weight: 600;
-  font-size: 1rem;
-  margin-top: 0.2rem;
+  font-size: 0.875rem; /* Adjusted font size */
+  margin-top: 0.5rem; /* Adjusted margin */
 }
+
 .user-modal {
-  background: #fff;
+  background: #ffffff;
   border-radius: 1rem;
-  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.13);
-  padding: 2rem 1.5rem;
-  max-width: 350px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem 2rem;
+  max-width: 380px;
   margin: 0 auto;
 }

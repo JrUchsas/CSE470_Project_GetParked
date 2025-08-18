@@ -1,69 +1,85 @@
 /* AdminDashboard custom styles */
 .admin-dashboard-container {
-  background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
-  min-height: 100vh;
-  padding: 0.8rem 0 2rem 0;
+  padding: 2rem 0;
+  width: 100%;
 }
+
 .admin-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 1rem;
-  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
-  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
   margin-bottom: 2rem;
-  max-width: none;
-  width: 100vw;
-  left: 50%;
-  right: 50%;
-  position: relative;
-  transform: translateX(-50%);
+  width: 100%;
 }
+
 .admin-table {
-  width: 100vw;
-  min-width: 1200px;
-  table-layout: fixed;
+  width: 100%;
   border-collapse: separate;
-  border-spacing: 0;
+  border-spacing: 0 0.5rem; /* Add space between rows */
 }
-.admin-table th, .admin-table td {
-  padding: 0.75rem 1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
+
+.admin-table th,
+.admin-table td {
+  padding: 1rem;
+  text-align: left;
   vertical-align: middle;
 }
-.admin-table th.booking-time, .admin-table td.booking-time {
-  white-space: normal;
-  word-break: break-word;
-  max-width: 320px;
-}
+
 .admin-table th {
-  background: #e0e7ff;
-  color: #1e293b;
-  font-weight: 600;
-}
-.admin-table tr {
-  transition: background 0.2s;
-}
-.admin-table tr:hover {
   background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
 }
-.selected-slot-label {
-  color: #2563eb;
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+
+.admin-table tr {
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
 }
+
+.admin-table tr:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
 .admin-btn {
   font-weight: 600;
   border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.5rem;
-  transition: background 0.2s;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
 }
-.admin-btn.update { background: #2563eb; color: #fff; }
-.admin-btn.update:hover { background: #1d4ed8; }
-.admin-btn.delete { background: #ef4444; color: #fff; }
-.admin-btn.delete:hover { background: #b91c1c; }
-.admin-btn.cancel { background: #6b7280; color: #fff; }
-.admin-btn.cancel:hover { background: #374151; }
+
+.admin-btn.update {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.admin-btn.update:hover {
+  background: #4338ca;
+}
+
+.admin-btn.delete {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.admin-btn.delete:hover {
+  background: #dc2626;
+}
+
+.admin-btn.cancel {
+  background: #64748b;
+  color: #ffffff;
+}
+
+.admin-btn.cancel:hover {
+  background: #475569;
+}

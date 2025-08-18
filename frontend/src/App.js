@@ -29,7 +29,7 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans flex flex-col items-center">
+    <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
       <Header user={user} setView={setView} onLogout={handleLogout} />
       <main className="w-full max-w-3xl flex flex-col items-center justify-center p-4 md:p-8 text-center">
         {!user ? (
