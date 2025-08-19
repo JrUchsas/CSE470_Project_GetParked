@@ -6,6 +6,16 @@ import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
 import '../custom-slotmodal.css';
 
 // Other icon components
+const SteeringWheelIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ fontSize: '24px' }}>
+    <circle cx="12" cy="12" r="9"/>
+    <circle cx="12" cy="12" r="3"/>
+    <line x1="12" y1="3" x2="12" y2="9"/>
+    <line x1="12" y1="15" x2="12" y2="21"/>
+    <line x1="3" y1="12" x2="9" y2="12"/>
+    <line x1="15" y1="12" x2="21" y2="12"/>
+  </svg>
+);
 
 const ClockIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -88,7 +98,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
           {/* Header Section */}
           <div className="slot-modal-header">
             <div className="slot-modal-icon-wrapper">
-              {getVehicleIcon(slot.type, 'w-6 h-6')}
+              <SteeringWheelIcon />
             </div>
             <div className="slot-location-container">
               <div className="slot-location-with-icon">
@@ -110,7 +120,10 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
               <div className="form-group">
                 <label className="slot-modal-label">
                   <span style={{ marginRight: '0.5rem' }}>
-                    {getVehicleIcon('car', 'w-4 h-4')}
+                    {(() => {
+                      const selectedVehicle = userVehicles.find(v => v.id === selectedVehicleId);
+                      return getVehicleIcon(selectedVehicle?.type || 'car', 'slot-card-icon');
+                    })()}
                   </span>
                   Choose Vehicle
                 </label>

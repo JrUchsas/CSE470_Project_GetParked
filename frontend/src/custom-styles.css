@@ -382,9 +382,9 @@
 }
 
 .slot-card-icon {
-  width: 12px;
-  height: 12px;
+  font-size: 1rem;
   display: inline-block;
+  line-height: 1;
 }
 
 .slot-action-hint {
