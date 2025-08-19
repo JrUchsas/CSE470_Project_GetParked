@@ -72,7 +72,17 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
 
             <div className="form-group">
               <label htmlFor="type" className="slot-modal-label">
-                {getVehicleIcon(type || 'car', 'slot-icon')}
+                <span style={{
+                  width: '1.2em',
+                  height: '1.2em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  marginRight: '0.5rem'
+                }}>
+                  {getVehicleIcon(type || 'car', 'w-full h-full')}
+                </span>
                 Vehicle Type
               </label>
               <select

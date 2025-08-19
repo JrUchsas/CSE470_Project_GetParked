@@ -218,7 +218,18 @@ const AdminDashboard = () => {
                   </td>
                   <td style={{ padding: '1rem', fontWeight: '500', color: '#374151' }}>
                     <div className="flex items-center justify-center gap-2">
-                      {slot.type && getVehicleIcon(slot.type, 'w-5 h-5')}
+                      {slot.type && (
+                        <span style={{
+                          width: '1.2em',
+                          height: '1.2em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          {getVehicleIcon(slot.type, 'w-full h-full')}
+                        </span>
+                      )}
                       {slot.type ? formatVehicleType(slot.type) : ''}
                     </div>
                   </td>
@@ -331,7 +342,18 @@ const AdminDashboard = () => {
                   <td>{vehicle.model}</td>
                   <td>
                     <div className="flex items-center justify-center gap-2">
-                      {vehicle.type && getVehicleIcon(vehicle.type, 'w-5 h-5')}
+                      {vehicle.type && (
+                        <span style={{
+                          width: '1.2em',
+                          height: '1.2em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          {getVehicleIcon(vehicle.type, 'w-full h-full')}
+                        </span>
+                      )}
                       {vehicle.type ? formatVehicleType(vehicle.type) : ''}
                     </div>
                   </td>

@@ -103,7 +103,18 @@ const VehiclePage = () => {
                 <td className="py-2 px-4">{vehicle.model || ''}</td>
                 <td className="py-2 px-4">
                   <div className="flex items-center justify-center gap-2">
-                    {vehicle.type && getVehicleIcon(vehicle.type, 'w-5 h-5')}
+                    {vehicle.type && (
+                      <span style={{
+                        width: '1.2em',
+                        height: '1.2em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        {getVehicleIcon(vehicle.type, 'w-full h-full')}
+                      </span>
+                    )}
                     {vehicle.type ? formatVehicleType(vehicle.type) : ''}
                   </div>
                 </td>

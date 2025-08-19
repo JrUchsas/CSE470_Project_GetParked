@@ -189,14 +189,12 @@ const HomePage = ({ user }) => {
                   </div>
                 </div>
                 <div className="slot-card-body">
-                  {slot.type && (
-                    <div className="slot-type">
-                      <span className="type-icon">
-                        {getVehicleIcon(slot.type, 'w-4 h-4')}
-                      </span>
-                      {formatVehicleType(slot.type)}
-                    </div>
-                  )}
+                  <div className="slot-type">
+                    <span className="type-icon">
+                      {getVehicleIcon(slot.type || 'car', 'slot-card-icon')}
+                    </span>
+                    {formatVehicleType(slot.type || 'car')}
+                  </div>
 
                 </div>
                 <div className="slot-card-footer">
@@ -251,14 +249,12 @@ const HomePage = ({ user }) => {
                   </div>
                 </div>
                 <div className="slot-card-body">
-                  {slot.type && (
-                    <div className="slot-type">
-                      <span className="type-icon">
-                        {getVehicleIcon(slot.type, 'w-4 h-4')}
-                      </span>
-                      {formatVehicleType(slot.type)}
-                    </div>
-                  )}
+                  <div className="slot-type">
+                    <span className="type-icon">
+                      {getVehicleIcon(slot.type || 'car', 'slot-card-icon')}
+                    </span>
+                    {formatVehicleType(slot.type || 'car')}
+                  </div>
                   <div className="reservation-details">
                     <div className="reserved-by">
                       <span className="user-icon">👤</span>

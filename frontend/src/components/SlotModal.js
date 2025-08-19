@@ -88,7 +88,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
           {/* Header Section */}
           <div className="slot-modal-header">
             <div className="slot-modal-icon-wrapper">
-              {getVehicleIcon(slot.type)}
+              {getVehicleIcon(slot.type, 'w-6 h-6')}
             </div>
             <div className="slot-location-container">
               <div className="slot-location-with-icon">
@@ -109,7 +109,9 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
             <div className="slot-modal-form">
               <div className="form-group">
                 <label className="slot-modal-label">
-                  {getVehicleIcon('car', 'slot-icon')}
+                  <span style={{ marginRight: '0.5rem' }}>
+                    {getVehicleIcon('car', 'w-4 h-4')}
+                  </span>
                   Choose Vehicle
                 </label>
                 <select
