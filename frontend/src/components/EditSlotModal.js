@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
+import DateTimePicker from './DateTimePicker';
 import '../custom-slotmodal.css'; // Use the modern SlotModal styles
 
 // Icon components for better visual appeal
@@ -25,34 +26,20 @@ const ClockIcon = () => (
 );
 
 const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => {
-  const toLocalDatetime = (isoString) => {
-    if (!isoString) return '';
-    const date = new Date(isoString);
-    const tzOffset = date.getTimezoneOffset() * 60000;
-    const localISO = new Date(date - tzOffset).toISOString().slice(0,16);
-    return localISO;
-  };
-
   const [location, setLocation] = useState(slot.location || '');
   const [type, setType] = useState(slot.type || 'car');
-  const [bookingStart, setBookingStart] = useState(toLocalDatetime(slot.bookingStart));
-  const [bookingEnd, setBookingEnd] = useState(toLocalDatetime(slot.bookingEnd));
+  const [bookingStart, setBookingStart] = useState(slot.bookingStart || '');
+  const [bookingEnd, setBookingEnd] = useState(slot.bookingEnd || '');
 
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    // Convert local datetime back to ISO string (UTC) for backend
-    const toUTCISOString = (local) => {
-      if (!local) return null;
-      const date = new Date(local);
-      return date.toISOString();
-    };
     onUpdate({
       ...slot,
       location,
       type,
-      bookingStart: toUTCISOString(bookingStart),
-      bookingEnd: toUTCISOString(bookingEnd),
+      bookingStart: bookingStart || null,
+      bookingEnd: bookingEnd || null,
     });
   };
 
@@ -138,30 +125,23 @@ const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => 
             {isReserved && (
               <>
                 <div className="form-group">
-                  <label htmlFor="bookingStart" className="slot-modal-label">
-                    <ClockIcon />
-                    Booking Start
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="bookingStart"
-                    className="slot-modal-input"
+                  <DateTimePicker
                     value={bookingStart}
-                    onChange={e => setBookingStart(e.target.value)}
+                    onChange={setBookingStart}
+                    label="Booking Start"
+                    icon={<ClockIcon />}
+                    placeholder="Select booking start time"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="bookingEnd" className="slot-modal-label">
-                    <ClockIcon />
-                    Booking End
-                  </label>
-                  <input
-                    type="datetime-local"
-                    id="bookingEnd"
-                    className="slot-modal-input"
+                  <DateTimePicker
                     value={bookingEnd}
-                    onChange={e => setBookingEnd(e.target.value)}
+                    onChange={setBookingEnd}
+                    label="Booking End"
+                    icon={<ClockIcon />}
+                    minDateTime={bookingStart}
+                    placeholder="Select booking end time"
                   />
                 </div>
               </>

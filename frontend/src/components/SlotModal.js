@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getVehiclesByOwner } from '../services/api';
 import ErrorModal from './ErrorModal';
 import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
+import DateTimePicker from './DateTimePicker';
 import '../custom-slotmodal.css';
 
 // Other icon components
@@ -146,30 +147,24 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
               </div>
 
               <div className="form-group">
-                <label className="slot-modal-label">
-                  <ClockIcon />
-                  Start Time
-                </label>
-                <input
-                  type="datetime-local"
-                  className="slot-modal-input"
+                <DateTimePicker
                   value={bookingStart}
-                  onChange={e => setBookingStart(e.target.value)}
-                  min={new Date().toISOString().slice(0, 16)}
+                  onChange={setBookingStart}
+                  label="Start Time"
+                  icon={<ClockIcon />}
+                  minDateTime={new Date().toISOString()}
+                  placeholder="Select start date and time"
                 />
               </div>
 
               <div className="form-group">
-                <label className="slot-modal-label">
-                  <ClockIcon />
-                  End Time
-                </label>
-                <input
-                  type="datetime-local"
-                  className="slot-modal-input"
+                <DateTimePicker
                   value={bookingEnd}
-                  onChange={e => setBookingEnd(e.target.value)}
-                  min={bookingStart || new Date().toISOString().slice(0, 16)}
+                  onChange={setBookingEnd}
+                  label="End Time"
+                  icon={<ClockIcon />}
+                  minDateTime={bookingStart || new Date().toISOString()}
+                  placeholder="Select end date and time"
                 />
               </div>
             </div>
