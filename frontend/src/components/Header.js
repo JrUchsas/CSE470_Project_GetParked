@@ -1,171 +1,150 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './Header.css';
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const handleToggleView = () => {
     if (!user || user.role !== 'admin') return;
-    // Assuming current path is either '/' (home) or '/admin'
     if (window.location.pathname === '/admin') {
-      navigate('/'); // Go to home view
+      navigate('/');
     } else {
-      navigate('/admin'); // Go to admin view
+      navigate('/admin');
     }
   };
 
-  return (
-    <header className="bg-white shadow-md py-4 px-4 flex items-center justify-between w-full">
-      {/* Left spacer for alignment */}
-      <div className="flex-1"></div>
+  const navigationItems = [
+    { path: '/', label: 'Home', icon: '🏠' },
+    { path: '/vehicles', label: 'My Vehicles', icon: '🚗' },
+    { path: '/entry-exit', label: 'Entry/Exit', icon: '🚪' },
+    { path: '/reservation-history', label: 'History', icon: '📋' },
+  ];
 
-      {/* Centered Logo and Tagline */}
-      <div className="flex flex-col items-center flex-grow">
-        <h1
-          className="text-4xl font-extrabold text-blue-600 cursor-pointer select-none"
-          onClick={() => navigate('/')}
-        >
-          GetParked
-        </h1>
-        <div className="text-lg text-gray-700 font-bold tracking-wide uppercase mt-1">
-          A SMART WAY TO PARK
+  const isActivePath = (path) => location.pathname === path;
+
+  return (
+    <header className="modern-header">
+      <div className="header-container">
+        {/* Logo Section */}
+        <div className="logo-section" onClick={() => navigate('/')}>
+          <div className="logo-icon">🅿️</div>
+          <div className="logo-content">
+            <h1 className="logo-title">GetParked</h1>
+            <p className="logo-subtitle">Smart Parking Solution</p>
+          </div>
         </div>
+
+        {/* Desktop Navigation */}
+        {user && (
+          <nav className="desktop-nav">
+            <div className="nav-items">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={`nav-item ${isActivePath(item.path) ? 'active' : ''}`}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-label">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+        )}
+
+        {/* User Section */}
+        {user && (
+          <div className="user-section">
+            <div className="user-info">
+              <div className="user-avatar">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="user-details">
+                <span className="user-name">{user.name}</span>
+                <span className="user-role">{user.role}</span>
+              </div>
+            </div>
+
+            <div className="user-actions">
+              {user.role === 'admin' && (
+                <button onClick={handleToggleView} className="action-btn admin-btn">
+                  <span className="btn-icon">⚙️</span>
+                  <span className="btn-label">
+                    {window.location.pathname === '/admin' ? 'User View' : 'Admin View'}
+                  </span>
+                </button>
+              )}
+              <button onClick={onLogout} className="action-btn logout-btn">
+                <span className="btn-icon">⏻</span>
+                <span className="btn-label">Logout</span>
+              </button>
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              className="mobile-menu-toggle"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <span className={`hamburger ${isMobileMenuOpen ? 'open' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Right-aligned User Info and Logout */}
-      <div className="flex-1 flex flex-col items-end">
-        {user ? (
-          <>
-            <span className="mb-1 font-medium text-gray-700">Welcome, {user.name}</span>
-            <div className="flex items-center gap-2">
+      {/* Mobile Navigation */}
+      {user && (
+        <div className={`mobile-nav ${isMobileMenuOpen ? 'open' : ''}`}>
+          <div className="mobile-nav-items">
+            {navigationItems.map((item) => (
               <button
-                onClick={() => navigate('/')}
-                className="slot-modal-btn disabled"
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  width: 'auto',
-                  background: 'transparent',
-                  color: '#374151',
-                  border: '1px solid #e5e7eb',
-                  boxShadow: 'none'
+                key={item.path}
+                onClick={() => {
+                  navigate(item.path);
+                  setIsMobileMenuOpen(false);
                 }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                  e.target.style.color = '#1e293b';
-                  e.target.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'transparent';
-                  e.target.style.color = '#374151';
-                  e.target.style.transform = 'translateY(0)';
-                }}
+                className={`mobile-nav-item ${isActivePath(item.path) ? 'active' : ''}`}
               >
-                Home
+                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-label">{item.label}</span>
               </button>
-              <button
-                onClick={() => navigate('/vehicles')}
-                className="slot-modal-btn disabled"
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  width: 'auto',
-                  background: 'transparent',
-                  color: '#374151',
-                  border: '1px solid #e5e7eb',
-                  boxShadow: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                  e.target.style.color = '#1e293b';
-                  e.target.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'transparent';
-                  e.target.style.color = '#374151';
-                  e.target.style.transform = 'translateY(0)';
-                }}
-              >
-                My Vehicles
-              </button>
-              <button
-                onClick={() => navigate('/entry-exit')}
-                className="slot-modal-btn disabled"
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  width: 'auto',
-                  background: 'transparent',
-                  color: '#374151',
-                  border: '1px solid #e5e7eb',
-                  boxShadow: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                  e.target.style.color = '#1e293b';
-                  e.target.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'transparent';
-                  e.target.style.color = '#374151';
-                  e.target.style.transform = 'translateY(0)';
-                }}
-              >
-                Entry/Exit
-              </button>
-              <button
-                onClick={() => navigate('/reservation-history')}
-                className="slot-modal-btn disabled"
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  width: 'auto',
-                  background: 'transparent',
-                  color: '#374151',
-                  border: '1px solid #e5e7eb',
-                  boxShadow: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
-                  e.target.style.color = '#1e293b';
-                  e.target.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'transparent';
-                  e.target.style.color = '#374151';
-                  e.target.style.transform = 'translateY(0)';
-                }}
-              >
-                Reservation History
-              </button>
+            ))}
+
+            <div className="mobile-actions">
               {user.role === 'admin' && (
                 <button
-                  onClick={handleToggleView}
-                  className="slot-modal-btn primary"
-                  style={{
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.875rem',
-                    width: 'auto'
+                  onClick={() => {
+                    handleToggleView();
+                    setIsMobileMenuOpen(false);
                   }}
+                  className="mobile-action-btn admin-btn"
                 >
-                  {window.location.pathname === '/admin' ? 'User View' : 'Admin View'}
+                  <span className="btn-icon">⚙️</span>
+                  <span className="btn-label">
+                    {window.location.pathname === '/admin' ? 'User View' : 'Admin View'}
+                  </span>
                 </button>
               )}
               <button
-                onClick={onLogout}
-                className="slot-modal-btn danger"
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  width: 'auto'
+                onClick={() => {
+                  onLogout();
+                  setIsMobileMenuOpen(false);
                 }}
+                className="mobile-action-btn logout-btn"
               >
-                Logout
+                <span className="btn-icon">⏻</span>
+                <span className="btn-label">Logout</span>
               </button>
             </div>
-          </>
-        ) : null}
-      </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
