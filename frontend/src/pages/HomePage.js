@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getSlots, updateSlot } from '../services/api';
 import Slot from '../components/Slot';
 import SlotModal from '../components/SlotModal';
@@ -6,6 +7,7 @@ import ErrorModal from '../components/ErrorModal';
 import '../custom-styles.css';
 
 const HomePage = ({ user }) => {
+  const navigate = useNavigate();
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -74,6 +76,14 @@ const HomePage = ({ user }) => {
     }
   };
 
+  // Check In
+  const handleCheckIn = (slot) => {
+    if (!user) return;
+    // Navigate to the Entry/Exit page, passing the slot ID
+    navigate('/entry-exit', { state: { slotId: slot.id } });
+    setSelectedSlot(null); // Close the modal
+  };
+
   return (
     <div className="flex flex-col w-full mx-auto">
       <h2 className="">Available slots:</h2>
@@ -128,6 +138,7 @@ const HomePage = ({ user }) => {
             onClose={() => setSelectedSlot(null)}
             onReserve={handleReserve}
             onCancel={handleCancel}
+            onCheckIn={handleCheckIn} // New prop
             actionLoading={actionLoading}
           />
         </div>

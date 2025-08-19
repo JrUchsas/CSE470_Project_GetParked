@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; // NEW
 import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthPage from './pages/AuthPage'; // NEW
@@ -12,7 +13,7 @@ import VehicleRegistrationPrompt from './components/VehicleRegistrationPrompt';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [view, setView] = useState('home');
+  
   const [showVehicleRegistrationPrompt, setShowVehicleRegistrationPrompt] = useState(false);
 
   // Check for user in localStorage on initial load
@@ -51,44 +52,34 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
-    setView('home'); // Reset view to home on logout
   };
 
-  const renderView = () => {
-    if (!user) {
-      return <AuthPage onLogin={handleLogin} />;
-    }
-
-    switch (view) {
-      case 'admin':
-        return user.role === 'admin' ? <AdminDashboard /> : <HomePage user={user} />;
-      case 'vehicles':
-        return <VehiclePage />;
-      case 'entry-exit':
-        return <EntryExitPage />;
-      case 'reservation-history':
-        return <ReservationHistoryPage />;
-      case 'home':
-      default:
-        return <HomePage user={user} />;
-    }
-  };
+  
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
-      
-      <Header user={user} setView={setView} onLogout={handleLogout} view={view} />
-      <main className="w-full max-w-3xl flex flex-col items-center justify-center p-4 md:p-8 text-center">
-        {renderView()}
-      </main>
+    <BrowserRouter>
+      <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
+        
+        <Header user={user} onLogout={handleLogout} />
+        <main className="w-full max-w-3xl flex flex-col items-center justify-center p-4 md:p-8 text-center">
+          <Routes>
+            <Route path="/auth" element={user ? <Navigate to="/" /> : <AuthPage onLogin={handleLogin} />} />
+            <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/auth" />} />
+            <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
+            <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />
+            <Route path="/entry-exit" element={user ? <EntryExitPage /> : <Navigate to="/auth" />} />
+            <Route path="/reservation-history" element={user ? <ReservationHistoryPage /> : <Navigate to="/auth" />} />
+            <Route path="*" element={<Navigate to="/" />} /> {/* Catch-all for unknown routes */}
+          </Routes>
+        </main>
 
-      {showVehicleRegistrationPrompt && (
-        <VehicleRegistrationPrompt
-          onClose={() => setShowVehicleRegistrationPrompt(false)}
-          setView={setView}
-        />
-      )}
-    </div>
+        {showVehicleRegistrationPrompt && (
+          <VehicleRegistrationPrompt
+            onClose={() => setShowVehicleRegistrationPrompt(false)}
+          />
+        )}
+      </div>
+    </BrowserRouter>
   );
 }
 

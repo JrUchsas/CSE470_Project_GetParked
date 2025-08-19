@@ -11,7 +11,7 @@ const formatVehicleType = (type) => {
   return type.charAt(0).toUpperCase() + type.slice(1);
 };
 
-const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) => { // Removed setError prop
+const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, actionLoading }) => { // Removed setError prop
   const isReserved = slot.status === 'Reserved';
   const isReservedByUser = user && slot.user && slot.user.id === user.id;
   const isAdmin = user && user.role === 'admin';
@@ -129,14 +129,27 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, actionLoading }) 
                 {actionLoading ? 'Reserving...' : 'Reserve'}
               </button>
             )}
-            {(isReservedByUser || isAdmin) && isReserved && (
-              <button
-                onClick={() => onCancel(slot)}
-                className="slot-modal-btn" style={{ backgroundColor: '#ccc', marginTop: '10px' }}
-                disabled={actionLoading}
-              >
-                {actionLoading ? 'Cancelling...' : 'Cancel Reservation'}
-              </button>
+            {isReserved && (
+              <>
+                {isReservedByUser && (
+                  <button
+                    onClick={() => onCheckIn(slot)}
+                    className="slot-modal-btn"
+                    disabled={actionLoading}
+                  >
+                    {actionLoading ? 'Checking In...' : 'Check In'}
+                  </button>
+                )}
+                {(isReservedByUser || isAdmin) && (
+                  <button
+                    onClick={() => onCancel(slot)}
+                    className="slot-modal-btn" style={{ backgroundColor: '#ccc', marginTop: '10px' }}
+                    disabled={actionLoading}
+                  >
+                    {actionLoading ? 'Cancelling...' : 'Cancel Reservation'}
+                  </button>
+                )}
+              </>
             )}
             {isReserved && !isReservedByUser && !isAdmin && (
               <button

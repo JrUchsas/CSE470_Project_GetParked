@@ -1,10 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
-const Header = ({ user, setView, onLogout, view }) => {
+const Header = ({ user, onLogout }) => {
+  const navigate = useNavigate();
   const handleToggleView = () => {
     if (!user || user.role !== 'admin') return;
-    setView((prev) => (prev === 'admin' ? 'home' : 'admin'));
+    // Assuming current path is either '/' (home) or '/admin'
+    if (window.location.pathname === '/admin') {
+      navigate('/'); // Go to home view
+    } else {
+      navigate('/admin'); // Go to admin view
+    }
   };
 
   return (
@@ -16,7 +23,7 @@ const Header = ({ user, setView, onLogout, view }) => {
       <div className="flex flex-col items-center flex-grow">
         <h1
           className="text-4xl font-extrabold text-blue-600 cursor-pointer select-none"
-          onClick={() => setView('home')}
+          onClick={() => navigate('/')}
         >
           GetParked
         </h1>
@@ -32,25 +39,25 @@ const Header = ({ user, setView, onLogout, view }) => {
             <span className="mb-1 font-medium text-gray-700">Welcome, {user.name}</span>
             <div className="flex items-center">
               <button
-                onClick={() => setView('home')}
+                onClick={() => navigate('/')}
                 className="text-gray-700 hover:text-blue-600 font-medium mr-4"
               >
                 Home
               </button>
               <button
-                onClick={() => setView('vehicles')}
+                onClick={() => navigate('/vehicles')}
                 className="text-gray-700 hover:text-blue-600 font-medium mr-4"
               >
                 My Vehicles
               </button>
               <button
-                onClick={() => setView('entry-exit')}
+                onClick={() => navigate('/entry-exit')}
                 className="text-gray-700 hover:text-blue-600 font-medium mr-4"
               >
                 Entry/Exit
               </button>
               <button
-                onClick={() => setView('reservation-history')}
+                onClick={() => navigate('/reservation-history')}
                 className="text-gray-700 hover:text-blue-600 font-medium mr-4"
               >
                 Reservation History
@@ -60,7 +67,7 @@ const Header = ({ user, setView, onLogout, view }) => {
                   onClick={handleToggleView}
                   className="text-gray-700 hover:text-blue-600 font-medium mr-4"
                 >
-                  {view === 'admin' ? 'User View' : 'Admin View'}
+                  {window.location.pathname === '/admin' ? 'User View' : 'Admin View'}
                 </button>
               )}
               <button onClick={onLogout} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">

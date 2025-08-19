@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const VehicleRegistrationPrompt = ({ onClose, setView }) => {
+const VehicleRegistrationPrompt = ({ onClose }) => {
+  const navigate = useNavigate();
   const handleRegisterClick = () => {
-    setView('vehicles');
+    navigate('/vehicles');
     onClose();
   };
 
