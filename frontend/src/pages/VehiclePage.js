@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getVehiclesByOwner, deleteVehicle } from '../services/api';
 import VehicleForm from '../components/VehicleForm';
+import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 
 const VehiclePage = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -100,7 +101,12 @@ const VehiclePage = () => {
               <tr key={vehicle.id}>
                 <td className="py-2 px-4">{vehicle.licensePlate || ''}</td>
                 <td className="py-2 px-4">{vehicle.model || ''}</td>
-                <td className="py-2 px-4">{vehicle.type === 'suv' ? 'SUV' : (vehicle.type ? vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1) : '')}</td>
+                <td className="py-2 px-4">
+                  <div className="flex items-center justify-center gap-2">
+                    {vehicle.type && getVehicleIcon(vehicle.type, 'w-5 h-5')}
+                    {vehicle.type ? formatVehicleType(vehicle.type) : ''}
+                  </div>
+                </td>
                 <td className="py-2 px-4">{vehicle.color || ''}</td>
                 <td className="py-2 px-4">
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>

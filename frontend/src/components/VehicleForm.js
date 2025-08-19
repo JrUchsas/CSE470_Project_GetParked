@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createVehicle, updateVehicle } from '../services/api';
-
-// Icon components for better visual appeal
-const CarIcon = () => (
-  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.6-1.6-1.6L18 10.5l-2-3c-.3-.5-.8-.5-1.3-.5H9.3c-.5 0-1 0-1.3.5l-2 3-2.4 1.4C2.7 11.4 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
-    <circle cx="7" cy="17" r="2"/>
-    <circle cx="17" cy="17" r="2"/>
-  </svg>
-);
+import { getVehicleIcon, formatVehicleType, CarIcon } from './VehicleIcons';
 
 const EditIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -156,11 +148,7 @@ const VehicleForm = ({ vehicle, ownerId, onSave, onCancel }) => {
 
         <div className="form-group">
           <label htmlFor="type" className="slot-modal-label">
-            <svg style={{ width: '1.2rem', height: '1.2rem', color: '#6b7280' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 16V8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2z"/>
-              <path d="M18 12h2a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-2"/>
-              <path d="M10 16h4"/>
-            </svg>
+            {getVehicleIcon(type || 'car', 'slot-icon')}
             Vehicle Type
           </label>
           <select

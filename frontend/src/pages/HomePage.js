@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getSlots, updateSlot } from '../services/api';
 import SlotModal from '../components/SlotModal';
 import ErrorModal from '../components/ErrorModal';
+import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 import '../custom-styles.css';
 
 const HomePage = ({ user }) => {
@@ -190,8 +191,10 @@ const HomePage = ({ user }) => {
                 <div className="slot-card-body">
                   {slot.type && (
                     <div className="slot-type">
-                      <span className="type-icon">🚗</span>
-                      {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
+                      <span className="type-icon">
+                        {getVehicleIcon(slot.type, 'w-4 h-4')}
+                      </span>
+                      {formatVehicleType(slot.type)}
                     </div>
                   )}
 
@@ -250,8 +253,10 @@ const HomePage = ({ user }) => {
                 <div className="slot-card-body">
                   {slot.type && (
                     <div className="slot-type">
-                      <span className="type-icon">🚗</span>
-                      {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
+                      <span className="type-icon">
+                        {getVehicleIcon(slot.type, 'w-4 h-4')}
+                      </span>
+                      {formatVehicleType(slot.type)}
                     </div>
                   )}
                   <div className="reservation-details">

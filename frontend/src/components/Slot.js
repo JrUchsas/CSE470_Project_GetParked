@@ -1,4 +1,5 @@
 import React from 'react';
+import { getVehicleIcon } from './VehicleIcons';
 
 const Slot = ({ slot }) => {
   const getStatusColor = () => {
@@ -20,9 +21,12 @@ const Slot = ({ slot }) => {
       style={{ transition: 'box-shadow 0.15s, transform 0.15s', minWidth: 0 }}
     >
       <span className="text-base tracking-wide group-hover:underline whitespace-nowrap flex items-center justify-center w-full text-center">
-        <span className="text-lg mr-1">🅿️</span> {slot.location}
+        <span className="text-lg mr-1" style={{ filter: 'brightness(0) invert(1)' }}>
+          {getVehicleIcon(slot.type, 'w-4 h-4')}
+        </span>
+        {slot.location}
       </span>
-      
+
     </div>
   );
 };

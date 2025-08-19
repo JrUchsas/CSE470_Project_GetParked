@@ -3,6 +3,7 @@ import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, updateVeh
 import EditSlotModal from '../components/EditSlotModal';
 import CreateSlotModal from '../components/CreateSlotModal';
 import VehicleForm from '../components/VehicleForm';
+import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 
 import '../custom-admin.css';
 
@@ -216,7 +217,10 @@ const AdminDashboard = () => {
                     </div>
                   </td>
                   <td style={{ padding: '1rem', fontWeight: '500', color: '#374151' }}>
-                    {slot.type === 'suv' ? 'SUV' : (slot.type ? slot.type.charAt(0).toUpperCase() + slot.type.slice(1) : '')}
+                    <div className="flex items-center justify-center gap-2">
+                      {slot.type && getVehicleIcon(slot.type, 'w-5 h-5')}
+                      {slot.type ? formatVehicleType(slot.type) : ''}
+                    </div>
                   </td>
                   <td style={{ padding: '1rem' }}>
                     <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
@@ -325,7 +329,12 @@ const AdminDashboard = () => {
                 <tr key={vehicle.id}>
                   <td>{vehicle.licensePlate}</td>
                   <td>{vehicle.model}</td>
-                  <td>{vehicle.type === 'suv' ? 'SUV' : (vehicle.type ? vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1) : '')}</td>
+                  <td>
+                    <div className="flex items-center justify-center gap-2">
+                      {vehicle.type && getVehicleIcon(vehicle.type, 'w-5 h-5')}
+                      {vehicle.type ? formatVehicleType(vehicle.type) : ''}
+                    </div>
+                  </td>
                   <td>{vehicle.color}</td>
                   <td>{vehicle.owner ? vehicle.owner.name : 'N/A'}</td>
                   <td>

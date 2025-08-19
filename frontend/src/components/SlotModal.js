@@ -2,23 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { getVehiclesByOwner } from '../services/api';
 import ErrorModal from './ErrorModal';
+import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
 import '../custom-slotmodal.css';
 
-const formatVehicleType = (type) => {
-  if (type === 'suv') {
-    return 'SUV';
-  }
-  return type.charAt(0).toUpperCase() + type.slice(1);
-};
-
-// Icon components for better visual appeal
-const CarIcon = () => (
-  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.6-1.6-1.6L18 10.5l-2-3c-.3-.5-.8-.5-1.3-.5H9.3c-.5 0-1 0-1.3.5l-2 3-2.4 1.4C2.7 11.4 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
-    <circle cx="7" cy="17" r="2"/>
-    <circle cx="17" cy="17" r="2"/>
-  </svg>
-);
+// Other icon components
 
 const ClockIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -34,12 +21,7 @@ const LocationIcon = () => (
   </svg>
 );
 
-const ParkingIcon = () => (
-  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-  </svg>
-);
+
 
 const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, actionLoading }) => {
   const isReserved = slot.status === 'Reserved';
@@ -106,7 +88,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
           {/* Header Section */}
           <div className="slot-modal-header">
             <div className="slot-modal-icon-wrapper">
-              <ParkingIcon />
+              {getVehicleIcon(slot.type)}
             </div>
             <div className="slot-location-container">
               <div className="slot-location-with-icon">
@@ -127,7 +109,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
             <div className="slot-modal-form">
               <div className="form-group">
                 <label className="slot-modal-label">
-                  <CarIcon />
+                  {getVehicleIcon('car', 'slot-icon')}
                   Choose Vehicle
                 </label>
                 <select
