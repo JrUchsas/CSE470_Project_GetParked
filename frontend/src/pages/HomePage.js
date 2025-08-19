@@ -86,26 +86,44 @@ const HomePage = ({ user }) => {
 
   return (
     <div className="flex flex-col w-full mx-auto">
-      <h2 className="">Available slots:</h2>
-      {loading && <p className="text-center">Loading slots...</p>}
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Available Slots</h2>
+      </div>
+
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="loading-spinner" style={{ width: '2rem', height: '2rem' }}></div>
+          <span className="ml-3 text-gray-600 font-medium">Loading slots...</span>
+        </div>
+      )}
+
       {error && (
         <ErrorModal
           errorMessage={error}
           onClose={() => setError('')}
         />
       )}
-      <div className="user-slot-list">
+
+      <div className="user-slot-list mb-8">
         {availableSlots.map((slot) => (
           <div
             key={slot.id}
             className="user-slot-card"
             onClick={() => setSelectedSlot(slot)}
+            style={{
+              cursor: 'pointer'
+            }}
           >
-            <Slot slot={slot} />
-            <div className="user-slot-status">
-              <div>Available</div>
+            <div className="p-4">
+              <div className="text-lg font-bold text-gray-800 mb-2">
+                🅿️ {slot.location}
+              </div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span className="text-sm font-medium text-gray-700">Available</span>
+              </div>
               {slot.type && (
-                <div className="text-xs mt-1">
+                <div className="text-sm font-medium text-gray-600">
                   Type: {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
                 </div>
               )}

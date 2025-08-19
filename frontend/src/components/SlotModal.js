@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { getVehiclesByOwner } from '../services/api';
-import ErrorModal from './ErrorModal'; // Import ErrorModal
-import '../custom-slotmodal.css'; // Reusing styles for consistency
+import ErrorModal from './ErrorModal';
+import '../custom-slotmodal.css';
 
 const formatVehicleType = (type) => {
   if (type === 'suv') {
@@ -11,15 +11,43 @@ const formatVehicleType = (type) => {
   return type.charAt(0).toUpperCase() + type.slice(1);
 };
 
-const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, actionLoading }) => { // Removed setError prop
+// Icon components for better visual appeal
+const CarIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.6-1.6-1.6L18 10.5l-2-3c-.3-.5-.8-.5-1.3-.5H9.3c-.5 0-1 0-1.3.5l-2 3-2.4 1.4C2.7 11.4 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
+    <circle cx="7" cy="17" r="2"/>
+    <circle cx="17" cy="17" r="2"/>
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12,6 12,12 16,14"/>
+  </svg>
+);
+
+const LocationIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+    <circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+
+const ParkingIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+    <line x1="8" y1="21" x2="16" y2="21"/>
+    <line x1="12" y1="17" x2="12" y2="21"/>
+  </svg>
+);
+
+const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, actionLoading }) => {
   const isReserved = slot.status === 'Reserved';
   const isReservedByUser = user && slot.user && slot.user.id === user.id;
   const isAdmin = user && user.role === 'admin';
 
-  // Internal error state for SlotModal
-  const [error, setError] = useState(''); // Add internal error state
-
-  // Booking time state
+  const [error, setError] = useState('');
   const [bookingStart, setBookingStart] = useState("");
   const [bookingEnd, setBookingEnd] = useState("");
   const [userVehicles, setUserVehicles] = useState([]);
@@ -62,101 +90,182 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
   };
 
   return (
-    <div className="slot-modal-overlay">
-      <div className="slot-modal-card">
+    <div className="slot-modal-overlay" onClick={onClose}>
+      <div className="slot-modal-card" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           className="slot-modal-close"
+          aria-label="Close modal"
         >
-          &times;
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
-        <div className="flex flex-col items-center gap-1">
-          <h3 className="text-2xl font-bold mb-2">{slot.location}</h3>
-          <p className="mb-4 text-base text-gray-700">Parking slot at {slot.location}.</p>
+
+        <div className="slot-modal-content">
+          {/* Header Section */}
+          <div className="slot-modal-header">
+            <div className="slot-modal-icon-wrapper">
+              <ParkingIcon />
+            </div>
+            <div className="slot-location-container">
+              <div className="slot-location-with-icon">
+                <span className="parking-p-icon">P</span>
+                <h3 className="slot-modal-title">{slot.location}</h3>
+              </div>
+            </div>
+            <p className="slot-modal-subtitle">
+              {formatVehicleType(slot.type)} Parking Slot
+            </p>
+            <div className={`slot-status-badge ${isReserved ? 'reserved' : 'available'}`}>
+              {isReserved ? 'Reserved' : 'Available'}
+            </div>
+          </div>
+
+          {/* Reservation Form */}
           {!isReserved && (
-            <div className="w-full flex flex-col gap-4 mb-4">
-              <label className="slot-modal-label">Choose Vehicle</label>
-              <select
-                className="slot-modal-input"
-                value={selectedVehicleId}
-                onChange={(e) => setSelectedVehicleId(e.target.value)}
-                required
-              >
-                {userVehicles.length > 0 ? (
-                  userVehicles.map((vehicle) => (
-                    <option key={vehicle.id} value={vehicle.id}>
-                      {vehicle.licensePlate} ({vehicle.model} - {formatVehicleType(vehicle.type)})
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No vehicles registered</option>
-                )}
-              </select>
-              <label className="slot-modal-label">Start Time</label>
-              <input
-                type="datetime-local"
-                className="slot-modal-input"
-                value={bookingStart}
-                onChange={e => setBookingStart(e.target.value)}
-              />
-              <label className="slot-modal-label">End Time</label>
-              <input
-                type="datetime-local"
-                className="slot-modal-input"
-                value={bookingEnd}
-                onChange={e => setBookingEnd(e.target.value)}
-              />
+            <div className="slot-modal-form">
+              <div className="form-group">
+                <label className="slot-modal-label">
+                  <CarIcon />
+                  Choose Vehicle
+                </label>
+                <select
+                  className="slot-modal-input"
+                  value={selectedVehicleId}
+                  onChange={(e) => setSelectedVehicleId(e.target.value)}
+                  required
+                >
+                  {userVehicles.length > 0 ? (
+                    userVehicles.map((vehicle) => (
+                      <option key={vehicle.id} value={vehicle.id}>
+                        {vehicle.licensePlate} ({vehicle.model} - {formatVehicleType(vehicle.type)})
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No vehicles registered</option>
+                  )}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="slot-modal-label">
+                  <ClockIcon />
+                  Start Time
+                </label>
+                <input
+                  type="datetime-local"
+                  className="slot-modal-input"
+                  value={bookingStart}
+                  onChange={e => setBookingStart(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="slot-modal-label">
+                  <ClockIcon />
+                  End Time
+                </label>
+                <input
+                  type="datetime-local"
+                  className="slot-modal-input"
+                  value={bookingEnd}
+                  onChange={e => setBookingEnd(e.target.value)}
+                  min={bookingStart || new Date().toISOString().slice(0, 16)}
+                />
+              </div>
             </div>
           )}
+          {/* Reservation Details */}
           {isReserved && (
-            <>
-              <p className="mb-2 text-xs text-gray-500">Reserved by: {slot.user?.name || 'Unknown'}</p>
-              {slot.bookingStart && slot.bookingEnd && (
-                <div className="mb-2 text-xs text-gray-600">
-                  <div>Start: {new Date(slot.bookingStart).toLocaleString()}</div>
-                  <div>End: {new Date(slot.bookingEnd).toLocaleString()}</div>
+            <div className="slot-modal-details">
+              <div className="reservation-info">
+                <h4 className="reservation-title">Reservation Details</h4>
+                <div className="reservation-item">
+                  <span className="reservation-label">Reserved by:</span>
+                  <span className="reservation-value">{slot.user?.name || 'Unknown'}</span>
                 </div>
-              )}
-            </>
+                {slot.bookingStart && slot.bookingEnd && (
+                  <>
+                    <div className="reservation-item">
+                      <span className="reservation-label">Start:</span>
+                      <span className="reservation-value">
+                        {new Date(slot.bookingStart).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="reservation-item">
+                      <span className="reservation-label">End:</span>
+                      <span className="reservation-value">
+                        {new Date(slot.bookingEnd).toLocaleString()}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           )}
-          <div className="flex gap-2 justify-center mt-2">
+
+          {/* Action Buttons */}
+          <div className="slot-modal-actions">
             {!isReserved && (
               <button
                 onClick={handleReserveClick}
-                className="slot-modal-btn"
+                className="slot-modal-btn primary"
                 disabled={actionLoading || !bookingStart || !bookingEnd || !selectedVehicleId}
               >
-                {actionLoading ? 'Reserving...' : 'Reserve'}
+                {actionLoading ? (
+                  <>
+                    <div className="loading-spinner"></div>
+                    Reserving...
+                  </>
+                ) : (
+                  'Reserve Slot'
+                )}
               </button>
             )}
+
             {isReserved && (
-              <>
+              <div className="action-buttons-group">
                 {isReservedByUser && (
                   <button
                     onClick={() => onCheckIn(slot)}
-                    className="slot-modal-btn"
+                    className="slot-modal-btn success"
                     disabled={actionLoading}
                   >
-                    {actionLoading ? 'Checking In...' : 'Check In'}
+                    {actionLoading ? (
+                      <>
+                        <div className="loading-spinner"></div>
+                        Checking In...
+                      </>
+                    ) : (
+                      'Check In'
+                    )}
                   </button>
                 )}
                 {(isReservedByUser || isAdmin) && (
                   <button
                     onClick={() => onCancel(slot)}
-                    className="slot-modal-btn" style={{ backgroundColor: '#ccc', marginTop: '10px' }}
+                    className="slot-modal-btn danger"
                     disabled={actionLoading}
                   >
-                    {actionLoading ? 'Cancelling...' : 'Cancel Reservation'}
+                    {actionLoading ? (
+                      <>
+                        <div className="loading-spinner"></div>
+                        Cancelling...
+                      </>
+                    ) : (
+                      'Cancel Reservation'
+                    )}
                   </button>
                 )}
-              </>
+              </div>
             )}
+
             {isReserved && !isReservedByUser && !isAdmin && (
-              <button
-                className="bg-gray-300 text-gray-500 font-semibold py-1 px-3 rounded cursor-not-allowed"
-                disabled
-              >
-                Reserved
+              <button className="slot-modal-btn disabled" disabled>
+                Slot Reserved
               </button>
             )}
           </div>

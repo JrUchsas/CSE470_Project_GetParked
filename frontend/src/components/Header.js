@@ -37,40 +37,129 @@ const Header = ({ user, onLogout }) => {
         {user ? (
           <>
             <span className="mb-1 font-medium text-gray-700">Welcome, {user.name}</span>
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/')}
-                className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+                className="slot-modal-btn disabled"
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  width: 'auto',
+                  background: 'transparent',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                  e.target.style.color = '#1e293b';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#374151';
+                  e.target.style.transform = 'translateY(0)';
+                }}
               >
                 Home
               </button>
               <button
                 onClick={() => navigate('/vehicles')}
-                className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+                className="slot-modal-btn disabled"
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  width: 'auto',
+                  background: 'transparent',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                  e.target.style.color = '#1e293b';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#374151';
+                  e.target.style.transform = 'translateY(0)';
+                }}
               >
                 My Vehicles
               </button>
               <button
                 onClick={() => navigate('/entry-exit')}
-                className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+                className="slot-modal-btn disabled"
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  width: 'auto',
+                  background: 'transparent',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                  e.target.style.color = '#1e293b';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#374151';
+                  e.target.style.transform = 'translateY(0)';
+                }}
               >
                 Entry/Exit
               </button>
               <button
                 onClick={() => navigate('/reservation-history')}
-                className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+                className="slot-modal-btn disabled"
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  width: 'auto',
+                  background: 'transparent',
+                  color: '#374151',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)';
+                  e.target.style.color = '#1e293b';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = '#374151';
+                  e.target.style.transform = 'translateY(0)';
+                }}
               >
                 Reservation History
               </button>
               {user.role === 'admin' && (
                 <button
                   onClick={handleToggleView}
-                  className="text-gray-700 hover:text-blue-600 font-medium mr-4"
+                  className="slot-modal-btn primary"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.875rem',
+                    width: 'auto'
+                  }}
                 >
                   {window.location.pathname === '/admin' ? 'User View' : 'Admin View'}
                 </button>
               )}
-              <button onClick={onLogout} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">
+              <button
+                onClick={onLogout}
+                className="slot-modal-btn danger"
+                style={{
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.875rem',
+                  width: 'auto'
+                }}
+              >
                 Logout
               </button>
             </div>

@@ -142,8 +142,19 @@ const AdminDashboard = () => {
         <h3 className="text-2xl font-bold mb-4 mx-auto">Slot Management</h3>
         <button
           onClick={handleCreateSlotClick}
-          className="admin-btn update"
+          className="slot-modal-btn primary"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            width: 'auto',
+            padding: '0.875rem 1.5rem'
+          }}
         >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '1.2rem', height: '1.2rem' }}>
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
           Create New Slot
         </button>
       </div>
@@ -159,40 +170,87 @@ const AdminDashboard = () => {
 
       <div className="md:col-span-2 admin-card flex flex-col items-center mx-auto">
         <h3 className="text-2xl font-bold mb-4 mx-auto">Manage Existing Slots</h3>
+
         <div className="overflow-x-auto w-full mx-auto">
           <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
             <thead>
               <tr>
-                <th>Location</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Booking Time</th>
-                <th>Booked By</th>
-                <th>Actions</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Location</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Type</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Status</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Booking Time</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Booked By</th>
+                <th style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', color: '#1e293b', fontWeight: '600' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {slots.map((slot) => (
-                <tr key={slot.id}>
-                  <td className="h-full align-middle">
+                <tr key={slot.id} style={{
+                  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                  borderRadius: '0.75rem',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
+                }}>
+                  <td className="h-full align-middle" style={{ padding: '1rem' }}>
                     <div className="flex flex-col items-center justify-center h-full w-full">
                       <div className="flex items-center justify-center gap-2 w-full">
-                        <span className={`w-3 h-3 rounded-full inline-block mr-2 align-middle ${slot.status === 'Available' ? 'bg-green-500' : slot.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-400'}`}></span>
+                        <div className={`w-3 h-3 rounded-full inline-block mr-2 align-middle ${
+                          slot.status === 'Available' ? 'bg-green-500' :
+                          slot.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-400'
+                        }`} style={{
+                          boxShadow: slot.status === 'Available' ? '0 2px 4px rgba(34, 197, 94, 0.3)' :
+                                    slot.status === 'Occupied' ? '0 2px 4px rgba(239, 68, 68, 0.3)' :
+                                    '0 2px 4px rgba(251, 191, 36, 0.3)'
+                        }}></div>
                         <span className='text-lg'>🅿️</span>
                         <span className="block w-full text-center font-semibold text-gray-800">{slot.location}</span>
                       </div>
                     </div>
                   </td>
-                  <td>{slot.type === 'suv' ? 'SUV' : (slot.type ? slot.type.charAt(0).toUpperCase() + slot.type.slice(1) : '')}</td>
-                  <td>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${slot.status === 'Available' ? 'bg-green-100 text-green-700' : slot.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{slot.status}</span>
+                  <td style={{ padding: '1rem', fontWeight: '500', color: '#374151' }}>
+                    {slot.type === 'suv' ? 'SUV' : (slot.type ? slot.type.charAt(0).toUpperCase() + slot.type.slice(1) : '')}
                   </td>
-                  <td className="text-xs">
+                  <td style={{ padding: '1rem' }}>
+                    <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
+                      slot.status === 'Available' ? 'bg-green-100 text-green-700' :
+                      slot.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                    }`} style={{
+                      background: slot.status === 'Available' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' :
+                                 slot.status === 'Occupied' ? 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' :
+                                 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
+                    }}>
+                      {slot.status}
+                    </span>
+                  </td>
+                  <td style={{ padding: '1rem' }}>
                     {slot.bookingStart && slot.bookingEnd ? (
-                      <>
-                        {new Date(slot.bookingStart).toLocaleString()}<br/>to<br/>{new Date(slot.bookingEnd).toLocaleString()}
-                        <br/>
-                        <span className="text-blue-700 font-semibold">
+                      <div className="text-sm space-y-1">
+                        <div className="font-medium text-gray-700">
+                          <svg style={{ width: '1rem', height: '1rem', display: 'inline', marginRight: '0.25rem', color: '#3b82f6' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                          </svg>
+                          Start: {new Date(slot.bookingStart).toLocaleString()}
+                        </div>
+                        <div className="font-medium text-gray-700">
+                          <svg style={{ width: '1rem', height: '1rem', display: 'inline', marginRight: '0.25rem', color: '#3b82f6' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                          </svg>
+                          End: {new Date(slot.bookingEnd).toLocaleString()}
+                        </div>
+                        <div className="text-blue-700 font-semibold text-center mt-2" style={{
+                          fontSize: '0.875rem'
+                        }}>
                           Duration: {(() => {
                             const start = new Date(slot.bookingStart);
                             const end = new Date(slot.bookingEnd);
@@ -202,22 +260,44 @@ const AdminDashboard = () => {
                             const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
                             return `${hours}h ${mins}m`;
                           })()}
-                        </span>
-                      </>
+                        </div>
+                      </div>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-gray-400 text-sm font-medium">No booking</span>
                     )}
                   </td>
-                  <td className="text-xs">
+                  <td style={{ padding: '1rem' }}>
                     {slot.user && slot.status === 'Reserved' ? (
-                      <span>{slot.user.name}</span>
+                      <span className="font-medium text-green-700">{slot.user.name}</span>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-gray-400 text-sm font-medium">No user</span>
                     )}
                   </td>
-                  <td>
-                    <button onClick={() => handleEdit(slot)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>
-                    <button onClick={() => handleDelete(slot.id)} className="text-red-600 hover:underline font-medium">Delete</button>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                      <button
+                        onClick={() => handleEdit(slot)}
+                        className="slot-modal-btn primary"
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          width: 'auto'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(slot.id)}
+                        className="slot-modal-btn danger"
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          width: 'auto'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -249,8 +329,30 @@ const AdminDashboard = () => {
                   <td>{vehicle.color}</td>
                   <td>{vehicle.owner ? vehicle.owner.name : 'N/A'}</td>
                   <td>
-                    <button onClick={() => handleEditVehicle(vehicle)} className="text-blue-600 hover:underline mr-4 font-medium">Edit</button>
-                    <button onClick={() => handleDeleteVehicle(vehicle.id)} className="text-red-600 hover:underline font-medium">Delete</button>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                      <button
+                        onClick={() => handleEditVehicle(vehicle)}
+                        className="slot-modal-btn primary"
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          width: 'auto'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteVehicle(vehicle.id)}
+                        className="slot-modal-btn danger"
+                        style={{
+                          padding: '0.5rem 1rem',
+                          fontSize: '0.875rem',
+                          width: 'auto'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -260,15 +362,31 @@ const AdminDashboard = () => {
       </div>
 
       {editingVehicle && (
-        <VehicleForm
-          vehicle={editingVehicle}
-          onClose={() => {
-            setEditingVehicle(null);
-            fetchVehicles(); // Re-fetch vehicles after closing the modal
-          }}
-          ownerId={editingVehicle.ownerId} // Pass ownerId for update
-          onUpdate={handleUpdateVehicle}
-        />
+        <div className="slot-modal-overlay" onClick={() => setEditingVehicle(null)}>
+          <div className="slot-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setEditingVehicle(null)}
+              className="slot-modal-close"
+              aria-label="Close modal"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="slot-modal-content">
+              <VehicleForm
+                vehicle={editingVehicle}
+                onSave={() => {
+                  setEditingVehicle(null);
+                  fetchVehicles();
+                }}
+                onCancel={() => setEditingVehicle(null)}
+                ownerId={editingVehicle.ownerId}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {isCreateModalOpen && (
