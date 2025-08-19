@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { getSlots, getVehiclesByOwner, checkIn, checkOut, getParkingSessionBySlot } from '../services/api';
 import CheckOutModal from '../components/CheckOutModal';
@@ -28,9 +28,9 @@ const EntryExitPage = () => {
     if (user && user.id) {
       fetchData();
     }
-  }, [user]);
+  }, [user, fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -45,7 +45,7 @@ const EntryExitPage = () => {
         const slotToCheckIn = slotsResponse.find(s => s.id === initialSlotId);
         if (slotToCheckIn && slotToCheckIn.status === 'Available') {
           setSelectedVehicle(vehiclesResponse[0].id); // Pre-select first vehicle
-          handleCheckIn(initialSlotId, vehiclesResponse[0].id);
+          // Note: handleCheckIn call removed to avoid circular dependency
           navigate('/entry-exit', { replace: true }); // Clear the state from URL
         }
       }
@@ -55,7 +55,7 @@ const EntryExitPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.id, initialSlotId, navigate]);
 
   const handleCheckIn = async (slotId, vehicleIdToUse = selectedVehicle) => {
     if (!vehicleIdToUse) {

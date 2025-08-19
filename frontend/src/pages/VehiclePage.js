@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getVehiclesByOwner, deleteVehicle } from '../services/api';
 import VehicleForm from '../components/VehicleForm';
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
@@ -17,7 +17,7 @@ const VehiclePage = () => {
     }
   }, []);
 
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     if (!user) return;
     try {
       const response = await getVehiclesByOwner(user.id);
@@ -26,11 +26,11 @@ const VehiclePage = () => {
       console.error('Failed to fetch vehicles', error);
       setVehicles([]); // Ensure vehicles is an empty array on error
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchVehicles();
-  }, [user]);
+  }, [fetchVehicles]);
 
   const handleEdit = (vehicle) => {
     setSelectedVehicle(vehicle);

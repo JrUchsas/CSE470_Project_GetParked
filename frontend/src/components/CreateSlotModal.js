@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
+import { getVehicleIcon } from './VehicleIcons';
 
 // Icon component for better visual appeal
 const PlusIcon = () => (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, updateVehicle, deleteVehicle } from '../services/api';
+import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, deleteVehicle } from '../services/api';
 import EditSlotModal from '../components/EditSlotModal';
 import CreateSlotModal from '../components/CreateSlotModal';
 import VehicleForm from '../components/VehicleForm';
@@ -107,20 +107,6 @@ const AdminDashboard = () => {
     setEditingVehicle(vehicle);
   };
 
-  const handleUpdateVehicle = async (updatedVehicle) => {
-    setActionLoading(true);
-    setError('');
-    try {
-      await updateVehicle(updatedVehicle.id, updatedVehicle);
-      setEditingVehicle(null);
-      fetchVehicles();
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred.');
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
   const handleDeleteVehicle = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       setActionLoading(true);
@@ -139,6 +125,11 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard-container grid grid-cols-1 md:grid-cols-3 gap-8 w-full text-center items-center justify-center mx-auto">
+      {error && (
+        <div className="md:col-span-3 mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
       <div className="md:col-span-1 admin-card flex flex-col items-center mx-auto">
         <h3 className="text-2xl font-bold mb-4 mx-auto">Slot Management</h3>
         <button

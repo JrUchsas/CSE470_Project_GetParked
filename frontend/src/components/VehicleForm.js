@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createVehicle, updateVehicle } from '../services/api';
-import { getVehicleIcon, formatVehicleType, CarIcon } from './VehicleIcons';
+import { getVehicleIcon } from './VehicleIcons';
 
 const EditIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

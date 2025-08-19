@@ -374,7 +374,6 @@ const DateTimePicker = ({
           readOnly
           disabled={disabled}
           aria-label={label}
-          aria-expanded={isOpen}
           aria-haspopup="dialog"
         />
         <button
