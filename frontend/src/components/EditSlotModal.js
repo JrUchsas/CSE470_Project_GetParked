@@ -36,7 +36,7 @@ const EditSlotModal = ({ slot, onClose, onUpdate, onDelete, actionLoading }) => 
 
   return (
     <div className="edit-slot-modal-overlay">
-      <div className="edit-slot-modal-card">
+      <div className="edit-slot-modal-card border-2 border-green-600">
         <button onClick={onClose} className="edit-slot-modal-close">&times;</button>
         <h3 className="text-xl font-bold mb-2">Edit Slot</h3>
         <form onSubmit={handleUpdate}>

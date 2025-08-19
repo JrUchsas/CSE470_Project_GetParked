@@ -12,8 +12,8 @@ const checkIn = async (req, res) => {
       return res.status(404).json({ error: 'Vehicle or Slot not found' });
     }
 
-    if (slot.type && vehicle.type !== slot.type) {
-      return res.status(400).json({ error: `Vehicle type (${vehicle.type}) does not match slot type (${slot.type})` });
+    if (slot.status !== 'Available') {
+      return res.status(400).json({ error: 'Slot is not available' });
     }
 
     const parkingSession = await prisma.parkingSession.create({

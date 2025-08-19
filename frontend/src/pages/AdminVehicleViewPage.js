@@ -39,12 +39,12 @@ const AdminVehicleViewPage = () => {
             <tbody>
               {vehicles.map((vehicle) => (
                 <tr key={vehicle.id}>
-                  <td>{vehicle.licensePlate}</td>
-                  <td>{vehicle.model}</td>
-                  <td>{vehicle.type}</td>
-                  <td>{vehicle.color}</td>
-                  <td>{vehicle.owner ? vehicle.owner.name : 'N/A'}</td>
-                  <td>{vehicle.owner ? vehicle.owner.email : 'N/A'}</td>
+                  <td className="py-2 px-4">{vehicle.licensePlate}</td>
+                  <td className="py-2 px-4">{vehicle.model}</td>
+                  <td className="py-2 px-4">{vehicle.type}</td>
+                  <td className="py-2 px-4">{vehicle.color}</td>
+                  <td className="py-2 px-4">{vehicle.owner ? vehicle.owner.name : 'N/A'}</td>
+                  <td className="py-2 px-4">{vehicle.owner ? vehicle.owner.email : 'N/A'}</td>
                 </tr>
               ))}
             </tbody>

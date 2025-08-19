@@ -4,7 +4,7 @@ import '../custom-slotmodal.css'; // Reusing styles for consistency
 const ErrorModal = ({ errorMessage, onClose }) => {
   return (
     <div className="slot-modal-overlay">
-      <div className="slot-modal-card">
+      <div className="slot-modal-card border-2 border-red-600">
         <button
           onClick={onClose}
           className="slot-modal-close"

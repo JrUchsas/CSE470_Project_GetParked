@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { getSlots, getVehiclesByOwner, checkIn, checkOut, getParkingSessionBySlot } from '../services/api';
-import CheckOutModal from '../components/CheckOutModal'; // NEW
+import CheckOutModal from '../components/CheckOutModal';
 
 const EntryExitPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { slotId: initialSlotId } = location.state || {}; // Get slotId from state
+  const { slotId: initialSlotId } = location.state || {};
+
   const [slots, setSlots] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [selectedVehicle, setSelectedVehicle] = useState('');
   const [user, setUser] = useState(null);
-  const [selectedOccupiedSlot, setSelectedOccupiedSlot] = useState(null); // New state for modal
+  const [selectedOccupiedSlot, setSelectedOccupiedSlot] = useState(null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
@@ -21,127 +24,166 @@ const EntryExitPage = () => {
     }
   }, []);
 
-  const fetchSlots = async () => {
-    try {
-      console.log('Fetching slots...');
-      const response = await getSlots();
-      console.log('Slots fetched:', response);
-      setSlots(response || []);
-    } catch (error) {
-      console.error('Failed to fetch slots', error);
-      setSlots([]);
-    }
-  };
-
-  const fetchVehicles = async () => {
-    if (!user) return;
-    try {
-      const response = await getVehiclesByOwner(user.id);
-      setVehicles(response || []);
-    } catch (error) {
-      console.error('Failed to fetch vehicles', error);
-      setVehicles([]);
-    }
-  };
-
   useEffect(() => {
-    console.log('useEffect triggered');
-    fetchSlots();
-    fetchVehicles();
-
-    if (initialSlotId && user && vehicles.length > 0) {
-      console.log('Attempting to auto-check-in:', initialSlotId);
-      const slotToCheckIn = slots.find(s => s.id === initialSlotId);
-      if (slotToCheckIn && slotToCheckIn.status === 'Reserved') {
-        console.log('Slot found and reserved:', slotToCheckIn);
-        if (vehicles.length > 0) {
-          console.log('Vehicles available, pre-selecting and checking in:', vehicles[0]);
-          setSelectedVehicle(vehicles[0].id); // Pre-select first vehicle
-          handleCheckIn(initialSlotId, vehicles[0].id); // Pass vehicleId to handleCheckIn
-          navigate('/entry-exit', { replace: true }); // Clear the state from URL
-        } else {
-          alert('Please register a vehicle to check in.');
-          console.log('No vehicles registered for auto-check-in.');
-        }
-      } else {
-        console.log('Slot not found or not reserved for auto-check-in.');
-      }
-    } else {
-      console.log('Conditions not met for auto-check-in. initialSlotId:', initialSlotId, 'user:', user, 'vehicles.length:', vehicles.length);
+    if (user && user.id) {
+      fetchData();
     }
-  }, [user, initialSlotId, slots, vehicles]);
+  }, [user]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const [slotsResponse, vehiclesResponse] = await Promise.all([
+        getSlots(),
+        getVehiclesByOwner(user.id),
+      ]);
+      setSlots(slotsResponse || []);
+      setVehicles(vehiclesResponse || []);
+
+      if (initialSlotId && slotsResponse && vehiclesResponse.length > 0) {
+        const slotToCheckIn = slotsResponse.find(s => s.id === initialSlotId);
+        if (slotToCheckIn && slotToCheckIn.status === 'Available') {
+          setSelectedVehicle(vehiclesResponse[0].id); // Pre-select first vehicle
+          handleCheckIn(initialSlotId, vehiclesResponse[0].id);
+          navigate('/entry-exit', { replace: true }); // Clear the state from URL
+        }
+      }
+    } catch (err) {
+      setError('Failed to load data.');
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCheckIn = async (slotId, vehicleIdToUse = selectedVehicle) => {
-    console.log('handleCheckIn called for slotId:', slotId, 'with vehicleId:', vehicleIdToUse);
     if (!vehicleIdToUse) {
-      alert('Please select a vehicle first');
-      console.log('No vehicle selected for check-in.');
+      alert('Please select a vehicle first.');
       return;
     }
     try {
-      console.log('Calling checkIn API...');
       await checkIn({ vehicleId: vehicleIdToUse, slotId });
-      console.log('CheckIn API successful, fetching slots...');
-      fetchSlots();
-      console.log('Slots fetched after check-in.');
-    } catch (error) {
-      console.error('Failed to check-in', error);
+      alert('Checked in successfully!');
+      fetchData(); // Refresh data after check-in
+    } catch (err) {
+      setError('Failed to check-in.');
+      console.error('Error during check-in:', err);
     }
   };
 
   const handleCheckOut = async (slot) => {
     try {
-      console.log('handleCheckOut called for slot:', slot.id);
-      const response = await getParkingSessionBySlot(slot.id);
-      const parkingSession = response;
-      console.log('Parking session found:', parkingSession);
-
-      await checkOut(parkingSession.id); // Only pass parkingSession.id
-      console.log('checkOut API successful.');
-      fetchSlots();
-      console.log('Slots fetched after check-out. Navigating to home page...');
-      navigate('/'); // Navigate to home page
-    } catch (error) {
-      console.error('Failed to check-out', error);
-      console.log('Error during check-out:', error);
+      const parkingSession = await getParkingSessionBySlot(slot.id);
+      setSelectedOccupiedSlot({ ...slot, parkingSession });
+    } catch (err) {
+      setError('Failed to retrieve parking session for check-out.');
+      console.error('Error fetching parking session:', err);
     }
   };
 
-  const occupiedSlots = slots.filter(slot => slot.status === 'Occupied' && slot.user && slot.user.id === user.id);
+  const confirmCheckOut = async () => {
+    if (!selectedOccupiedSlot || !selectedOccupiedSlot.parkingSession) return;
+    try {
+      await checkOut(selectedOccupiedSlot.parkingSession.id);
+      alert('Checked out successfully!');
+      setSelectedOccupiedSlot(null);
+      fetchData(); // Refresh data after check-out
+    } catch (err) {
+      setError('Failed to check-out.');
+      console.error('Error during check-out confirmation:', err);
+    }
+  };
+
+  const availableSlots = slots.filter(slot => slot.status === 'Available');
+  const occupiedSlotsByUser = slots.filter(slot => slot.status === 'Occupied' && slot.reservedBy === user?.id);
+
+  if (loading) {
+    return <div className="text-center py-8">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 w-full">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">Occupied Parking Slots</h1>
-      {/* Removed Select Vehicle as this page now focuses on occupied slots */}
-      <> {/* Added React Fragment */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-3xl">
-          {occupiedSlots.length === 0 ? (
-            <p className="text-center text-gray-600 col-span-full">No occupied slots found.</p>
-          ) : (
-            occupiedSlots.map((slot) => (
-              <div key={slot.id} className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center justify-center">
-                <p className="text-lg font-semibold mb-2">{slot.location}</p>
-                <p className="text-gray-600 mb-4">{slot.status}</p>
-                {slot.status === 'Occupied' && (
-                  <button
-                    onClick={() => handleCheckOut(slot.id)}
-                    className="slot-modal-btn" // Reusing existing button style
-                  >
-                    Check-out
-                  </button>
-                )}
-              </div>
-            ))
-          )}
-        </div>
-        {selectedOccupiedSlot && (
-          <CheckOutModal
-            slot={selectedOccupiedSlot}
-            onClose={() => setSelectedOccupiedSlot(null)}
-            onCheckOut={handleCheckOut}
-          />
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-blue-600">Parking Entry/Exit</h1>
+
+      {/* Check-in Section */}
+      <section className="mb-8 p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Check-in</h2>
+        {user && vehicles.length > 0 ? (
+          <div className="mb-4">
+            <label htmlFor="vehicle-select" className="block text-sm font-medium text-gray-700 mb-2">Select Vehicle:</label>
+            <select
+              id="vehicle-select"
+              className="mt-1 block w-full md:w-1/2 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              value={selectedVehicle}
+              onChange={(e) => setSelectedVehicle(e.target.value)}
+            >
+              <option value="">-- Select a Vehicle --</option>
+              {vehicles.map(v => (
+                <option key={v.id} value={v.id}>{v.licensePlate} ({v.model})</option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <p className="text-gray-600 mb-4">Please <Link to="/register-vehicle" className="text-blue-500 hover:underline">register a vehicle</Link> to check in.</p>
         )}
-      </> {/* Closing React Fragment */}
+
+        <h3 className="text-xl font-medium mb-3">Available Slots</h3>
+        {availableSlots.length === 0 ? (
+          <p className="text-gray-600">No available slots at the moment.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {availableSlots.map(slot => (
+              <div key={slot.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center">
+                <p className="text-lg font-semibold">{slot.location}</p>
+                <p className="text-sm text-gray-500">Type: {slot.type || 'Any'}</p>
+                <button
+                  onClick={() => handleCheckIn(slot.id)}
+                  disabled={!selectedVehicle}
+                  className={`mt-3 py-2 px-4 rounded-md text-white font-semibold ${selectedVehicle ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400 cursor-not-allowed'}`}
+                >
+                  Check-in
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Check-out Section */}
+      <section className="p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Check-out</h2>
+        {occupiedSlotsByUser.length === 0 ? (
+          <p className="text-gray-600">No active parking sessions for your vehicles.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {occupiedSlotsByUser.map(slot => (
+              <div key={slot.id} className="bg-red-50 p-4 rounded-lg shadow-sm flex flex-col items-center">
+                <p className="text-lg font-semibold">{slot.location}</p>
+                <p className="text-sm text-gray-500">Status: {slot.status}</p>
+                <button
+                  onClick={() => handleCheckOut(slot)}
+                  className="mt-3 py-2 px-4 rounded-md text-white font-semibold bg-red-500 hover:bg-red-600"
+                >
+                  Check-out
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {selectedOccupiedSlot && (
+        <CheckOutModal
+          slot={selectedOccupiedSlot}
+          onClose={() => setSelectedOccupiedSlot(null)}
+          onCheckOut={confirmCheckOut}
+        />
+      )}
     </div>
   );
 };

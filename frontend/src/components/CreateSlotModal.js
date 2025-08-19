@@ -13,7 +13,7 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
 
   return (
     <div className="slot-modal-overlay">
-      <div className="slot-modal-card">
+      <div className="slot-modal-card border-2 border-blue-600">
         <button onClick={onClose} className="slot-modal-close">
           &times;
         </button>

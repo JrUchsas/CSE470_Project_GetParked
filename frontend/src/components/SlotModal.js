@@ -53,8 +53,8 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
 
     // Type validation
     if (selectedVehicle.type !== slot.type) {
-      setError(`Cannot park ${formatVehicleType(selectedVehicle.type)} vehicle in a ${formatVehicleType(slot.type)} slot.
-                Please choose a ${formatVehicleType(selectedVehicle.type)} vehicle slot for parking.`);
+            setError(`This slot is for a ${formatVehicleType(slot.type)}.`
+        + ` Please select a ${formatVehicleType(slot.type)} vehicle to reserve this slot.`);
       return;
     }
 

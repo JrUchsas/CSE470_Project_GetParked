@@ -35,30 +35,32 @@ const ReservationHistoryPage = () => {
       {parkingSessions.length === 0 ? (
         <p>No past reservations found.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>License Plate</th>
-              <th>Slot Location</th>
-              <th>Check-in Time</th>
-              <th>Check-out Time</th>
-              <th>Duration (minutes)</th>
-              <th>Fee ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {parkingSessions.map((session) => (
-              <tr key={session.id}>
-                <td>{session.vehicle.licensePlate}</td>
-                <td>{session.slot.location}</td>
-                <td>{new Date(session.checkInTime).toLocaleString()}</td>
-                <td>{session.checkOutTime ? new Date(session.checkOutTime).toLocaleString() : 'N/A'}</td>
-                <td>{session.duration || 'N/A'}</td>
-                <td>{session.fee || 'N/A'}</td>
+        <div className="overflow-x-auto w-full mx-auto">
+          <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
+            <thead>
+              <tr>
+                <th className="py-2 px-4">License Plate</th>
+                <th className="py-2 px-4">Slot Location</th>
+                <th className="py-2 px-4">Check-in Time</th>
+                <th className="py-2 px-4">Check-out Time</th>
+                <th className="py-2 px-4">Duration (minutes)</th>
+                <th className="py-2 px-4">Fee ($)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {parkingSessions.map((session) => (
+                <tr key={session.id}>
+                  <td className="py-2 px-4">{session.vehicle.licensePlate}</td>
+                  <td className="py-2 px-4">{session.slot.location}</td>
+                  <td className="py-2 px-4">{new Date(session.checkInTime).toLocaleString()}</td>
+                  <td className="py-2 px-4">{session.checkOutTime ? new Date(session.checkOutTime).toLocaleString() : 'N/A'}</td>
+                  <td className="py-2 px-4">{session.duration || 'N/A'}</td>
+                  <td className="py-2 px-4">{session.fee || 'N/A'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

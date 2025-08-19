@@ -11,7 +11,7 @@ const signup = async (req, res) => {
   const { name, email, contact, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Please provide name, email, and password' });
+    return res.status(400).json({ message: 'Please provide name, email, contact and password' });
   }
 
   try {

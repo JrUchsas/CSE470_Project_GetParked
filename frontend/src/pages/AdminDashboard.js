@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, updateVehicle, deleteVehicle } from '../services/api';
 import EditSlotModal from '../components/EditSlotModal';
 import CreateSlotModal from '../components/CreateSlotModal';
-import { VehicleForm } from './VehiclePage'; // Reusing VehicleForm from VehiclePage
+import VehicleForm from '../components/VehicleForm';
+
 import '../custom-admin.css';
 
 const AdminDashboard = () => {

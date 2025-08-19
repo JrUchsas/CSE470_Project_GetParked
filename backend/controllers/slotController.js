@@ -10,7 +10,7 @@ const getSlots = async (req, res) => {
       orderBy: {
         location: 'asc',
       },
-      include: { user: true },
+      include: { user: true, vehicle: true },
     });
     res.json(slots);
   } catch (error) {
@@ -82,14 +82,20 @@ const updateSlot = async (req, res) => {
 // @access  Private/Admin
 const deleteSlot = async (req, res) => {
   const { id } = req.params;
-
+  console.log('Attempting to delete slot with ID:', id);
   try {
-    await prisma.slot.delete({
+    // First, delete all ParkingSession records associated with this slot
+    await prisma.parkingSession.deleteMany({
+      where: { slotId: id },
+    });
+
+    const deletedSlot = await prisma.slot.delete({
       where: { id },
     });
+    console.log('Prisma delete operation successful:', deletedSlot);
     res.json({ message: 'Slot removed' });
   } catch (error) {
-    // Prisma throws an error if the record to delete is not found
+    console.error('Prisma delete operation failed:', error);
     res.status(404).json({ message: 'Slot not found', error: error.message });
   }
 };
