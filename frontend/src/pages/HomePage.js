@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSlots, updateSlot } from '../services/api';
-import Slot from '../components/Slot';
 import SlotModal from '../components/SlotModal';
 import ErrorModal from '../components/ErrorModal';
 import '../custom-styles.css';
@@ -84,16 +83,74 @@ const HomePage = ({ user }) => {
     setSelectedSlot(null); // Close the modal
   };
 
+  // Calculate statistics
+  const availableCount = slots.filter(slot => slot.status === 'Available').length;
+  const reservedCount = slots.filter(slot => slot.status === 'Reserved').length;
+  const occupiedCount = slots.filter(slot => slot.status === 'Occupied').length;
+  const totalSlots = slots.length;
+
+  // Scroll to section function
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
-    <div className="flex flex-col w-full mx-auto">
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Available Slots</h2>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">🅿️</span>
+            GetParked Dashboard
+          </h1>
+          <p className="homepage-subtitle">
+            Welcome back, {user?.name}! Find and manage your parking spots.
+          </p>
+        </div>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="stats-grid">
+        <div className="stat-card available clickable" onClick={() => scrollToSection('available-slots')}>
+          <div className="stat-icon">🟢</div>
+          <div className="stat-content">
+            <div className="stat-number">{availableCount}</div>
+            <div className="stat-label">Available</div>
+          </div>
+        </div>
+        <div className="stat-card reserved clickable" onClick={() => scrollToSection('reserved-slots')}>
+          <div className="stat-icon">🟡</div>
+          <div className="stat-content">
+            <div className="stat-number">{reservedCount}</div>
+            <div className="stat-label">Reserved</div>
+          </div>
+        </div>
+        <div className="stat-card occupied clickable" onClick={() => scrollToSection('occupied-slots')}>
+          <div className="stat-icon">🔴</div>
+          <div className="stat-content">
+            <div className="stat-number">{occupiedCount}</div>
+            <div className="stat-label">Occupied</div>
+          </div>
+        </div>
+        <div className="stat-card total clickable" onClick={() => scrollToSection('available-slots')}>
+          <div className="stat-icon">📊</div>
+          <div className="stat-content">
+            <div className="stat-number">{totalSlots}</div>
+            <div className="stat-label">Total Slots</div>
+          </div>
+        </div>
       </div>
 
       {loading && (
-        <div className="flex justify-center items-center py-8">
-          <div className="loading-spinner" style={{ width: '2rem', height: '2rem' }}></div>
-          <span className="ml-3 text-gray-600 font-medium">Loading slots...</span>
+        <div className="loading-container">
+          <div className="loading-spinner-modern"></div>
+          <span className="loading-text">Loading parking slots...</span>
         </div>
       )}
 
@@ -104,59 +161,134 @@ const HomePage = ({ user }) => {
         />
       )}
 
-      <div className="user-slot-list mb-8">
-        {availableSlots.map((slot) => (
-          <div
-            key={slot.id}
-            className="user-slot-card"
-            onClick={() => setSelectedSlot(slot)}
-            style={{
-              cursor: 'pointer'
-            }}
-          >
-            <div className="p-4">
-              <div className="text-lg font-bold text-gray-800 mb-2">
-                🅿️ {slot.location}
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                <span className="text-sm font-medium text-gray-700">Available</span>
-              </div>
-              {slot.type && (
-                <div className="text-sm font-medium text-gray-600">
-                  Type: {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
-                </div>
-              )}
-            </div>
+      {/* Available Slots Section */}
+      {!loading && availableSlots.length > 0 && (
+        <div id="available-slots" className="slots-section">
+          <div className="section-header">
+            <h2 className="section-title">
+              <span className="section-icon">🟢</span>
+              Available Parking Slots
+            </h2>
+            <div className="section-badge">{availableSlots.length} slots</div>
           </div>
-        ))}
-      </div>
-      {reservedSlots.length > 0 && (
-        <>
-          <h2 className="user-section-title" style={{fontSize:'1.5rem'}}>Reserved slots:</h2>
-          <div className="user-slot-list">
-            {reservedSlots.map((slot) => (
+          <div className="modern-slot-grid">
+            {availableSlots.map((slot) => (
               <div
                 key={slot.id}
-                className="user-slot-card"
+                className="modern-slot-card available-slot"
                 onClick={() => setSelectedSlot(slot)}
               >
-                <Slot slot={slot} />
-                <div className="user-reserved-label">Reserved by: {slot.user?.name || 'Unknown'}</div>
+                <div className="slot-card-header">
+                  <div className="slot-location">
+                    <span className="location-icon">📍</span>
+                    {slot.location}
+                  </div>
+                  <div className="slot-status-indicator available">
+                    <span className="status-dot"></span>
+                    Available
+                  </div>
+                </div>
+                <div className="slot-card-body">
+                  {slot.type && (
+                    <div className="slot-type">
+                      <span className="type-icon">🚗</span>
+                      {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
+                    </div>
+                  )}
+
+                </div>
+                <div className="slot-card-footer">
+                  <div className="reserve-button">
+                    <span>Reserve Now</span>
+                    <span className="arrow">→</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
+
+      {!loading && availableSlots.length === 0 && (
+        <div id="available-slots" className="empty-state">
+          <div className="empty-icon">🚫</div>
+          <h3 className="empty-title">No Available Slots</h3>
+          <p className="empty-description">All parking slots are currently occupied or reserved. Check back later!</p>
+        </div>
+      )}
+
+      {/* Occupied Slots Placeholder Section */}
+      <div id="occupied-slots" className="slots-section" style={{ paddingTop: '1rem' }}>
+        {/* This section can be expanded later to show occupied slots */}
+      </div>
+      {/* Reserved Slots Section */}
+      {!loading && reservedSlots.length > 0 && (
+        <div id="reserved-slots" className="slots-section">
+          <div className="section-header">
+            <h2 className="section-title">
+              <span className="section-icon">🟡</span>
+              Reserved Slots
+            </h2>
+            <div className="section-badge">{reservedSlots.length} slots</div>
+          </div>
+          <div className="modern-slot-grid">
+            {reservedSlots.map((slot) => (
+              <div
+                key={slot.id}
+                className="modern-slot-card reserved-slot"
+                onClick={() => setSelectedSlot(slot)}
+              >
+                <div className="slot-card-header">
+                  <div className="slot-location">
+                    <span className="location-icon">📍</span>
+                    {slot.location}
+                  </div>
+                  <div className="slot-status-indicator reserved">
+                    <span className="status-dot"></span>
+                    Reserved
+                  </div>
+                </div>
+                <div className="slot-card-body">
+                  {slot.type && (
+                    <div className="slot-type">
+                      <span className="type-icon">🚗</span>
+                      {slot.type === 'suv' ? 'SUV' : (slot.type.charAt(0).toUpperCase() + slot.type.slice(1))}
+                    </div>
+                  )}
+                  <div className="reservation-details">
+                    <div className="reserved-by">
+                      <span className="user-icon">👤</span>
+                      {slot.user?.name || 'Unknown User'}
+                    </div>
+                    {slot.bookingStart && (
+                      <div className="booking-time">
+                        <span className="time-icon">⏰</span>
+                        {new Date(slot.bookingStart).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="slot-card-footer">
+                  <div className="manage-button">
+                    <span>Manage Reservation</span>
+                    <span className="arrow">→</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {/* Slot Modal */}
       {selectedSlot && (
-        <div className="user-modal">
+        <div className="modern-modal-overlay">
           <SlotModal
             slot={selectedSlot}
             user={user}
             onClose={() => setSelectedSlot(null)}
             onReserve={handleReserve}
             onCancel={handleCancel}
-            onCheckIn={handleCheckIn} // New prop
+            onCheckIn={handleCheckIn}
             actionLoading={actionLoading}
           />
         </div>
