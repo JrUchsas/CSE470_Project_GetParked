@@ -314,7 +314,18 @@
 }
 
 .location-icon {
-  font-size: 1.25rem;
+  background: #4285f4;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: bold;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
 }
 
 .slot-status-indicator {

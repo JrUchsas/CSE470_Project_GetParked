@@ -106,7 +106,6 @@ const HomePage = ({ user }) => {
       <div className="homepage-header">
         <div className="header-content">
           <h1 className="homepage-title">
-            <span className="title-icon">🅿️</span>
             GetParked Dashboard
           </h1>
           <p className="homepage-subtitle">
@@ -180,7 +179,7 @@ const HomePage = ({ user }) => {
               >
                 <div className="slot-card-header">
                   <div className="slot-location">
-                    <span className="location-icon">📍</span>
+                    <span className="location-icon">P</span>
                     {slot.location}
                   </div>
                   <div className="slot-status-indicator available">
@@ -240,7 +239,7 @@ const HomePage = ({ user }) => {
               >
                 <div className="slot-card-header">
                   <div className="slot-location">
-                    <span className="location-icon">📍</span>
+                    <span className="location-icon">P</span>
                     {slot.location}
                   </div>
                   <div className="slot-status-indicator reserved">
