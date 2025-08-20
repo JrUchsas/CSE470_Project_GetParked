@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getSlots, createSlot, updateSlot, deleteSlot, getAllVehicles, deleteVehicle } from '../services/api';
 import EditSlotModal from '../components/EditSlotModal';
 import CreateSlotModal from '../components/CreateSlotModal';
@@ -277,10 +277,10 @@ const AdminDashboard = () => {
                       <div className="flex flex-col">
                         <span className={`font-medium ${slot.status === 'Reserved' ? 'text-green-700' : 'text-red-700'}`}>
                           {slot.user.name}
+                          {slot.status === 'Occupied' && (
+                            <span className="text-xs text-gray-500 ml-1">(Currently Parked)</span>
+                          )}
                         </span>
-                        {slot.status === 'Occupied' && (
-                          <span className="text-xs text-gray-500">Currently Parked</span>
-                        )}
                       </div>
                     ) : (
                       <span className="text-gray-400 text-sm font-medium">No user</span>

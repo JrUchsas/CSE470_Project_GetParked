@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getReservationHistoryByUser } from '../services/api';
 import '../custom-styles.css';
 
@@ -7,27 +7,37 @@ const ReservationHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  const [paymentLoading, setPaymentLoading] = useState({});
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
+    console.log('Raw user data from localStorage:', loggedInUser);
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
+      console.log('Parsed user data:', foundUser);
       setUser(foundUser);
+    } else {
+      console.log('No user found in localStorage');
     }
   }, []);
 
   useEffect(() => {
     const fetchReservationHistory = async () => {
-      if (!user || !user.id) return;
+      if (!user || !user.id) {
+        console.log('No user found, skipping history fetch');
+        return;
+      }
 
+      console.log('Fetching reservation history for user:', user.id);
       setLoading(true);
       setError('');
       try {
         const history = await getReservationHistoryByUser(user.id);
+        console.log('Received history data:', history);
         setReservationHistory(history || []);
       } catch (err) {
-        setError('Failed to load reservation history.');
         console.error('Error fetching reservation history:', err);
+        setError(`Failed to load reservation history: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -57,14 +67,10 @@ const ReservationHistoryPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center">
-              <div className="loading-spinner mx-auto mb-4" style={{ width: '3rem', height: '3rem' }}></div>
-              <p className="text-gray-600 text-lg">Loading your reservation history...</p>
-            </div>
-          </div>
+      <div className="modern-homepage-container">
+        <div className="loading-container">
+          <div className="loading-spinner-modern"></div>
+          <span className="loading-text">Loading reservation history...</span>
         </div>
       </div>
     );
@@ -72,95 +78,114 @@ const ReservationHistoryPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </div>
-              <p className="text-red-600 text-lg font-medium">Error loading history</p>
-              <p className="text-gray-600 mt-2">{error}</p>
-            </div>
-          </div>
+      <div className="modern-homepage-container">
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <h3 className="error-title">Error loading history</h3>
+          <p className="error-message">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">Reservation History</h1>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">📋</span>
+            Reservation History
+          </h1>
+          <p className="homepage-subtitle">
+            View your completed parking sessions and transaction history
+          </p>
+        </div>
+      </div>
 
       {reservationHistory.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600 text-lg">No reservation history found.</p>
-          <p className="text-gray-500 text-sm mt-2">
+        <div className="empty-state">
+          <div className="empty-state-icon">📋</div>
+          <h3 className="empty-state-title">No reservation history found</h3>
+          <p className="empty-state-description">
             Your completed parking sessions will appear here.
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="history-cards-container">
           {reservationHistory.map((history) => (
-            <div key={history.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800">{history.slotLocation}</h3>
-                  <p className="text-sm text-gray-500">
-                    Completed on {formatDateTime(history.checkOutTime)}
-                  </p>
+            <div key={history.id} className="history-card">
+              <div className="history-card-header">
+                <div className="history-location">
+                  <span className="location-icon">P</span>
+                  <div>
+                    <h3 className="history-title">{history.slotLocation}</h3>
+                    <p className="history-subtitle">
+                      Completed on {formatDateTime(history.checkOutTime)}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
+                <div className="history-status">
+                  <span className="status-badge completed">
                     Completed
                   </span>
                   {history.fee && (
-                    <p className="text-lg font-bold text-green-600 mt-1">${history.fee}</p>
+                    <p className="history-fee">${history.fee}</p>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Vehicle Details</h4>
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">License Plate:</span>
-                      <span className="font-medium">{history.vehiclePlate}</span>
+              <div className="history-card-content">
+                <div className="vehicle-section">
+                  <h4 className="section-subtitle">
+                    <span className="vehicle-icon">🚗</span>
+                    Vehicle Details
+                  </h4>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">License Plate</span>
+                      <span className="detail-value">{history.vehiclePlate}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Model:</span>
-                      <span className="font-medium">{history.vehicleModel}</span>
+                    <div className="detail-item">
+                      <span className="detail-label">Model</span>
+                      <span className="detail-value">{history.vehicleModel}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="font-medium capitalize">{history.vehicleType}</span>
+                    <div className="detail-item">
+                      <span className="detail-label">Type</span>
+                      <span className="detail-value capitalize">{history.vehicleType}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Timing Details</h4>
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Reserved:</span>
-                      <span className="font-medium text-xs">
+                <div className="timing-section">
+                  <h4 className="section-subtitle">
+                    <span className="timing-icon">⏰</span>
+                    Timing Details
+                  </h4>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span className="detail-label">Reserved</span>
+                      <span className="detail-value text-xs">
                         {formatDateTime(history.reservedStart)} - {formatDateTime(history.reservedEnd)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Check-in:</span>
-                      <span className="font-medium">{formatDateTime(history.checkInTime)}</span>
+                    <div className="detail-item">
+                      <span className="detail-label">Check-in</span>
+                      <span className="detail-value">{formatDateTime(history.checkInTime)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Check-out:</span>
-                      <span className="font-medium">{formatDateTime(history.checkOutTime)}</span>
+                    <div className="detail-item">
+                      <span className="detail-label">Check-out</span>
+                      <span className="detail-value">{formatDateTime(history.checkOutTime)}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Duration:</span>
-                      <span className="font-medium">{formatDuration(history.duration)}</span>
+                    <div className="detail-item">
+                      <span className="detail-label">Duration</span>
+                      <span className="detail-value">{formatDuration(history.duration)}</span>
                     </div>
                   </div>
                 </div>
