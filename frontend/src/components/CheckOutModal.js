@@ -19,7 +19,10 @@ const formatVehicleType = (type) => {
 const CheckOutModal = ({ slot, onClose, onCheckOut }) => {
   const { parkingSession } = slot;
 
-  // Format check-in time
+  // Format current time for checkout
+  const currentTime = new Date().toLocaleString();
+
+  // Format check-in time if available
   const checkInTime = parkingSession?.checkInTime ?
     new Date(parkingSession.checkInTime).toLocaleString() : 'N/A';
 
@@ -55,32 +58,38 @@ const CheckOutModal = ({ slot, onClose, onCheckOut }) => {
           {/* Session Details */}
           <div className="slot-modal-details">
             <div className="reservation-info">
-              <h4 className="reservation-title">Parking Session Details</h4>
+              <h4 className="reservation-title">Check-Out Confirmation</h4>
 
               <div className="reservation-item">
-                <span className="reservation-label">Check-in Time:</span>
-                <span className="reservation-value">{checkInTime}</span>
+                <span className="reservation-label">Slot Location:</span>
+                <span className="reservation-value">{slot.location}</span>
               </div>
 
-              {parkingSession?.duration && (
+              {slot.vehicle && (
                 <div className="reservation-item">
-                  <span className="reservation-label">Duration:</span>
-                  <span className="reservation-value">{parkingSession.duration} minutes</span>
+                  <span className="reservation-label">Vehicle:</span>
+                  <span className="reservation-value">{slot.vehicle.licensePlate} ({slot.vehicle.model})</span>
                 </div>
               )}
 
-              {parkingSession?.fee && (
+              <div className="reservation-item">
+                <span className="reservation-label">Check-out Time:</span>
+                <span className="reservation-value">{currentTime}</span>
+              </div>
+
+              {parkingSession?.checkInTime && (
                 <div className="reservation-item">
-                  <span className="reservation-label">Parking Fee:</span>
-                  <span className="reservation-value" style={{
-                    color: '#059669',
-                    fontWeight: '700',
-                    fontSize: '1.1rem'
-                  }}>
-                    ${parkingSession.fee}
-                  </span>
+                  <span className="reservation-label">Check-in Time:</span>
+                  <span className="reservation-value">{checkInTime}</span>
                 </div>
               )}
+
+              <div className="reservation-item">
+                <span className="reservation-label">Status:</span>
+                <span className="reservation-value" style={{ color: '#dc2626', fontWeight: '600' }}>
+                  Ready for Check-out
+                </span>
+              </div>
             </div>
           </div>
 

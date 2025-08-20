@@ -7,10 +7,12 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
   animation: fadeIn 0.3s ease-out;
+  overflow-y: auto;
+  min-height: 100vh;
 }
 
 @keyframes fadeIn {
@@ -42,12 +44,18 @@
   max-width: 420px;
   width: 100%;
   position: relative;
-  overflow: hidden;
   animation: slideUp 0.3s ease-out;
+  margin: auto;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .slot-modal-content {
   padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .slot-modal-close {
@@ -374,10 +382,15 @@
 }
 
 /* Responsive Design */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+  .slot-modal-overlay {
+    padding: 1rem 0.5rem;
+  }
+
   .slot-modal-card {
     max-width: 95vw;
-    margin: 1rem;
+    margin: 0;
+    max-height: calc(100vh - 2rem);
   }
 
   .slot-modal-content {
@@ -397,4 +410,36 @@
     width: 1.5rem;
     height: 1.5rem;
   }
+}
+
+@media (max-width: 480px) {
+  .slot-modal-overlay {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .slot-modal-card {
+    max-width: 98vw;
+    max-height: calc(100vh - 1rem);
+    border-radius: 1rem;
+  }
+
+  .slot-modal-content {
+    padding: 1rem;
+  }
+
+  .slot-modal-title {
+    font-size: 1.25rem;
+  }
+
+  .slot-modal-subtitle {
+    font-size: 0.875rem;
+  }
+}
+
+/* Ensure modals are always above everything else */
+.slot-modal-overlay,
+.modern-modal-overlay,
+.edit-slot-modal-overlay,
+.vehicle-modal-overlay {
+  z-index: 1100 !important;
 }

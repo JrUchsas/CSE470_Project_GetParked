@@ -7,8 +7,11 @@
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+  min-height: 100vh;
 }
 .edit-slot-modal-card {
   background: #fff;
@@ -19,6 +22,9 @@
   width: 100%;
   position: relative;
   text-align: center;
+  margin: auto;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
 }
 .edit-slot-modal-close {
   position: absolute;

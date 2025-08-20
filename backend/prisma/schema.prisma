@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   slots     Slot[]   @relation("Slot_user")
   vehicles  Vehicle[] @relation("User_vehicles")
+  reservationHistory ReservationHistory[]
 }
 
 model Vehicle {
@@ -32,6 +33,7 @@ model Vehicle {
   updatedAt    DateTime @updatedAt
   slots            Slot[]           @relation("Slot_vehicle")
   parkingSessions ParkingSession[]
+  reservationHistory ReservationHistory[]
 }
 
 model ParkingSession {
@@ -62,4 +64,26 @@ model Slot {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   parkingSessions ParkingSession[]
+  reservationHistory ReservationHistory[]
+}
+
+model ReservationHistory {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  slotId          String   @db.ObjectId
+  slot            Slot     @relation(fields: [slotId], references: [id])
+  vehicleId       String   @db.ObjectId
+  vehicle         Vehicle  @relation(fields: [vehicleId], references: [id])
+  slotLocation    String   // Store slot location at time of reservation
+  vehiclePlate    String   // Store vehicle license plate at time of reservation
+  vehicleModel    String   // Store vehicle model at time of reservation
+  vehicleType     String   // Store vehicle type at time of reservation
+  reservedStart   DateTime // Original reservation start time
+  reservedEnd     DateTime // Original reservation end time
+  checkInTime     DateTime // Actual check-in time
+  checkOutTime    DateTime // Actual check-out time
+  duration        Int      // Duration in minutes
+  fee             Int?     // Calculated parking fee
+  createdAt       DateTime @default(now())
 }

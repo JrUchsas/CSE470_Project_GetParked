@@ -273,8 +273,15 @@ const AdminDashboard = () => {
                     )}
                   </td>
                   <td style={{ padding: '1rem' }}>
-                    {slot.user && slot.status === 'Reserved' ? (
-                      <span className="font-medium text-green-700">{slot.user.name}</span>
+                    {slot.user && (slot.status === 'Reserved' || slot.status === 'Occupied') ? (
+                      <div className="flex flex-col">
+                        <span className={`font-medium ${slot.status === 'Reserved' ? 'text-green-700' : 'text-red-700'}`}>
+                          {slot.user.name}
+                        </span>
+                        {slot.status === 'Occupied' && (
+                          <span className="text-xs text-gray-500">Currently Parked</span>
+                        )}
+                      </div>
                     ) : (
                       <span className="text-gray-400 text-sm font-medium">No user</span>
                     )}
