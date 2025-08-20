@@ -24,13 +24,9 @@ const EntryExitPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (user && user.id) {
-      fetchData();
-    }
-  }, [user, fetchData]);
-
   const fetchData = useCallback(async () => {
+    if (!user || !user.id) return;
+
     setLoading(true);
     setError('');
     try {
@@ -55,7 +51,13 @@ const EntryExitPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [user.id, initialSlotId, navigate]);
+  }, [user, initialSlotId, navigate]);
+
+  useEffect(() => {
+    if (user && user.id) {
+      fetchData();
+    }
+  }, [user, fetchData]);
 
   const handleCheckIn = async (slotId, vehicleIdToUse = selectedVehicle) => {
     if (!vehicleIdToUse) {
