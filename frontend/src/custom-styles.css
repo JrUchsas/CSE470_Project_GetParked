@@ -555,3 +555,185 @@
     margin: 0 0.25rem;
   }
 }
+
+/* Entry/Exit Page Styles */
+.checkout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.checkout-button:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.checkout-button .arrow {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.checkout-button:hover .arrow {
+  transform: translateX(3px);
+}
+
+.vehicle-info {
+  margin-bottom: 1.5rem;
+}
+
+.vehicle-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.vehicle-details,
+.timing-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.timing-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.slot-status-badge.occupied {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.slot-status-badge.occupied .status-dot {
+  background: #dc2626;
+}
+
+/* Reservation History Page Styles */
+.history-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.history-card-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.history-card-content {
+  padding: 1.5rem;
+}
+
+.vehicle-section,
+.timing-section {
+  background: #fafbfc;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #f1f5f9;
+}
+
+.section-header {
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.timing-icon {
+  width: 2rem;
+  height: 2rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fee-badge {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #86efac;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+}
+
+.fee-amount {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+/* Responsive adjustments for history page */
+@media (max-width: 768px) {
+  .history-card-header,
+  .history-card-content {
+    padding: 1rem;
+  }
+
+  .vehicle-section,
+  .timing-section {
+    padding: 1rem;
+  }
+
+  .detail-value {
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+  }
+}

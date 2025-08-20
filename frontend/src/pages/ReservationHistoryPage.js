@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getReservationHistoryByUser } from '../services/api';
+import { getVehicleIcon } from '../components/VehicleIcons';
+import '../custom-styles.css';
 
 const ReservationHistoryPage = () => {
   const [reservationHistory, setReservationHistory] = useState([]);
@@ -55,92 +57,171 @@ const ReservationHistoryPage = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading reservation history...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <div className="loading-spinner mx-auto mb-4" style={{ width: '3rem', height: '3rem' }}></div>
+              <p className="text-gray-600 text-lg">Loading your reservation history...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <p className="text-red-600 text-lg font-medium">Error loading history</p>
+              <p className="text-gray-600 mt-2">{error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-blue-600">Reservation History</h1>
-
-      {reservationHistory.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600 text-lg">No reservation history found.</p>
-          <p className="text-gray-500 text-sm mt-2">
-            Your completed parking sessions will appear here.
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Modern Header */}
+        <div className="homepage-header text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Parking History
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            View your completed parking sessions and track your parking activity
           </p>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {reservationHistory.map((history) => (
-            <div key={history.id} className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800">{history.slotLocation}</h3>
-                  <p className="text-sm text-gray-500">
-                    Completed on {formatDateTime(history.checkOutTime)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-semibold rounded-full">
-                    Completed
-                  </span>
-                  {history.fee && (
-                    <p className="text-lg font-bold text-green-600 mt-1">${history.fee}</p>
-                  )}
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Vehicle Details</h4>
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">License Plate:</span>
-                      <span className="font-medium">{history.vehiclePlate}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Model:</span>
-                      <span className="font-medium">{history.vehicleModel}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="font-medium capitalize">{history.vehicleType}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-gray-700">Timing Details</h4>
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Reserved:</span>
-                      <span className="font-medium text-xs">
-                        {formatDateTime(history.reservedStart)} - {formatDateTime(history.reservedEnd)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Check-in:</span>
-                      <span className="font-medium">{formatDateTime(history.checkInTime)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Check-out:</span>
-                      <span className="font-medium">{formatDateTime(history.checkOutTime)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Duration:</span>
-                      <span className="font-medium">{formatDuration(history.duration)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {reservationHistory.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
             </div>
-          ))}
-        </div>
-      )}
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">No History Yet</h3>
+            <p className="text-gray-600 text-lg mb-2">You haven't completed any parking sessions.</p>
+            <p className="text-gray-500">
+              Your completed parking sessions will appear here after you check out.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {reservationHistory.map((history) => (
+              <div key={history.id} className="history-card group">
+                <div className="history-card-header">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="slot-icon-container bg-gradient-to-br from-green-500 to-emerald-500">
+                        <span className="parking-p-icon text-white">P</span>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">{history.slotLocation}</h3>
+                        <p className="text-sm text-gray-600">
+                          Completed on {formatDateTime(history.checkOutTime)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm font-medium text-green-700">Completed</span>
+                      </div>
+                      {history.fee && (
+                        <div className="fee-badge">
+                          <span className="fee-amount">${history.fee}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="history-card-content">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="vehicle-section">
+                      <div className="section-header">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="vehicle-icon">
+                            {getVehicleIcon(history.vehicleType)}
+                          </div>
+                          <h4 className="section-title">Vehicle Details</h4>
+                        </div>
+                      </div>
+                      <div className="vehicle-details">
+                        <div className="detail-item">
+                          <span className="detail-label">License Plate</span>
+                          <span className="detail-value font-mono">{history.vehiclePlate}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Model</span>
+                          <span className="detail-value">{history.vehicleModel}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Type</span>
+                          <span className="detail-value capitalize">{history.vehicleType}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="timing-section">
+                      <div className="section-header">
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="timing-icon">
+                            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                          </div>
+                          <h4 className="section-title">Session Timeline</h4>
+                        </div>
+                      </div>
+                      <div className="timing-details">
+                        <div className="detail-item">
+                          <span className="detail-label">Reserved Period</span>
+                          <div className="detail-value text-xs">
+                            <div>{formatDateTime(history.reservedStart)}</div>
+                            <div className="text-gray-500">to {formatDateTime(history.reservedEnd)}</div>
+                          </div>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Check-in</span>
+                          <span className="detail-value">{formatDateTime(history.checkInTime)}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Check-out</span>
+                          <span className="detail-value">{formatDateTime(history.checkOutTime)}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Total Duration</span>
+                          <span className="detail-value font-semibold text-blue-600">{formatDuration(history.duration)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
