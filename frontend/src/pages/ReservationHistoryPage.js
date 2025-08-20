@@ -156,62 +156,55 @@ const ReservationHistoryPage = () => {
                 </div>
 
                 <div className="history-card-content">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="vehicle-section">
-                      <div className="section-header">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="vehicle-icon">
-                            {getVehicleIcon(history.vehicleType)}
-                          </div>
-                          <h4 className="section-title">Vehicle Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <div className="vehicle-icon">
+                          {getVehicleIcon(history.vehicleType, "text-lg")}
                         </div>
-                      </div>
-                      <div className="vehicle-details">
-                        <div className="detail-item">
-                          <span className="detail-label">License Plate</span>
-                          <span className="detail-value font-mono">{history.vehiclePlate}</span>
+                        Vehicle Details
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">License Plate:</span>
+                          <span className="font-medium font-mono">{history.vehiclePlate}</span>
                         </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Model</span>
-                          <span className="detail-value">{history.vehicleModel}</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Model:</span>
+                          <span className="font-medium">{history.vehicleModel}</span>
                         </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Type</span>
-                          <span className="detail-value capitalize">{history.vehicleType}</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Type:</span>
+                          <span className="font-medium capitalize">{history.vehicleType}</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="timing-section">
-                      <div className="section-header">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="timing-icon">
-                            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                          </div>
-                          <h4 className="section-title">Session Timeline</h4>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Session Timeline
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Reserved:</span>
+                          <span className="font-medium text-xs">
+                            {formatDateTime(history.reservedStart)} - {formatDateTime(history.reservedEnd)}
+                          </span>
                         </div>
-                      </div>
-                      <div className="timing-details">
-                        <div className="detail-item">
-                          <span className="detail-label">Reserved Period</span>
-                          <div className="detail-value text-xs">
-                            <div>{formatDateTime(history.reservedStart)}</div>
-                            <div className="text-gray-500">to {formatDateTime(history.reservedEnd)}</div>
-                          </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Check-in:</span>
+                          <span className="font-medium">{formatDateTime(history.checkInTime)}</span>
                         </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Check-in</span>
-                          <span className="detail-value">{formatDateTime(history.checkInTime)}</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Check-out:</span>
+                          <span className="font-medium">{formatDateTime(history.checkOutTime)}</span>
                         </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Check-out</span>
-                          <span className="detail-value">{formatDateTime(history.checkOutTime)}</span>
-                        </div>
-                        <div className="detail-item">
-                          <span className="detail-label">Total Duration</span>
-                          <span className="detail-value font-semibold text-blue-600">{formatDuration(history.duration)}</span>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Duration:</span>
+                          <span className="font-medium text-blue-600">{formatDuration(history.duration)}</span>
                         </div>
                       </div>
                     </div>
