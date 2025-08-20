@@ -1,0 +1,99 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// Get reservation history for a user
+const getReservationHistoryByUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const reservationHistory = await prisma.reservationHistory.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        slot: true,
+        vehicle: true,
+      },
+      orderBy: {
+        checkOutTime: 'desc', // Order by most recent
+      },
+    });
+    res.json(reservationHistory);
+  } catch (error) {
+    console.error('Error fetching reservation history:', error);
+    res.status(500).json({ error: 'Failed to get reservation history for user' });
+  }
+};
+
+// Create a reservation history entry (used when checking out)
+const createReservationHistory = async (req, res) => {
+  const {
+    userId,
+    slotId,
+    vehicleId,
+    slotLocation,
+    vehiclePlate,
+    vehicleModel,
+    vehicleType,
+    reservedStart,
+    reservedEnd,
+    checkInTime,
+    checkOutTime,
+    duration,
+    fee
+  } = req.body;
+
+  try {
+    const reservationHistory = await prisma.reservationHistory.create({
+      data: {
+        userId,
+        slotId,
+        vehicleId,
+        slotLocation,
+        vehiclePlate,
+        vehicleModel,
+        vehicleType,
+        reservedStart: new Date(reservedStart),
+        reservedEnd: new Date(reservedEnd),
+        checkInTime: new Date(checkInTime),
+        checkOutTime: new Date(checkOutTime),
+        duration,
+        fee,
+      },
+      include: {
+        slot: true,
+        vehicle: true,
+        user: true,
+      },
+    });
+    res.status(201).json(reservationHistory);
+  } catch (error) {
+    console.error('Error creating reservation history:', error);
+    res.status(500).json({ error: 'Failed to create reservation history' });
+  }
+};
+
+// Get all reservation history (admin only)
+const getAllReservationHistory = async (req, res) => {
+  try {
+    const reservationHistory = await prisma.reservationHistory.findMany({
+      include: {
+        user: true,
+        slot: true,
+        vehicle: true,
+      },
+      orderBy: {
+        checkOutTime: 'desc',
+      },
+    });
+    res.json(reservationHistory);
+  } catch (error) {
+    console.error('Error fetching all reservation history:', error);
+    res.status(500).json({ error: 'Failed to get reservation history' });
+  }
+};
+
+module.exports = {
+  getReservationHistoryByUser,
+  createReservationHistory,
+  getAllReservationHistory,
+};

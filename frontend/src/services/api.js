@@ -81,6 +81,11 @@ export const checkOut = async (id) => {
   return data;
 };
 
+export const checkOutBySlot = async (slotId) => {
+  const { data } = await API.put(`/parking/check-out-by-slot/${slotId}`);
+  return data;
+};
+
 export const getParkingSessionBySlot = async (slotId) => {
   const { data } = await API.get(`/parking/slot/${slotId}`);
   return data;
@@ -88,5 +93,21 @@ export const getParkingSessionBySlot = async (slotId) => {
 
 export const getParkingSessionsByUser = async (userId) => {
   const { data } = await API.get(`/parking/user/${userId}`);
+  return data;
+};
+
+// --- RESERVATION HISTORY API CALLS ---
+export const getReservationHistoryByUser = async (userId) => {
+  const { data } = await API.get(`/reservation-history/user/${userId}`);
+  return data;
+};
+
+export const createReservationHistory = async (historyData) => {
+  const { data } = await API.post('/reservation-history', historyData);
+  return data;
+};
+
+export const getAllReservationHistory = async () => {
+  const { data } = await API.get('/reservation-history');
   return data;
 };

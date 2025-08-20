@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSlots, updateSlot } from '../services/api';
+import { getSlots, updateSlot, checkIn } from '../services/api';
 import SlotModal from '../components/SlotModal';
+import CheckInConfirmationModal from '../components/CheckInConfirmationModal';
 import ErrorModal from '../components/ErrorModal';
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 import '../custom-styles.css';
@@ -12,6 +13,7 @@ const HomePage = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [checkInSlot, setCheckInSlot] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -76,12 +78,39 @@ const HomePage = ({ user }) => {
     }
   };
 
-  // Check In
+  // Check In - Show confirmation modal
   const handleCheckIn = (slot) => {
     if (!user) return;
-    // Navigate to the Entry/Exit page, passing the slot ID
-    navigate('/entry-exit', { state: { slotId: slot.id } });
-    setSelectedSlot(null); // Close the modal
+    setCheckInSlot(slot);
+    setSelectedSlot(null); // Close the slot modal
+  };
+
+  // Confirm Check In - Actually perform the check-in
+  const handleConfirmCheckIn = async (slot) => {
+    if (!user) return;
+    setActionLoading(true);
+    try {
+      console.log('Starting check-in process for slot:', slot.id, 'vehicle:', slot.vehicleId);
+
+      // Call the check-in API with the vehicle from the slot reservation
+      const checkInResult = await checkIn({ vehicleId: slot.vehicleId, slotId: slot.id });
+      console.log('Check-in API result:', checkInResult);
+
+      // Refresh the slots data to get the updated status
+      const updatedSlots = await getSlots();
+      setSlots(updatedSlots);
+      setCheckInSlot(null);
+
+      alert('Checked in successfully!');
+      // Navigate to entry/exit page to show the occupied slot
+      navigate('/entry-exit');
+    } catch (err) {
+      console.error('Check-in error:', err);
+      console.error('Error response:', err.response?.data);
+      setError(`Failed to check in: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Calculate statistics
@@ -289,6 +318,18 @@ const HomePage = ({ user }) => {
             onReserve={handleReserve}
             onCancel={handleCancel}
             onCheckIn={handleCheckIn}
+            actionLoading={actionLoading}
+          />
+        </div>
+      )}
+
+      {/* Check-In Confirmation Modal */}
+      {checkInSlot && (
+        <div className="modern-modal-overlay">
+          <CheckInConfirmationModal
+            slot={checkInSlot}
+            onClose={() => setCheckInSlot(null)}
+            onConfirmCheckIn={handleConfirmCheckIn}
             actionLoading={actionLoading}
           />
         </div>
