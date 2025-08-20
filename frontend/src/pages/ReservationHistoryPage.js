@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getReservationHistoryByUser } from '../services/api';
-import { getVehicleIcon } from '../components/VehicleIcons';
-import '../custom-styles.css';
-import { getVehicleIcon } from '../components/VehicleIcons';
 import '../custom-styles.css';
 
 const ReservationHistoryPage = () => {
