@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getReservationHistoryByUser } from '../services/api';
+import { getReservationHistoryByUser, updatePaymentStatus } from '../services/api';
 import '../custom-styles.css';
 
 const ReservationHistoryPage = () => {
@@ -8,6 +8,34 @@ const ReservationHistoryPage = () => {
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState({});
+
+  const handlePayment = async (historyId) => {
+    // Set loading state for this specific history item
+    setPaymentLoading(prev => ({ ...prev, [historyId]: true }));
+    
+    try {
+      // Update payment status to "Paid"
+      const updatedHistory = await updatePaymentStatus(historyId, "Paid");
+      
+      // Update the reservation history state with the new payment status
+      setReservationHistory(prevHistory =>
+        prevHistory.map(history =>
+          history.id === historyId
+            ? { ...history, paymentStatus: updatedHistory.paymentStatus }
+            : history
+        )
+      );
+      
+      // Show success message or handle as needed
+      console.log("Payment successful for history ID:", historyId);
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      // Handle error (show message to user, etc.)
+    } finally {
+      // Reset loading state
+      setPaymentLoading(prev => ({ ...prev, [historyId]: false }));
+    }
+  };
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
@@ -135,6 +163,15 @@ const ReservationHistoryPage = () => {
                   <span className="status-badge completed">
                     Completed
                   </span>
+                  {history.paymentStatus === "Paid" ? (
+                    <span className="status-badge paid">
+                      Paid
+                    </span>
+                  ) : (
+                    <span className="status-badge not-paid">
+                      Not Paid
+                    </span>
+                  )}
                   {history.fee && (
                     <p className="history-fee">${history.fee}</p>
                   )}
@@ -161,6 +198,17 @@ const ReservationHistoryPage = () => {
                       <span className="detail-value capitalize">{history.vehicleType}</span>
                     </div>
                   </div>
+                  {history.paymentStatus !== "Paid" && history.fee && (
+                    <div className="history-card-footer">
+                      <button
+                        className="pay-now-button"
+                        onClick={() => handlePayment(history.id)}
+                        disabled={paymentLoading[history.id]}
+                      >
+                        {paymentLoading[history.id] ? "Processing..." : "Pay Now"}
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="timing-section">

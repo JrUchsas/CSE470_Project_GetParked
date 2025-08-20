@@ -85,5 +85,6 @@ model ReservationHistory {
   checkOutTime    DateTime // Actual check-out time
   duration        Int      // Duration in minutes
   fee             Int?     // Calculated parking fee
+  paymentStatus   String   @default("Not Paid") // Payment status: "Paid" or "Not Paid"
   createdAt       DateTime @default(now())
 }

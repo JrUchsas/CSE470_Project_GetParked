@@ -111,3 +111,8 @@ export const getAllReservationHistory = async () => {
   const { data } = await API.get('/reservation-history');
   return data;
 };
+
+export const updatePaymentStatus = async (id, paymentStatus) => {
+  const { data } = await API.put(`/reservation-history/${id}/payment`, { paymentStatus });
+  return data;
+};

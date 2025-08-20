@@ -92,8 +92,26 @@ const getAllReservationHistory = async (req, res) => {
   }
 };
 
+// Update payment status for a reservation history entry
+const updatePaymentStatus = async (req, res) => {
+  const { id } = req.params;
+  const { paymentStatus } = req.body;
+
+  try {
+    const updatedHistory = await prisma.reservationHistory.update({
+      where: { id: id },
+      data: { paymentStatus: paymentStatus },
+    });
+    res.json(updatedHistory);
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+    res.status(500).json({ error: 'Failed to update payment status' });
+  }
+};
+
 module.exports = {
   getReservationHistoryByUser,
   createReservationHistory,
   getAllReservationHistory,
+  updatePaymentStatus,
 };
