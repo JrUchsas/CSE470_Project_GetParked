@@ -1,10 +1,11 @@
 import React from 'react';
+import { getVehicleIcon } from './VehicleIcons'; // Import getVehicleIcon
 
 // Icon component for check-in
 const CheckInIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M9 12l2 2 4-4"/>
-    <path d="M21 12c0 1.66-.41 3.22-1.14 4.58-.73 1.36-1.85 2.48-3.21 3.21C15.22 20.59 13.66 21 12 21s-3.22-.41-4.58-1.14c-1.36-.73-2.48-1.85-3.21-3.21C3.41 15.22 3 13.66 3 12s.41-3.22 1.14-4.58c.73-1.36 1.85-2.48 3.21-3.21C8.78 3.41 10.34 3 12 3s3.22.41 4.58 1.14c1.36.73 2.48 1.85 3.21 3.21C20.59 8.78 21 10.34 21 12z"/>
+    <path d="M21 12c0 1.66-.41 3.22-1.14 4.58-.73 1.36-1.85 2.48-3.21 3.21C15.22 20.59 13.66 21 12 21s-3.22-.41-4.58-1.14c-1.36-.73-2.48-1.85-3.21-3.21C3.41 15.22 3 13.66 3 12s.41-3.22 1.14-4.58c.73-1.36 1.85-2.48 3.21-3.21C20.59 8.78 21 10.34 21 12z"/>
   </svg>
 );
 
@@ -23,8 +24,37 @@ const isTimeWithinReservation = (currentTime, bookingStart, bookingEnd) => {
 };
 
 const formatVehicleType = (type) => {
-  if (!type) return 'Vehicle';
-  return type.charAt(0).toUpperCase() + type.slice(1);
+  let formattedType = type;
+  switch (type) {
+    case 'car':
+      formattedType = 'Car';
+      break;
+    case 'bike':
+      formattedType = 'Bike';
+      break;
+    case 'suv':
+      formattedType = 'SUV';
+      break;
+    case 'van':
+      formattedType = 'Van';
+      break;
+    case 'minibus':
+      formattedType = 'Minibus';
+      break;
+    default:
+      formattedType = type.charAt(0).toUpperCase() + type.slice(1);
+  }
+
+  if (!type) return (
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+      {getVehicleIcon('car', 'w-4 h-4 mr-1')} Vehicle
+    </span>
+  );
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+      {getVehicleIcon(type, 'w-4 h-4 mr-1')} {formattedType}
+    </span>
+  );
 };
 
 const CheckInConfirmationModal = ({ slot, onClose, onConfirmCheckIn, actionLoading }) => {
@@ -72,13 +102,13 @@ const CheckInConfirmationModal = ({ slot, onClose, onConfirmCheckIn, actionLoadi
           </div>
 
           {/* Content Section */}
-          <div className="slot-modal-details">
-            <div className="reservation-info">
-              <h4 className="info-title">Reservation Details</h4>
-              <div className="info-grid">
+          <div className="slot-modal-form"> {/* Changed from slot-modal-details */}
+            <div className="form-group">
+              <h4 className="slot-modal-label" style={{ marginBottom: '0.5rem' }}>Reservation Details</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="info-item">
-                  <span className="info-label">Reserved Time:</span>
-                  <span className="info-value">
+                  <span className="slot-modal-label">Reserved Time:</span>
+                  <span className="slot-modal-input-display">
                     {slot.bookingStart && slot.bookingEnd ? (
                       <>
                         {new Date(slot.bookingStart).toLocaleString('en-US', {
@@ -97,8 +127,8 @@ const CheckInConfirmationModal = ({ slot, onClose, onConfirmCheckIn, actionLoadi
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">Current Time:</span>
-                  <span className="info-value">
+                  <span className="slot-modal-label">Current Time:</span>
+                  <span className="slot-modal-input-display">
                     {currentTime.toLocaleString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -108,29 +138,29 @@ const CheckInConfirmationModal = ({ slot, onClose, onConfirmCheckIn, actionLoadi
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="info-label">Vehicle Type:</span>
-                  <span className="info-value">{formatVehicleType(slot.type)}</span>
+                  <span className="slot-modal-label">Vehicle Type:</span>
+                  <span className="slot-modal-input-display">{formatVehicleType(slot.type)}</span>
                 </div>
               </div>
             </div>
 
             {!isValidTime && (
-              <div className="warning-message">
-                <div className="warning-icon">⚠️</div>
-                <div className="warning-text">
-                  <p><strong>Check-in not available</strong></p>
-                  <p>You can only check in during your reservation time window (starting 15 minutes before your reserved time).</p>
+              <div className="text-danger" style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid #dc3545', borderRadius: '8px', backgroundColor: '#f8d7da' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>⚠️</span>
+                  <p style={{ margin: 0, fontWeight: 'bold' }}>Check-in not available</p>
                 </div>
+                <p style={{ margin: 0 }}>You can only check in during your reservation time window (starting 15 minutes before your reserved time).</p>
               </div>
             )}
 
             {isValidTime && (
-              <div className="success-message">
-                <div className="success-icon">✅</div>
-                <div className="success-text">
-                  <p><strong>Ready to check in!</strong></p>
-                  <p>You're within your reservation time window. Proceed with check-in.</p>
+              <div className="text-success" style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid #28a745', borderRadius: '8px', backgroundColor: '#d4edda' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>✅</span>
+                  <p style={{ margin: 0, fontWeight: 'bold' }}>Ready to check in!</p>
                 </div>
+                <p style={{ margin: 0 }}>You're within your reservation time window. Proceed with check-in.</p>
               </div>
             )}
           </div>
@@ -141,7 +171,7 @@ const CheckInConfirmationModal = ({ slot, onClose, onConfirmCheckIn, actionLoadi
               {isValidTime ? (
                 <button
                   onClick={handleConfirm}
-                  className="slot-modal-btn success"
+                  className="slot-modal-btn primary" // Changed from success to primary for consistency
                   disabled={actionLoading}
                 >
                   {actionLoading ? (

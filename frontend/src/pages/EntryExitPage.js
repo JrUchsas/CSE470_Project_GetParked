@@ -4,6 +4,30 @@ import CheckOutModal from '../components/CheckOutModal';
 import { getVehicleIcon } from '../components/VehicleIcons';
 import '../styles/custom-styles.css';
 
+const formatVehicleType = (type) => {
+  let formattedType = type;
+  switch (type) {
+    case 'car':
+      formattedType = 'Car';
+      break;
+    case 'bike':
+      formattedType = 'Bike';
+      break;
+    case 'suv':
+      formattedType = 'SUV';
+      break;
+    case 'van':
+      formattedType = 'Van';
+      break;
+    case 'minibus':
+      formattedType = 'Minibus';
+      break;
+    default:
+      formattedType = type.charAt(0).toUpperCase() + type.slice(1);
+  }
+  return formattedType;
+};
+
 const EntryExitPage = () => {
 
   const [slots, setSlots] = useState([]);
@@ -183,7 +207,7 @@ const EntryExitPage = () => {
                         </div>
                         <div className="horizontal-detail-item">
                           <span className="detail-label">Type:</span>
-                          <span className="detail-value capitalize">{slot.vehicle.type}</span>
+                          <span className="detail-value">{formatVehicleType(slot.vehicle.type)}</span>
                         </div>
                         {slot.vehicle.color && (
                           <div className="horizontal-detail-item">
