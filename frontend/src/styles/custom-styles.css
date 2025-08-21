@@ -1343,10 +1343,11 @@ span.slot-icon {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  border-radius: 0.4rem !important; /* Slightly larger border-radius */
+  padding: 0.4rem 0.8rem !important; /* Slightly increased padding */
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.8rem !important; /* Slightly increased font size */
+  min-width: 5.5rem !important; /* Slightly increased min-width */
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
