@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes'); // NEW
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const parkingRoutes = require('./routes/parkingRoutes');
 const reservationHistoryRoutes = require('./routes/reservationHistoryRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/api/slots', slotRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/parking', parkingRoutes);
 app.use('/api/reservation-history', reservationHistoryRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

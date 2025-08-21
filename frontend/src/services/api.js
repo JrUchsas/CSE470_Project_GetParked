@@ -116,3 +116,19 @@ export const updatePaymentStatus = async (id, paymentStatus) => {
   const { data } = await API.put(`/reservation-history/${id}/payment`, { paymentStatus });
   return data;
 };
+
+// --- USER API CALLS ---
+export const getAllUsers = async () => {
+  const { data } = await API.get('/users');
+  return data;
+};
+
+export const updateUser = async (id, userData) => {
+  const { data } = await API.put(`/users/${id}`, userData);
+  return data;
+};
+
+export const deleteUser = async (id) => {
+  const { data } = await API.delete(`/users/${id}`);
+  return data;
+};
