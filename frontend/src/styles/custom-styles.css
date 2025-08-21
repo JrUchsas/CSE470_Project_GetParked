@@ -1336,6 +1336,7 @@ span.slot-icon {
   padding: 0 1.5rem 1.5rem;
   display: flex;
   justify-content: flex-end;
+  margin-top: 1rem;
 }
 
 .pay-now-button {

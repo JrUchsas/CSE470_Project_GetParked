@@ -14,6 +14,7 @@ import ReservationHistoryPage from './pages/ReservationHistoryPage';
 
 import './styles/custom-slotmodal.css';
 import './styles/custom-vehicleformmodal.css';
+import './styles/custom-styles.css';
 
 
 
@@ -65,7 +66,7 @@ function App() {
       <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
         
         <Header user={user} onLogout={handleLogout} />
-        <main className="w-full max-w-3xl flex flex-col items-center justify-center p-4 md:p-8 text-center">
+        <main className="w-full p-4 md:p-8">
           <Routes>
             <Route path="/auth" element={user ? <Navigate to="/" /> : <AuthPage onLogin={handleLogin} />} />
             <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/auth" />} />

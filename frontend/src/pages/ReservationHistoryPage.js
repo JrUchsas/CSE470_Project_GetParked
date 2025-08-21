@@ -198,17 +198,6 @@ const ReservationHistoryPage = () => {
                       <span className="detail-value capitalize">{history.vehicleType}</span>
                     </div>
                   </div>
-                  {history.paymentStatus !== "Paid" && history.fee && (
-                    <div className="history-card-footer">
-                      <button
-                        className="pay-now-button"
-                        onClick={() => handlePayment(history.id)}
-                        disabled={paymentLoading[history.id]}
-                      >
-                        {paymentLoading[history.id] ? "Processing..." : "Pay Now"}
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 <div className="timing-section">
@@ -238,6 +227,17 @@ const ReservationHistoryPage = () => {
                   </div>
                 </div>
               </div>
+              {history.paymentStatus !== "Paid" && history.fee && (
+                <div className="history-card-footer">
+                  <button
+                    className="pay-now-button"
+                    onClick={() => handlePayment(history.id)}
+                    disabled={paymentLoading[history.id]}
+                  >
+                    {paymentLoading[history.id] ? "Processing..." : "Pay Now"}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
