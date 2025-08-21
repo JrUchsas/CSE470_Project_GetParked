@@ -45,7 +45,7 @@ model ParkingSession {
   checkInTime DateTime @default(now())
   checkOutTime DateTime?
   duration    Int? // Duration in minutes
-  fee         Decimal? // Calculated parking fee
+  fee         Int? // Calculated parking fee
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -87,4 +87,41 @@ model ReservationHistory {
   fee             Int?     // Calculated parking fee
   paymentStatus   String   @default("Not Paid") // Payment status: "Paid" or "Not Paid"
   createdAt       DateTime @default(now())
+  paymentInvoice  PaymentInvoice? // Link to payment invoice when paid
+}
+
+model PaymentInvoice {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  reservationHistoryId  String   @unique @db.ObjectId
+  reservationHistory    ReservationHistory @relation(fields: [reservationHistoryId], references: [id])
+  invoiceNumber         String   @unique // Auto-generated invoice number
+
+  // User details at time of payment
+  userName              String
+  userEmail             String
+  userContact           String?
+
+  // Vehicle details at time of payment
+  vehiclePlate          String
+  vehicleModel          String
+  vehicleType           String
+
+  // Parking details
+  slotLocation          String
+  checkInTime           DateTime
+  checkOutTime          DateTime
+  duration              Int      // Duration in minutes
+
+  // Fee breakdown
+  hourlyRate            Int      // Rate per hour for the vehicle type
+  parkingFee            Int      // Calculated parking fee (rate * duration)
+  onlineReservationFee  Int      // Online reservation fee (20 taka)
+  totalAmount           Int      // Total amount paid
+
+  // Payment details
+  paymentMethod         String   @default("Online") // Payment method
+  paymentDate           DateTime @default(now())
+  paymentStatus         String   @default("Paid")
+
+  createdAt             DateTime @default(now())
 }

@@ -7,6 +7,7 @@ const vehicleRoutes = require('./routes/vehicleRoutes');
 const parkingRoutes = require('./routes/parkingRoutes');
 const reservationHistoryRoutes = require('./routes/reservationHistoryRoutes');
 const userRoutes = require('./routes/userRoutes');
+const paymentInvoiceRoutes = require('./routes/paymentInvoiceRoutes');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/parking', parkingRoutes);
 app.use('/api/reservation-history', reservationHistoryRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/payment-invoices', paymentInvoiceRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server running on port ${PORT}`));

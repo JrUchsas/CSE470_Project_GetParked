@@ -57,6 +57,13 @@ const AdminDashboard = ({ onLogout }) => {
           <h3 className="tile-title">Manage Registered Vehicles</h3>
           <p className="tile-description">View and manage all registered vehicles.</p>
         </div>
+
+        {/* Payment History Tile */}
+        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/payment-history')}>
+          <span className="tile-icon">💰</span>
+          <h3 className="tile-title">Payment History</h3>
+          <p className="tile-description">View payment invoices and revenue statistics.</p>
+        </div>
       </div>
 
       {isCreateModalOpen && (

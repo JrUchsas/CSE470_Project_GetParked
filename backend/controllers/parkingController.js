@@ -114,7 +114,7 @@ const checkOut = async (req, res) => {
     if (vehicleType === 'car' || vehicleType === 'suv') {
       ratePerMinute = 120 / 60; // 2 Taka per minute
     } else if (vehicleType === 'van' || vehicleType === 'minibus') {
-      ratePerMinute = 180 / 60; // 3 Taka per minute
+      ratePerMinute = 140 / 60; // 2.333... Taka per minute (140 taka/hour)
     } else if (vehicleType === 'bike') {
       ratePerMinute = 100 / 60; // 1.666... Taka per minute
     } else {
@@ -125,11 +125,9 @@ const checkOut = async (req, res) => {
     const onlineReservationFee = 20;
     const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
 
-    // Round the calculated fee to 2 decimal places (or nearest integer if preferred)
-    // Since the rates are integers, and durationMinutes is integer, this might not be strictly necessary
-    // unless bike rate is used, which is a float.
-    const finalCalculatedFee = parseFloat(calculatedFee.toFixed(2)); // Round to 2 decimal places
-    console.log('Calculated Fee (checkOut):', finalCalculatedFee); // ADD THIS LINE
+    // Round to nearest integer since database expects Int
+    const finalCalculatedFee = Math.round(calculatedFee);
+    console.log('Calculated Fee (checkOut):', finalCalculatedFee);
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -287,20 +285,61 @@ const checkOutBySlot = async (req, res) => {
     });
     console.log('Active sessions (NOT query):', allActiveSessions3);
 
-    // Since the null queries are not working, let's find the session manually from all sessions
-    const activeSessions = allSessions.filter(session => !session.checkOutTime);
-    console.log('Manually filtered active sessions:', activeSessions);
+    // Get all sessions for this specific slot and filter for active ones
+    const allSessionsForSlot = await prisma.parkingSession.findMany({
+      where: { slotId: slotId },
+      include: { vehicle: true, slot: true },
+      orderBy: { checkInTime: 'desc' }
+    });
+    console.log('All sessions for this slot:', allSessionsForSlot);
 
-    // Find the active parking session for this slot
-    const parkingSession = activeSessions.find(session => session.slotId === slotId);
-
-    console.log('Found parking session for slot:', parkingSession);
+    // Find the most recent session without a checkout time
+    const parkingSession = allSessionsForSlot.find(session => !session.checkOutTime);
+    console.log('Found active parking session for slot:', parkingSession);
 
     if (!parkingSession) {
+      // Check if the slot status is inconsistent (shows Occupied but no active session)
+      const slot = await prisma.slot.findUnique({ where: { id: slotId } });
+
+      if (slot && slot.status === 'Occupied') {
+        console.log('Data inconsistency detected: Slot shows Occupied but no active session. Fixing...');
+
+        // Fix the slot status
+        await prisma.slot.update({
+          where: { id: slotId },
+          data: {
+            status: 'Available',
+            reservedBy: null,
+            vehicleId: null,
+            bookingStart: null,
+            bookingEnd: null,
+          },
+        });
+
+        return res.status(404).json({
+          error: 'No active parking session found for this slot. Slot status has been corrected.',
+          slotId: slotId,
+          totalSessionsForSlot: allSessionsForSlot.length,
+          statusFixed: true,
+          allSessions: allSessionsForSlot.map(s => ({
+            id: s.id,
+            checkInTime: s.checkInTime,
+            checkOutTime: s.checkOutTime,
+            vehiclePlate: s.vehicle?.licensePlate
+          }))
+        });
+      }
+
       return res.status(404).json({
         error: 'No active parking session found for this slot',
         slotId: slotId,
-        availableSessions: activeSessions.map(s => ({ slotId: s.slotId, sessionId: s.id }))
+        totalSessionsForSlot: allSessionsForSlot.length,
+        allSessions: allSessionsForSlot.map(s => ({
+          id: s.id,
+          checkInTime: s.checkInTime,
+          checkOutTime: s.checkOutTime,
+          vehiclePlate: s.vehicle?.licensePlate
+        }))
       });
     }
 
@@ -315,7 +354,7 @@ const checkOutBySlot = async (req, res) => {
     if (vehicleType === 'car' || vehicleType === 'suv') {
       ratePerMinute = 120 / 60; // 2 Taka per minute
     } else if (vehicleType === 'van' || vehicleType === 'minibus') {
-      ratePerMinute = 180 / 60; // 3 Taka per minute
+      ratePerMinute = 140 / 60; // 2.333... Taka per minute (140 taka/hour)
     } else if (vehicleType === 'bike') {
       ratePerMinute = 100 / 60; // 1.666... Taka per minute
     } else {
@@ -326,9 +365,9 @@ const checkOutBySlot = async (req, res) => {
     const onlineReservationFee = 20;
     const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
 
-    // Round the calculated fee to 2 decimal places
-    const finalCalculatedFee = parseFloat(calculatedFee.toFixed(2));
-    console.log('Calculated Fee (checkOutBySlot):', finalCalculatedFee); // ADD THIS LINE
+    // Round to nearest integer since database expects Int
+    const finalCalculatedFee = Math.round(calculatedFee);
+    console.log('Calculated Fee (checkOutBySlot):', finalCalculatedFee);
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -391,10 +430,90 @@ const getAllParkingSessions = async (req, res) => {
         checkInTime: 'desc'
       }
     });
-    res.json(sessions);
+
+    // Also get active sessions count
+    const activeSessions = sessions.filter(session => !session.checkOutTime);
+
+    res.json({
+      totalSessions: sessions.length,
+      activeSessions: activeSessions.length,
+      sessions: sessions.map(session => ({
+        id: session.id,
+        slotId: session.slotId,
+        slotLocation: session.slot?.location,
+        vehiclePlate: session.vehicle?.licensePlate,
+        checkInTime: session.checkInTime,
+        checkOutTime: session.checkOutTime,
+        isActive: !session.checkOutTime,
+        duration: session.duration,
+        fee: session.fee
+      }))
+    });
   } catch (error) {
     console.error('Error getting all parking sessions:', error);
     res.status(500).json({ error: 'Failed to get parking sessions' });
+  }
+};
+
+// Repair function to fix data inconsistencies
+const repairSlotStatuses = async (req, res) => {
+  try {
+    console.log('Starting slot status repair...');
+
+    // Get all slots that show as Occupied
+    const occupiedSlots = await prisma.slot.findMany({
+      where: { status: 'Occupied' },
+      include: { vehicle: true }
+    });
+
+    console.log(`Found ${occupiedSlots.length} slots marked as Occupied`);
+
+    let repairedCount = 0;
+
+    for (const slot of occupiedSlots) {
+      // Check if there's an active parking session for this slot
+      const activeSessions = await prisma.parkingSession.findMany({
+        where: { slotId: slot.id },
+        orderBy: { checkInTime: 'desc' }
+      });
+
+      const activeSession = activeSessions.find(session => !session.checkOutTime);
+
+      if (!activeSession) {
+        // No active session but slot shows Occupied - fix it
+        console.log(`Repairing slot ${slot.location} (${slot.id})`);
+
+        await prisma.slot.update({
+          where: { id: slot.id },
+          data: {
+            status: 'Available',
+            reservedBy: null,
+            vehicleId: null,
+            bookingStart: null,
+            bookingEnd: null,
+          },
+        });
+
+        repairedCount++;
+      }
+    }
+
+    console.log(`Repair completed. Fixed ${repairedCount} slots.`);
+
+    res.json({
+      message: 'Slot status repair completed',
+      totalOccupiedSlots: occupiedSlots.length,
+      repairedSlots: repairedCount,
+      details: occupiedSlots.map(slot => ({
+        id: slot.id,
+        location: slot.location,
+        status: slot.status,
+        vehiclePlate: slot.vehicle?.licensePlate
+      }))
+    });
+  } catch (error) {
+    console.error('Error during slot repair:', error);
+    res.status(500).json({ error: 'Failed to repair slot statuses' });
   }
 };
 
@@ -405,4 +524,5 @@ module.exports = {
   getParkingSessionBySlot,
   getParkingSessionsByUser,
   getAllParkingSessions,
+  repairSlotStatuses,
 };

@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const { createPaymentInvoice } = require('./paymentInvoiceController');
 const prisma = new PrismaClient();
 
 // Get reservation history for a user
@@ -102,6 +103,19 @@ const updatePaymentStatus = async (req, res) => {
       where: { id: id },
       data: { paymentStatus: paymentStatus },
     });
+
+    // If payment status is set to "Paid", create a payment invoice
+    if (paymentStatus === 'Paid') {
+      try {
+        const paymentInvoice = await createPaymentInvoice(id);
+        console.log('Payment invoice created:', paymentInvoice.invoiceNumber);
+      } catch (invoiceError) {
+        console.error('Error creating payment invoice:', invoiceError);
+        // Don't fail the payment status update if invoice creation fails
+        // The payment is still successful, just log the error
+      }
+    }
+
     res.json(updatedHistory);
   } catch (error) {
     console.error('Error updating payment status:', error);

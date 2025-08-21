@@ -107,17 +107,27 @@ const PaymentPage = () => {
   }
 
   // Calculate fee breakdown for display
-  // const hourlyRate = history.vehicleType.toLowerCase() === 'car' || history.vehicleType.toLowerCase() === 'suv' ? 120 :
-  //                    history.vehicleType.toLowerCase() === 'van' || history.vehicleType.toLowerCase() === 'minibus' ? 180 :
-  //                    history.vehicleType.toLowerCase() === 'bike' ? 100 : 0;
   const onlineReservationFee = 20;
-  // const durationHours = Math.ceil(history.duration / 60);
-  // const parkingFee = hourlyRate * durationHours;
-  const totalAmountDue = history.fee;
-  const parkingFeeDisplay = totalAmountDue - onlineReservationFee;
+  const totalAmountDue = history.fee || 0;
+
+  // Calculate parking fee properly - ensure it's never negative
+  const parkingFeeDisplay = Math.max(0, totalAmountDue - onlineReservationFee);
+
+  // Recalculate the fee if it seems incorrect (for debugging/validation)
+  const hourlyRate = history.vehicleType.toLowerCase() === 'car' || history.vehicleType.toLowerCase() === 'suv' ? 120 :
+                     history.vehicleType.toLowerCase() === 'van' || history.vehicleType.toLowerCase() === 'minibus' ? 140 :
+                     history.vehicleType.toLowerCase() === 'bike' ? 100 : 0;
+
+  const durationMinutes = history.duration || 0;
+  const ratePerMinute = hourlyRate / 60;
+  const calculatedParkingFee = Math.ceil(ratePerMinute * durationMinutes);
+  const calculatedTotalFee = calculatedParkingFee + onlineReservationFee;
 
   console.log('Frontend: totalAmountDue (history.fee):', totalAmountDue);
   console.log('Frontend: parkingFeeDisplay:', parkingFeeDisplay);
+  console.log('Frontend: calculatedTotalFee:', calculatedTotalFee);
+  console.log('Frontend: duration in minutes:', durationMinutes);
+  console.log('Frontend: hourlyRate:', hourlyRate);
 
 
   return (

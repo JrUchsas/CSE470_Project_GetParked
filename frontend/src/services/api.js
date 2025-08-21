@@ -96,6 +96,16 @@ export const getParkingSessionsByUser = async (userId) => {
   return data;
 };
 
+export const getAllParkingSessions = async () => {
+  const { data } = await API.get('/parking/all');
+  return data;
+};
+
+export const repairSlotStatuses = async () => {
+  const { data } = await API.post('/parking/repair-slots');
+  return data;
+};
+
 // --- RESERVATION HISTORY API CALLS ---
 export const getReservationHistoryByUser = async (userId) => {
   const { data } = await API.get(`/reservation-history/user/${userId}`);
@@ -119,6 +129,27 @@ export const updatePaymentStatus = async (id, paymentStatus) => {
 
 export const getReservationHistoryById = async (id) => {
   const { data } = await API.get(`/reservation-history/${id}`);
+  return data;
+};
+
+// --- PAYMENT INVOICE API CALLS ---
+export const getPaymentInvoiceByReservationId = async (reservationHistoryId) => {
+  const { data } = await API.get(`/payment-invoices/reservation/${reservationHistoryId}`);
+  return data;
+};
+
+export const getAllPaymentInvoices = async () => {
+  const { data } = await API.get('/payment-invoices');
+  return data;
+};
+
+export const getPaymentInvoiceByNumber = async (invoiceNumber) => {
+  const { data } = await API.get(`/payment-invoices/invoice/${invoiceNumber}`);
+  return data;
+};
+
+export const getPaymentStatistics = async () => {
+  const { data } = await API.get('/payment-invoices/statistics');
   return data;
 };
 
