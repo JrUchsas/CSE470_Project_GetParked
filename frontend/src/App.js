@@ -6,6 +6,8 @@ import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthPage from './pages/AuthPage'; // NEW
 import AdminVehicleViewPage from './pages/AdminVehicleViewPage';
+import AdminSlotManagementPage from './pages/AdminSlotManagementPage';
+import AdminUserManagementPage from './pages/AdminUserManagementPage';
 import VehiclePage from './pages/VehiclePage';
 import Header from './components/Header';
 
@@ -72,6 +74,8 @@ function App() {
             <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/auth" />} />
             <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/admin/vehicles" element={user && user.role === 'admin' ? <AdminVehicleViewPage /> : <Navigate to="/" />} />
+            <Route path="/admin/manage-slots" element={user && user.role === 'admin' ? <AdminSlotManagementPage /> : <Navigate to="/" />} />
+            <Route path="/admin/manage-users" element={user && user.role === 'admin' ? <AdminUserManagementPage /> : <Navigate to="/" />} />
             <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />
             <Route path="/entry-exit" element={user ? <EntryExitPage /> : <Navigate to="/auth" />} />
             <Route path="/reservation-history" element={user ? <ReservationHistoryPage /> : <Navigate to="/auth" />} />
