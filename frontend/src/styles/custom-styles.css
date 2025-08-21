@@ -1367,3 +1367,24 @@ span.slot-icon {
 .pay-now-button:active:not(:disabled) {
   transform: translateY(0);
 }
+
+/* Download Invoice Button */
+.download-invoice-button {
+  background: linear-gradient(135deg, #607d8b 0%, #455a64 100%); /* Grayish blue */
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  min-width: 5.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(96, 125, 139, 0.25);
+}
+
+.download-invoice-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(96, 125, 139, 0.35);
+  background: linear-gradient(135deg, #455a64 0%, #37474f 100%);
+}

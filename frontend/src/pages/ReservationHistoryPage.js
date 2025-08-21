@@ -202,8 +202,8 @@ const ReservationHistoryPage = () => {
                   </div>
                 </div>
               </div>
-              {history.paymentStatus !== "Paid" && history.fee && (
-                <div className="history-card-footer">
+              <div className="history-card-footer">
+                {history.paymentStatus !== "Paid" && history.fee ? (
                   <button
                     className="pay-now-button"
                     onClick={() => handlePayment(history.id)}
@@ -211,8 +211,15 @@ const ReservationHistoryPage = () => {
                   >
                     {paymentLoading[history.id] ? "Processing..." : "Pay Now"}
                   </button>
-                </div>
-              )}
+                ) : (
+                  <button
+                    className="download-invoice-button"
+                    onClick={() => alert(`Downloading invoice for ${history.id}`)} // Placeholder
+                  >
+                    Download Invoice
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>

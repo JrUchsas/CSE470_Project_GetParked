@@ -35,8 +35,9 @@ const PaymentPage = () => {
     if (!history) return;
     setPaymentProcessing(true);
     try {
-      await updatePaymentStatus(history.id, 'Paid');
-      alert('Payment successful!');
+      // Simulate payment success without actual gateway integration
+      await updatePaymentStatus(history.id, 'Paid'); // Update status in backend
+      alert('Payment successful! Redirecting to reservation history.');
       navigate('/reservation-history'); // Redirect back to history page
     } catch (err) {
       console.error('Error processing payment:', err);

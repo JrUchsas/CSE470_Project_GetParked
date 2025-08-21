@@ -1,6 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { getAllPaymentInvoices, getPaymentStatistics } from '../services/api';
 import '../styles/custom-admin.css';
+import { getVehicleIcon } from '../components/VehicleIcons'; // Import getVehicleIcon
+
+// Icon component for invoice modal header
+const InvoiceIcon = () => (
+  <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
+  </svg>
+);
+
+const formatVehicleType = (type) => {
+  let formattedType = type;
+  switch (type) {
+    case 'car':
+      formattedType = 'Car';
+      break;
+    case 'bike':
+      formattedType = 'Bike';
+      break;
+    case 'suv':
+      formattedType = 'SUV';
+      break;
+    case 'van':
+      formattedType = 'Van';
+      break;
+    case 'minibus':
+      formattedType = 'Minibus';
+      break;
+    default:
+      formattedType = type.charAt(0).toUpperCase() + type.slice(1);
+  }
+  return formattedType;
+};
 
 const AdminPaymentHistory = () => {
   const [paymentInvoices, setPaymentInvoices] = useState([]);
@@ -68,9 +104,9 @@ const AdminPaymentHistory = () => {
 
   if (loading) {
     return (
-      <div className="admin-container">
+      <div className="modern-homepage-container"> {/* Changed class */}
         <div className="loading-container">
-          <div className="loading-spinner"></div>
+          <div className="loading-spinner-modern"></div> {/* Changed class */}
           <span className="loading-text">Loading payment history...</span>
         </div>
       </div>
@@ -79,7 +115,7 @@ const AdminPaymentHistory = () => {
 
   if (error) {
     return (
-      <div className="admin-container">
+      <div className="modern-homepage-container"> {/* Changed class */}
         <div className="error-container">
           <div className="error-icon">⚠️</div>
           <h3 className="error-title">Error</h3>
@@ -93,10 +129,17 @@ const AdminPaymentHistory = () => {
   }
 
   return (
-    <div className="admin-container">
-      <div className="admin-header">
-        <h1 className="admin-title">Payment History</h1>
-        <p className="admin-subtitle">View and manage payment invoices</p>
+    <div className="modern-homepage-container"> {/* Changed class */}
+      <div className="homepage-header"> {/* Changed class */}
+        <div className="header-content"> {/* Added div */}
+          <h1 className="homepage-title"> {/* Changed class */}
+            <span className="title-icon">🧾</span> {/* Changed class and icon */}
+            Payment History
+          </h1>
+          <p className="homepage-subtitle"> {/* Changed class */}
+            View and manage payment invoices
+          </p>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -179,7 +222,10 @@ const AdminPaymentHistory = () => {
                   <td>
                     <div className="vehicle-info">
                       <div className="vehicle-plate">{invoice.vehiclePlate}</div>
-                      <div className="vehicle-details">{invoice.vehicleModel} ({invoice.vehicleType})</div>
+                      <div className="vehicle-details">
+                        {getVehicleIcon(invoice.vehicleType, 'w-4 h-4 mr-1')} {/* Added icon */}
+                        {formatVehicleType(invoice.vehicleType)} {/* Used formatVehicleType */}
+                      </div>
                     </div>
                   </td>
                   <td className="slot-location">{invoice.slotLocation}</td>
@@ -203,13 +249,17 @@ const AdminPaymentHistory = () => {
 
       {/* Invoice Modal */}
       {selectedInvoice && (
-        <div className="modal-overlay" onClick={closeInvoiceModal}>
-          <div className="invoice-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Payment Invoice</h2>
-              <button onClick={closeInvoiceModal} className="close-button">×</button>
+        <div className="slot-modal-overlay"> {/* Changed class */}
+          <div className="slot-modal-card" onClick={(e) => e.stopPropagation()}> {/* Changed class */}
+            <button onClick={closeInvoiceModal} className="slot-modal-close">×</button> {/* Changed class */}
+            <div className="slot-modal-header"> {/* Changed class */}
+              <div className="slot-modal-icon-wrapper"> {/* Added div */}
+                <InvoiceIcon /> {/* Added icon */}
+              </div>
+              <h3 className="slot-modal-title">Payment Invoice</h3> {/* Changed class */}
+              <p className="slot-modal-subtitle">Details of the selected payment</p> {/* Added subtitle */}
             </div>
-            <div className="modal-content">
+            <div className="slot-modal-form"> {/* Changed class */}
               <div className="invoice-details">
                 <div className="invoice-header-info">
                   <h3>Invoice #{selectedInvoice.invoiceNumber}</h3>
@@ -229,7 +279,7 @@ const AdminPaymentHistory = () => {
                   <h4>Vehicle Details</h4>
                   <p><strong>License Plate:</strong> {selectedInvoice.vehiclePlate}</p>
                   <p><strong>Model:</strong> {selectedInvoice.vehicleModel}</p>
-                  <p><strong>Type:</strong> {selectedInvoice.vehicleType}</p>
+                  <p><strong>Type:</strong> {formatVehicleType(selectedInvoice.vehicleType)}</p> {/* Used formatVehicleType */}
                 </div>
 
                 <div className="invoice-section">
@@ -263,6 +313,14 @@ const AdminPaymentHistory = () => {
                   <p><strong>Payment Method:</strong> {selectedInvoice.paymentMethod}</p>
                   <p><strong>Payment Status:</strong> <span className="status-paid">{selectedInvoice.paymentStatus}</span></p>
                 </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="download-invoice-button"
+                  onClick={() => alert(`Admin: Downloading invoice for ${selectedInvoice.id}`)} // Placeholder
+                >
+                  Download Invoice
+                </button>
               </div>
             </div>
           </div>
