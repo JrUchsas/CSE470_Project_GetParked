@@ -227,7 +227,7 @@ const DateTimePicker = ({
         hour12: true
       });
     } catch (error) {
-      console.error('Error formatting date:', error);
+      // Error handling for date formatting
       return '';
     }
   };

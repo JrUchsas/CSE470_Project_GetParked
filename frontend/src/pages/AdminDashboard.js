@@ -40,15 +40,14 @@ const AdminDashboard = () => {
   };
 
   const handleCreateSlot = async ({ location, type }) => {
-    console.log('Attempting to create slot with:', { location, type });
+    // Attempting to create slot
     setError('');
     try {
       await createSlot({ location, type });
-      console.log('Slot created successfully!');
+      // Slot created successfully
       fetchSlots();
       setIsCreateModalOpen(false);
     } catch (err) {
-      console.error('Error creating slot:', err);
       setError(err.response?.data?.message || 'An error occurred.');
     }
   };

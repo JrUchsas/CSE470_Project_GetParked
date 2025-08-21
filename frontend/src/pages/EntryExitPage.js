@@ -30,7 +30,7 @@ const EntryExitPage = () => {
       setSlots(slotsResponse || []);
     } catch (err) {
       setError('Failed to load data.');
-      console.error('Error fetching data:', err);
+      // Error handling for data fetching
     } finally {
       setLoading(false);
     }
@@ -53,15 +53,13 @@ const EntryExitPage = () => {
     if (!selectedOccupiedSlot) return;
 
     try {
-      console.log('Checking out slot:', selectedOccupiedSlot.id);
+      // Checking out slot
       // Use the simpler checkout by slot method
       await checkOutBySlot(selectedOccupiedSlot.id);
       alert('Checked out successfully!');
       setSelectedOccupiedSlot(null);
       fetchData(); // Refresh data after check-out
     } catch (err) {
-      console.error('Error during check-out:', err);
-      console.error('Error response:', err.response?.data);
       setError(`Failed to check-out: ${err.response?.data?.error || err.message}`);
     }
   };

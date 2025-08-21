@@ -25,7 +25,7 @@ const HomePage = ({ user }) => {
         setError('');
       } catch (err) {
         setError('Failed to fetch parking slots. Is the backend server running?');
-        console.error(err);
+        // Error handling for slot fetching
       } finally {
         setLoading(false);
       }
@@ -90,11 +90,11 @@ const HomePage = ({ user }) => {
     if (!user) return;
     setActionLoading(true);
     try {
-      console.log('Starting check-in process for slot:', slot.id, 'vehicle:', slot.vehicleId);
+      // Starting check-in process for slot
 
       // Call the check-in API with the vehicle from the slot reservation
       const checkInResult = await checkIn({ vehicleId: slot.vehicleId, slotId: slot.id });
-      console.log('Check-in API result:', checkInResult);
+      // Check-in API result processing
 
       // Refresh the slots data to get the updated status
       const updatedSlots = await getSlots();
@@ -105,8 +105,6 @@ const HomePage = ({ user }) => {
       // Navigate to entry/exit page to show the occupied slot
       navigate('/entry-exit');
     } catch (err) {
-      console.error('Check-in error:', err);
-      console.error('Error response:', err.response?.data);
       setError(`Failed to check in: ${err.response?.data?.error || err.message}`);
     } finally {
       setActionLoading(false);
