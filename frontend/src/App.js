@@ -41,7 +41,7 @@ function App() {
           setShowVehicleRegistrationPrompt(false);
         }
       } catch (error) {
-        // Error handling for vehicle checking
+        console.error('Error checking user vehicles:', error);
         // Optionally, handle error by not showing the prompt or showing a generic error
       }
     }

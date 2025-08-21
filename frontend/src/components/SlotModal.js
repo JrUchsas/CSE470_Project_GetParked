@@ -50,7 +50,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
             setSelectedVehicleId(vehicles[0].id); // Select first vehicle by default
           }
         } catch (error) {
-          // Error handling for vehicle fetching
+          console.error('Failed to fetch user vehicles:', error);
         }
       }
     };

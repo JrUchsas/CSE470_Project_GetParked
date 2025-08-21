@@ -23,7 +23,7 @@ const VehiclePage = () => {
       const response = await getVehiclesByOwner(user.id);
       setVehicles(response || []);
     } catch (error) {
-      // Error handling for vehicle fetching
+      console.error('Failed to fetch vehicles', error);
       setVehicles([]); // Ensure vehicles is an empty array on error
     }
   }, [user]);
@@ -42,7 +42,7 @@ const VehiclePage = () => {
       await deleteVehicle(id);
       fetchVehicles();
     } catch (error) {
-      // Error handling for vehicle deletion
+      console.error('Failed to delete vehicle', error);
     }
   };
 

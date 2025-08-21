@@ -10,7 +10,7 @@ const AdminVehicleViewPage = () => {
         const response = await getAllVehicles();
         setVehicles(response || []);
       } catch (error) {
-        // Error handling for vehicle fetching
+        console.error('Failed to fetch all vehicles', error);
         setVehicles([]);
       }
     };
