@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
 import DateTimePicker from './DateTimePicker';
-import '../custom-slotmodal.css'; // Use the modern SlotModal styles
+import '../styles/custom-slotmodal.css'; // Use the modern SlotModal styles
 
 // Icon components for better visual appeal
 const EditIcon = () => (

@@ -5,7 +5,7 @@ import SlotModal from '../components/SlotModal';
 import CheckInConfirmationModal from '../components/CheckInConfirmationModal';
 import ErrorModal from '../components/ErrorModal';
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
-import '../custom-styles.css';
+import '../styles/custom-styles.css';
 
 const HomePage = ({ user }) => {
   const navigate = useNavigate();

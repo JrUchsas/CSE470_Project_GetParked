@@ -5,7 +5,7 @@ import CreateSlotModal from '../components/CreateSlotModal';
 import VehicleForm from '../components/VehicleForm';
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 
-import '../custom-admin.css';
+import '../styles/custom-admin.css';
 
 const AdminDashboard = () => {
   const [slots, setSlots] = useState([]);

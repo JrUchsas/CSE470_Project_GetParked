@@ -4,7 +4,7 @@ import { getVehiclesByOwner } from '../services/api';
 import ErrorModal from './ErrorModal';
 import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
 import DateTimePicker from './DateTimePicker';
-import '../custom-slotmodal.css';
+import '../styles/custom-slotmodal.css';
 
 // Other icon components
 const SteeringWheelIcon = () => (

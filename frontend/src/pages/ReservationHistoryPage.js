@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getReservationHistoryByUser, updatePaymentStatus } from '../services/api';
-import '../custom-styles.css';
+import '../styles/custom-styles.css';
 
 const ReservationHistoryPage = () => {
   const [reservationHistory, setReservationHistory] = useState([]);

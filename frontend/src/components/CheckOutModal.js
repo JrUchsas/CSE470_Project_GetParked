@@ -1,5 +1,5 @@
 import React from 'react';
-import '../custom-slotmodal.css';
+import '../styles/custom-slotmodal.css';
 
 // Icon component for check-out
 const CheckOutIcon = () => (

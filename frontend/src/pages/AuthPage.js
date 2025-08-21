@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { signupUser, loginUser } from '../services/api';
-import '../custom-auth.css';
+import '../styles/custom-auth.css';
 
 const AuthPage = ({ onLogin, onLogout }) => {
   // Auto logout on tab/browser close: clear user from storage

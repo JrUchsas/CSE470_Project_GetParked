@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { getSlots, checkOutBySlot } from '../services/api';
 import CheckOutModal from '../components/CheckOutModal';
 import { getVehicleIcon } from '../components/VehicleIcons';
-import '../custom-styles.css';
+import '../styles/custom-styles.css';
 
 const EntryExitPage = () => {
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Header.css';
+import '../styles/Header.css';
 
 // Steering Wheel Icon Component
 const SteeringWheelIcon = () => (

@@ -12,8 +12,8 @@ import Header from './components/Header';
 import EntryExitPage from './pages/EntryExitPage';
 import ReservationHistoryPage from './pages/ReservationHistoryPage';
 
-import './custom-slotmodal.css';
-import './custom-vehicleformmodal.css';
+import './styles/custom-slotmodal.css';
+import './styles/custom-vehicleformmodal.css';
 
 
 
