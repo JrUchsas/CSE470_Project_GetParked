@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Import useEffect
 import { getVehicleIcon } from './VehicleIcons';
+import { createSlot, getSlots } from '../services/api'; // Import getSlots
 
 // Icon component for better visual appeal
 const PlusIcon = () => (
@@ -17,15 +18,65 @@ const LocationIcon = () => (
 );
 
 const CreateSlotModal = ({ onClose, onCreateSlot }) => {
-  const [location, setLocation] = useState('');
-  const [type, setType] = useState('car');
+  const [slotData, setSlotData] = useState({
+    location: '', // Maps to backend 'location'
+    vehicleType: 'car', // Maps to backend 'vehicleType'
+  });
+  const [formError, setFormError] = useState('');
+  const [existingSlotLocations, setExistingSlotLocations] = useState([]);
 
-  const handleSubmit = (e) => {
+  // Fetch existing slots when the modal opens
+  useEffect(() => {
+    const fetchExistingSlots = async () => {
+      try {
+        const response = await getSlots();
+        setExistingSlotLocations(response.map(slot => slot.location));
+      } catch (error) {
+        console.error('Error fetching existing slots:', error);
+        // Optionally, set a form error here if fetching fails
+      }
+    };
+    fetchExistingSlots();
+    setFormError(''); // Clear previous errors when modal opens
+  }, []); // Empty dependency array means this runs once on mount
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSlotData({
+      ...slotData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+    setFormError(''); // Clear error on input change
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onCreateSlot({ location, type });
-    setLocation('');
-    setType('car');
-    onClose();
+
+    // Frontend validation for duplicate slot location
+    if (existingSlotLocations.includes(slotData.location)) {
+      setFormError('A slot with this location already exists. Please choose a different one.');
+      return;
+    }
+
+    // Basic validation for required fields
+    if (!slotData.location || !slotData.vehicleType) {
+      setFormError('Please fill in all required fields.');
+      return;
+    }
+
+    // Prepare data for backend
+    const dataToSend = {
+      ...slotData,
+    };
+
+    // Call the onCreateSlot prop, which is now connected to the actual API call
+    onCreateSlot(dataToSend);
+    // Reset form and close modal after successful submission (handled by AdminDashboard)
+    setSlotData({
+      location: '',
+      vehicleType: 'car',
+    });
+    onClose(); // Close modal after submission
   };
 
   return (
@@ -54,6 +105,8 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
 
           {/* Form Section */}
           <form onSubmit={handleSubmit} className="slot-modal-form">
+            {formError && <p className="text-danger" style={{ marginBottom: '1rem' }}>{formError}</p>} {/* Display error message */}
+
             <div className="form-group">
               <label htmlFor="location" className="slot-modal-label">
                 <LocationIcon />
@@ -62,8 +115,9 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
               <input
                 type="text"
                 id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                name="location" // Add name attribute
+                value={slotData.location}
+                onChange={handleChange}
                 className="slot-modal-input"
                 placeholder="e.g., A-01, B-15, C-03"
                 required
@@ -71,7 +125,7 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="type" className="slot-modal-label">
+              <label htmlFor="vehicleType" className="slot-modal-label"> {/* Change htmlFor and name */}
                 <span style={{
                   width: '1.2em',
                   height: '1.2em',
@@ -81,14 +135,15 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
                   flexShrink: 0,
                   marginRight: '0.5rem'
                 }}>
-                  {getVehicleIcon(type || 'car', 'w-full h-full')}
+                  {getVehicleIcon(slotData.vehicleType || 'car', 'w-full h-full')} {/* Use slotData.vehicleType */}
                 </span>
                 Vehicle Type
               </label>
               <select
-                id="type"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
+                id="vehicleType" // Change id
+                name="vehicleType" // Add name attribute
+                value={slotData.vehicleType}
+                onChange={handleChange}
                 className="slot-modal-input"
                 required
               >
@@ -99,6 +154,8 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
                 <option value="minibus">Minibus</option>
               </select>
             </div>
+
+            
 
             {/* Action Buttons */}
             <div className="slot-modal-actions">
@@ -119,7 +176,7 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
         </div>
       </div>
     </div>
-  );
+);
 };
 
 export default CreateSlotModal;

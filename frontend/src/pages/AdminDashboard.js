@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateSlotModal from '../components/CreateSlotModal';
 import '../styles/custom-admin.css';
+import { createSlot } from '../services/api'; // <--- ADD THIS IMPORT
 
 const AdminDashboard = ({ onLogout }) => {
   const navigate = useNavigate();
@@ -12,13 +13,19 @@ const AdminDashboard = ({ onLogout }) => {
     setIsCreateModalOpen(true);
   };
 
-  const handleCreateSlot = async ({ location, type }) => {
-    console.log('Creating slot:', { location, type });
-    return new Promise(resolve => setTimeout(() => {
-      console.log('Slot created (simulated)');
+  // MODIFY THIS FUNCTION
+  const handleCreateSlot = async (slotData) => { // Change parameter to slotData
+    try {
+      
+      await createSlot(slotData); // <--- CALL THE ACTUAL API FUNCTION
+      
       setIsCreateModalOpen(false);
-      resolve();
-    }, 500));
+      // You might want to trigger a refresh of the slot list here if there's one
+      // For now, we'll just close the modal.
+    } catch (error) {
+      console.error('Error creating slot:', error);
+      setError('Failed to create slot. Please check console for details.'); // Display error to user
+    }
   };
 
   return (
