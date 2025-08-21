@@ -105,16 +105,39 @@ const checkOut = async (req, res) => {
 
     const checkOutTime = new Date();
     const checkInTime = new Date(parkingSession.checkInTime);
-    const duration = Math.ceil((checkOutTime - checkInTime) / (1000 * 60)); // Duration in minutes
-    const fee = Math.ceil(duration / 60); // $1 per hour, rounded up
+    const durationMinutes = Math.ceil((checkOutTime - checkInTime) / (1000 * 60)); // Duration in minutes
+
+    // Define hourly rates based on vehicle type
+    let ratePerMinute = 0;
+    const vehicleType = parkingSession.vehicle.type.toLowerCase(); // Ensure type is lowercase for comparison
+
+    if (vehicleType === 'car' || vehicleType === 'suv') {
+      ratePerMinute = 120 / 60; // 2 Taka per minute
+    } else if (vehicleType === 'van' || vehicleType === 'minibus') {
+      ratePerMinute = 180 / 60; // 3 Taka per minute
+    } else if (vehicleType === 'bike') {
+      ratePerMinute = 100 / 60; // 1.666... Taka per minute
+    } else {
+      // Default or error handling for unknown vehicle types
+      ratePerMinute = 0; // Or throw an error
+    }
+
+    const onlineReservationFee = 20;
+    const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
+
+    // Round the calculated fee to 2 decimal places (or nearest integer if preferred)
+    // Since the rates are integers, and durationMinutes is integer, this might not be strictly necessary
+    // unless bike rate is used, which is a float.
+    const finalCalculatedFee = parseFloat(calculatedFee.toFixed(2)); // Round to 2 decimal places
+    console.log('Calculated Fee (checkOut):', finalCalculatedFee); // ADD THIS LINE
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
       where: { id },
       data: {
         checkOutTime,
-        duration,
-        fee,
+        duration: durationMinutes, // Store duration in minutes
+        fee: finalCalculatedFee, // Store the calculated fee
       },
     });
 
@@ -132,8 +155,9 @@ const checkOut = async (req, res) => {
         reservedEnd: parkingSession.slot.bookingEnd,
         checkInTime: parkingSession.checkInTime,
         checkOutTime: checkOutTime,
-        duration: duration,
-        fee: fee,
+        duration: durationMinutes, // Store duration in minutes
+        fee: finalCalculatedFee, // Store the calculated fee
+        paymentStatus: "Not Paid", // Default status
       },
     });
 
@@ -282,16 +306,37 @@ const checkOutBySlot = async (req, res) => {
 
     const checkOutTime = new Date();
     const checkInTime = new Date(parkingSession.checkInTime);
-    const duration = Math.ceil((checkOutTime - checkInTime) / (1000 * 60)); // Duration in minutes
-    const fee = Math.ceil(duration / 60); // $1 per hour, rounded up
+    const durationMinutes = Math.ceil((checkOutTime - checkInTime) / (1000 * 60)); // Duration in minutes
+
+    // Define hourly rates based on vehicle type
+    let ratePerMinute = 0;
+    const vehicleType = parkingSession.vehicle.type.toLowerCase(); // Ensure type is lowercase for comparison
+
+    if (vehicleType === 'car' || vehicleType === 'suv') {
+      ratePerMinute = 120 / 60; // 2 Taka per minute
+    } else if (vehicleType === 'van' || vehicleType === 'minibus') {
+      ratePerMinute = 180 / 60; // 3 Taka per minute
+    } else if (vehicleType === 'bike') {
+      ratePerMinute = 100 / 60; // 1.666... Taka per minute
+    } else {
+      // Default or error handling for unknown vehicle types
+      ratePerMinute = 0; // Or throw an error
+    }
+
+    const onlineReservationFee = 20;
+    const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
+
+    // Round the calculated fee to 2 decimal places
+    const finalCalculatedFee = parseFloat(calculatedFee.toFixed(2));
+    console.log('Calculated Fee (checkOutBySlot):', finalCalculatedFee); // ADD THIS LINE
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
       where: { id: parkingSession.id },
       data: {
         checkOutTime,
-        duration,
-        fee,
+        duration: durationMinutes,
+        fee: finalCalculatedFee,
       },
     });
 
@@ -309,8 +354,9 @@ const checkOutBySlot = async (req, res) => {
         reservedEnd: parkingSession.slot.bookingEnd,
         checkInTime: parkingSession.checkInTime,
         checkOutTime: checkOutTime,
-        duration: duration,
-        fee: fee,
+        duration: durationMinutes,
+        fee: finalCalculatedFee,
+        paymentStatus: "Not Paid",
       },
     });
 

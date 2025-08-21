@@ -1,0 +1,186 @@
+/* Custom styles for PaymentPage (Invoice) */
+.payment-invoice-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
+  max-width: 700px;
+  width: 100%;
+  margin: 2rem auto;
+  border: 1px solid #e2e8f0;
+}
+
+.invoice-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1.5rem;
+}
+
+.invoice-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.invoice-date {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.invoice-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.invoice-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 1.2rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 1rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: right;
+}
+
+.detail-value.capitalize {
+  text-transform: capitalize;
+}
+
+.total-row {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  border-top: 2px solid #3b82f6;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.invoice-footer {
+  text-align: center;
+  padding-top: 2rem;
+}
+
+.pay-now-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3);
+}
+
+.pay-now-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.pay-now-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.payment-status-paid {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #16a34a;
+  padding: 0.75rem 1.5rem;
+  background-color: #dcfce7;
+  border-radius: 0.75rem;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-invoice-card {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .invoice-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.3rem;
+  }
+
+  .detail-label,
+  .detail-value {
+    font-size: 0.9rem;
+  }
+
+  .total-row {
+    font-size: 1.1rem;
+  }
+
+  .pay-now-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .payment-status-paid {
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+  }
+}

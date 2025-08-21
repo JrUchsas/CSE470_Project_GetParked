@@ -13,6 +13,7 @@ import Header from './components/Header';
 
 import EntryExitPage from './pages/EntryExitPage';
 import ReservationHistoryPage from './pages/ReservationHistoryPage';
+import PaymentPage from './pages/PaymentPage';
 
 import './styles/custom-slotmodal.css';
 import './styles/custom-vehicleformmodal.css';
@@ -72,13 +73,14 @@ function App() {
           <Routes>
             <Route path="/auth" element={user ? <Navigate to="/" /> : <AuthPage onLogin={handleLogin} />} />
             <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/auth" />} />
-            <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
+            <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/admin/vehicles" element={user && user.role === 'admin' ? <AdminVehicleViewPage /> : <Navigate to="/" />} />
             <Route path="/admin/manage-slots" element={user && user.role === 'admin' ? <AdminSlotManagementPage /> : <Navigate to="/" />} />
-            <Route path="/admin/manage-users" element={user && user.role === 'admin' ? <AdminUserManagementPage /> : <Navigate to="/" />} />
+            <Route path="/admin/manage-users" element={user && user.role === 'admin' ? <AdminUserManagementPage onLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />
             <Route path="/entry-exit" element={user ? <EntryExitPage /> : <Navigate to="/auth" />} />
             <Route path="/reservation-history" element={user ? <ReservationHistoryPage /> : <Navigate to="/auth" />} />
+            <Route path="/payment/:id" element={user ? <PaymentPage /> : <Navigate to="/auth" />} />
             <Route path="*" element={<Navigate to="/" />} /> {/* Catch-all for unknown routes */}
           </Routes>
         </main>

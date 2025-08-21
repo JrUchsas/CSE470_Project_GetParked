@@ -4,8 +4,12 @@ const {
   getReservationHistoryByUser,
   createReservationHistory,
   getAllReservationHistory,
-  updatePaymentStatus
+    updatePaymentStatus,
+  getReservationHistoryById
 } = require('../controllers/reservationHistoryController');
+
+// Get reservation history by ID
+router.get('/:id', getReservationHistoryById);
 
 // Get reservation history for a specific user
 router.get('/user/:userId', getReservationHistoryByUser);

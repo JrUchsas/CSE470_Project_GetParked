@@ -16,7 +16,7 @@
 .admin-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 0.75rem; /* Add more space between rows */
+  border-spacing: 0 0.75rem;
 }
 
 .admin-table th,

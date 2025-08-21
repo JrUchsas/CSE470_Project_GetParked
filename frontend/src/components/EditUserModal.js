@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/custom-slotmodal.css'; // Import the custom styles
 
 const EditUserModal = ({ user, onClose, onUpdate, actionLoading }) => {
   const [formData, setFormData] = useState({
@@ -38,69 +39,61 @@ const EditUserModal = ({ user, onClose, onUpdate, actionLoading }) => {
           </svg>
         </button>
         <div className="slot-modal-content">
-          <h2 className="text-2xl font-bold mb-4 text-center">Edit User</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                Name
-              </label>
+          <h2 className="slot-modal-title">Edit User</h2>
+          <form onSubmit={handleSubmit} className="slot-modal-form">
+            <div className="form-group">
+              <label htmlFor="name" className="slot-modal-label">Name</label>
               <input
                 type="text"
                 name="name"
                 id="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="slot-modal-input"
                 required
               />
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                Email
-              </label>
+            <div className="form-group">
+              <label htmlFor="email" className="slot-modal-label">Email</label>
               <input
                 type="email"
                 name="email"
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="slot-modal-input"
                 required
               />
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="contact">
-                Contact
-              </label>
+            <div className="form-group">
+              <label htmlFor="contact" className="slot-modal-label">Contact</label>
               <input
                 type="text"
                 name="contact"
                 id="contact"
                 value={formData.contact}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="slot-modal-input"
               />
             </div>
-            <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
-                Role
-              </label>
+            <div className="form-group">
+              <label htmlFor="role" className="slot-modal-label">Role</label>
               <select
                 name="role"
                 id="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="slot-modal-input"
                 required
               >
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="slot-modal-actions">
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="slot-modal-btn primary"
                 disabled={actionLoading}
               >
                 {actionLoading ? 'Updating...' : 'Update User'}
@@ -108,7 +101,7 @@ const EditUserModal = ({ user, onClose, onUpdate, actionLoading }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="slot-modal-btn secondary"
                 disabled={actionLoading}
               >
                 Cancel

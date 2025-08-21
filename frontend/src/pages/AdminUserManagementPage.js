@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Keep useNavigate
 import { getAllUsers, updateUser, deleteUser } from '../services/api';
-import EditUserModal from '../components/EditUserModal'; // Will create this component
+import EditUserModal from '../components/EditUserModal';
 import '../styles/custom-admin.css';
 
-const AdminUserManagementPage = () => {
+// Receive onLogout as a prop
+const AdminUserManagementPage = ({ onLogout }) => {
+  const navigate = useNavigate();
+  // Remove useLocation and direct access to onLogout from location.state
+
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
@@ -31,9 +36,22 @@ const AdminUserManagementPage = () => {
     setActionLoading(true);
     setError('');
     try {
-      await updateUser(updatedUser.id, updatedUser);
+      const response = await updateUser(updatedUser.id, updatedUser);
       setEditingUser(null);
       fetchUsers(); // Refresh list
+
+      // Check if the currently logged-in user's role was changed from admin to user
+      const loggedInUser = JSON.parse(localStorage.getItem('user'));
+      if (loggedInUser && loggedInUser.id === response.id && loggedInUser.role === 'admin' && response.role === 'user') {
+        if (onLogout) { // Use the passed onLogout function
+          onLogout();
+        } else {
+          // Fallback if onLogout is not passed (shouldn't happen if App.js is correct)
+          localStorage.removeItem('user');
+          navigate('/auth');
+        }
+      }
+
     } catch (err) {
       console.error('Error updating user:', err);
       setError(err.response?.data?.message || 'An error occurred while updating user.');

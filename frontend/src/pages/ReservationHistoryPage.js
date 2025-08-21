@@ -1,40 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getReservationHistoryByUser, updatePaymentStatus } from '../services/api';
 import '../styles/custom-styles.css';
 
 const ReservationHistoryPage = () => {
+  const navigate = useNavigate();
   const [reservationHistory, setReservationHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState({});
 
-  const handlePayment = async (historyId) => {
-    // Set loading state for this specific history item
-    setPaymentLoading(prev => ({ ...prev, [historyId]: true }));
-    
-    try {
-      // Update payment status to "Paid"
-      const updatedHistory = await updatePaymentStatus(historyId, "Paid");
-      
-      // Update the reservation history state with the new payment status
-      setReservationHistory(prevHistory =>
-        prevHistory.map(history =>
-          history.id === historyId
-            ? { ...history, paymentStatus: updatedHistory.paymentStatus }
-            : history
-        )
-      );
-      
-      // Show success message or handle as needed
-      console.log("Payment successful for history ID:", historyId);
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      // Handle error (show message to user, etc.)
-    } finally {
-      // Reset loading state
-      setPaymentLoading(prev => ({ ...prev, [historyId]: false }));
-    }
+  const handlePayment = (historyId) => {
+    navigate(`/payment/${historyId}`);
   };
 
   useEffect(() => {
@@ -171,9 +149,6 @@ const ReservationHistoryPage = () => {
                     <span className="status-badge not-paid">
                       Not Paid
                     </span>
-                  )}
-                  {history.fee && (
-                    <p className="history-fee">${history.fee}</p>
                   )}
                 </div>
               </div>

@@ -117,6 +117,11 @@ export const updatePaymentStatus = async (id, paymentStatus) => {
   return data;
 };
 
+export const getReservationHistoryById = async (id) => {
+  const { data } = await API.get(`/reservation-history/${id}`);
+  return data;
+};
+
 // --- USER API CALLS ---
 export const getAllUsers = async () => {
   const { data } = await API.get('/users');

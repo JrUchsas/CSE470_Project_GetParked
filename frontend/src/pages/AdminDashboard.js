@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateSlotModal from '../components/CreateSlotModal';
 import '../styles/custom-admin.css';
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ onLogout }) => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

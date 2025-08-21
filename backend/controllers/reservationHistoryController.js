@@ -109,9 +109,34 @@ const updatePaymentStatus = async (req, res) => {
   }
 };
 
+// Get reservation history by ID
+const getReservationHistoryById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const history = await prisma.reservationHistory.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        slot: true,
+        vehicle: true,
+      },
+    });
+
+    if (history) {
+      res.json(history);
+    } else {
+      res.status(404).json({ message: 'Reservation history not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching reservation history by ID:', error);
+    res.status(500).json({ error: 'Failed to get reservation history by ID' });
+  }
+};
+
 module.exports = {
   getReservationHistoryByUser,
   createReservationHistory,
   getAllReservationHistory,
   updatePaymentStatus,
+  getReservationHistoryById,
 };

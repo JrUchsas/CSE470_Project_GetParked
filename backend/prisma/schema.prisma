@@ -45,7 +45,7 @@ model ParkingSession {
   checkInTime DateTime @default(now())
   checkOutTime DateTime?
   duration    Int? // Duration in minutes
-  fee         Int? // Calculated parking fee
+  fee         Decimal? // Calculated parking fee
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
