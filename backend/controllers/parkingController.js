@@ -17,7 +17,6 @@ const isTimeWithinReservation = (currentTime, bookingStart, bookingEnd) => {
 // Log check-in
 const checkIn = async (req, res) => {
   const { vehicleId, slotId } = req.body;
-  console.log('Check-in request received:', { vehicleId, slotId });
   try {
     const vehicle = await prisma.vehicle.findUnique({
       where: { id: vehicleId },
@@ -58,17 +57,14 @@ const checkIn = async (req, res) => {
       });
     }
 
-    console.log('Creating parking session...');
     const parkingSession = await prisma.parkingSession.create({
       data: {
         vehicle: { connect: { id: vehicleId } },
         slot: { connect: { id: slotId } },
       },
     });
-    console.log('Parking session created:', parkingSession);
 
     // Update slot status to Occupied while preserving reservation details
-    console.log('Updating slot status to Occupied...');
     const updatedSlot = await prisma.slot.update({
       where: { id: slotId },
       data: {
@@ -76,11 +72,9 @@ const checkIn = async (req, res) => {
         // Keep reservedBy, vehicleId, bookingStart, bookingEnd intact
       },
     });
-    console.log('Slot updated:', updatedSlot);
 
     res.status(201).json(parkingSession);
   } catch (error) {
-    console.error('Check-in error:', error);
     res.status(500).json({ error: 'Failed to check-in' });
   }
 };
@@ -127,7 +121,6 @@ const checkOut = async (req, res) => {
 
     // Round to nearest integer since database expects Int
     const finalCalculatedFee = Math.round(calculatedFee);
-    console.log('Calculated Fee (checkOut):', finalCalculatedFee);
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -173,7 +166,6 @@ const checkOut = async (req, res) => {
 
     res.json(updatedParkingSession);
   } catch (error) {
-    console.error('Check-out error:', error);
     res.status(500).json({ error: 'Failed to check-out' });
   }
 };
@@ -182,7 +174,6 @@ const checkOut = async (req, res) => {
 const getParkingSessionBySlot = async (req, res) => {
   const { slotId } = req.params;
   try {
-    console.log('Looking for parking session for slot ID:', slotId);
 
     const parkingSession = await prisma.parkingSession.findFirst({
       where: {
@@ -195,15 +186,12 @@ const getParkingSessionBySlot = async (req, res) => {
       }
     });
 
-    console.log('Found parking session:', parkingSession);
-
     if (!parkingSession) {
       // Let's also check if there are any parking sessions for this slot at all
       const allSessions = await prisma.parkingSession.findMany({
         where: { slotId: slotId },
         include: { vehicle: true, slot: true }
       });
-      console.log('All parking sessions for this slot:', allSessions);
 
       return res.status(404).json({
         error: 'No active parking session found for this slot',
@@ -214,7 +202,6 @@ const getParkingSessionBySlot = async (req, res) => {
 
     res.json(parkingSession);
   } catch (error) {
-    console.error('Error getting parking session by slot:', error);
     res.status(500).json({ error: 'Failed to get parking session', details: error.message });
   }
 };
@@ -247,7 +234,6 @@ const getParkingSessionsByUser = async (req, res) => {
 const checkOutBySlot = async (req, res) => {
   const { slotId } = req.params;
   try {
-    console.log('Checking out by slot ID:', slotId);
 
     // First, let's see all parking sessions (active and inactive)
     const allSessions = await prisma.parkingSession.findMany({
@@ -255,14 +241,12 @@ const checkOutBySlot = async (req, res) => {
       orderBy: { checkInTime: 'desc' },
       take: 5 // Get last 5 sessions
     });
-    console.log('Last 5 parking sessions:', allSessions);
 
     // Now check active sessions with different query approaches
     const allActiveSessions1 = await prisma.parkingSession.findMany({
       where: { checkOutTime: null },
       include: { vehicle: true, slot: true }
     });
-    console.log('Active sessions (checkOutTime: null):', allActiveSessions1);
 
     const allActiveSessions2 = await prisma.parkingSession.findMany({
       where: {
@@ -273,7 +257,6 @@ const checkOutBySlot = async (req, res) => {
       },
       include: { vehicle: true, slot: true }
     });
-    console.log('Active sessions (OR query):', allActiveSessions2);
 
     const allActiveSessions3 = await prisma.parkingSession.findMany({
       where: {
@@ -283,7 +266,6 @@ const checkOutBySlot = async (req, res) => {
       },
       include: { vehicle: true, slot: true }
     });
-    console.log('Active sessions (NOT query):', allActiveSessions3);
 
     // Get all sessions for this specific slot and filter for active ones
     const allSessionsForSlot = await prisma.parkingSession.findMany({
@@ -291,18 +273,15 @@ const checkOutBySlot = async (req, res) => {
       include: { vehicle: true, slot: true },
       orderBy: { checkInTime: 'desc' }
     });
-    console.log('All sessions for this slot:', allSessionsForSlot);
 
     // Find the most recent session without a checkout time
     const parkingSession = allSessionsForSlot.find(session => !session.checkOutTime);
-    console.log('Found active parking session for slot:', parkingSession);
 
     if (!parkingSession) {
       // Check if the slot status is inconsistent (shows Occupied but no active session)
       const slot = await prisma.slot.findUnique({ where: { id: slotId } });
 
       if (slot && slot.status === 'Occupied') {
-        console.log('Data inconsistency detected: Slot shows Occupied but no active session. Fixing...');
 
         // Fix the slot status
         await prisma.slot.update({
@@ -367,7 +346,6 @@ const checkOutBySlot = async (req, res) => {
 
     // Round to nearest integer since database expects Int
     const finalCalculatedFee = Math.round(calculatedFee);
-    console.log('Calculated Fee (checkOutBySlot):', finalCalculatedFee);
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -413,7 +391,6 @@ const checkOutBySlot = async (req, res) => {
 
     res.json(updatedParkingSession);
   } catch (error) {
-    console.error('Check-out by slot error:', error);
     res.status(500).json({ error: 'Failed to check-out', details: error.message });
   }
 };
@@ -450,7 +427,6 @@ const getAllParkingSessions = async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('Error getting all parking sessions:', error);
     res.status(500).json({ error: 'Failed to get parking sessions' });
   }
 };
@@ -458,15 +434,12 @@ const getAllParkingSessions = async (req, res) => {
 // Repair function to fix data inconsistencies
 const repairSlotStatuses = async (req, res) => {
   try {
-    console.log('Starting slot status repair...');
 
     // Get all slots that show as Occupied
     const occupiedSlots = await prisma.slot.findMany({
       where: { status: 'Occupied' },
       include: { vehicle: true }
     });
-
-    console.log(`Found ${occupiedSlots.length} slots marked as Occupied`);
 
     let repairedCount = 0;
 
@@ -481,7 +454,6 @@ const repairSlotStatuses = async (req, res) => {
 
       if (!activeSession) {
         // No active session but slot shows Occupied - fix it
-        console.log(`Repairing slot ${slot.location} (${slot.id})`);
 
         await prisma.slot.update({
           where: { id: slot.id },
@@ -498,8 +470,6 @@ const repairSlotStatuses = async (req, res) => {
       }
     }
 
-    console.log(`Repair completed. Fixed ${repairedCount} slots.`);
-
     res.json({
       message: 'Slot status repair completed',
       totalOccupiedSlots: occupiedSlots.length,
@@ -512,7 +482,6 @@ const repairSlotStatuses = async (req, res) => {
       }))
     });
   } catch (error) {
-    console.error('Error during slot repair:', error);
     res.status(500).json({ error: 'Failed to repair slot statuses' });
   }
 };

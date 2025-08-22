@@ -20,7 +20,6 @@ const getReservationHistoryByUser = async (req, res) => {
     });
     res.json(reservationHistory);
   } catch (error) {
-    console.error('Error fetching reservation history:', error);
     res.status(500).json({ error: 'Failed to get reservation history for user' });
   }
 };
@@ -68,7 +67,6 @@ const createReservationHistory = async (req, res) => {
     });
     res.status(201).json(reservationHistory);
   } catch (error) {
-    console.error('Error creating reservation history:', error);
     res.status(500).json({ error: 'Failed to create reservation history' });
   }
 };
@@ -88,7 +86,6 @@ const getAllReservationHistory = async (req, res) => {
     });
     res.json(reservationHistory);
   } catch (error) {
-    console.error('Error fetching all reservation history:', error);
     res.status(500).json({ error: 'Failed to get reservation history' });
   }
 };
@@ -108,9 +105,7 @@ const updatePaymentStatus = async (req, res) => {
     if (paymentStatus === 'Paid') {
       try {
         const paymentInvoice = await createPaymentInvoice(id);
-        console.log('Payment invoice created:', paymentInvoice.invoiceNumber);
       } catch (invoiceError) {
-        console.error('Error creating payment invoice:', invoiceError);
         // Don't fail the payment status update if invoice creation fails
         // The payment is still successful, just log the error
       }
@@ -118,7 +113,6 @@ const updatePaymentStatus = async (req, res) => {
 
     res.json(updatedHistory);
   } catch (error) {
-    console.error('Error updating payment status:', error);
     res.status(500).json({ error: 'Failed to update payment status' });
   }
 };
@@ -142,7 +136,6 @@ const getReservationHistoryById = async (req, res) => {
       res.status(404).json({ message: 'Reservation history not found' });
     }
   } catch (error) {
-    console.error('Error fetching reservation history by ID:', error);
     res.status(500).json({ error: 'Failed to get reservation history by ID' });
   }
 };
