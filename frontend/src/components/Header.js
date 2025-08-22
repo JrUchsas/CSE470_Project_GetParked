@@ -45,7 +45,7 @@ const Header = ({ user, onLogout }) => {
           <div className="logo-icon">🅿️</div>
           <div className="logo-content">
             <h1 className="logo-title">GetParked</h1>
-            <p className="logo-subtitle">Smart Parking Solution</p>
+            <p className="logo-subtitle">Smart Parking System</p>
           </div>
         </div>
 
