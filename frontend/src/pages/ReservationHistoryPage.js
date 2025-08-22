@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getReservationHistoryByUser, updatePaymentStatus } from '../services/api';
+import { getReservationHistoryByUser } from '../services/api';
 import '../styles/custom-styles.css';
 
 const ReservationHistoryPage = () => {
@@ -9,7 +9,6 @@ const ReservationHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
-  const [paymentLoading, setPaymentLoading] = useState({});
 
   const handlePayment = (historyId) => {
     navigate(`/payment/${historyId}`);
@@ -207,9 +206,8 @@ const ReservationHistoryPage = () => {
                   <button
                     className="pay-now-button"
                     onClick={() => handlePayment(history.id)}
-                    disabled={paymentLoading[history.id]}
                   >
-                    {paymentLoading[history.id] ? "Processing..." : "Pay Now"}
+                    Pay Now
                   </button>
                 ) : (
                   <button

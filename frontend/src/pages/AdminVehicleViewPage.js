@@ -6,7 +6,6 @@ import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 const AdminVehicleViewPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [editingVehicle, setEditingVehicle] = useState(null); // Added state
-  const [actionLoading, setActionLoading] = useState(false); // Added state
 
   const fetchAllVehicles = async () => {
     try {
@@ -28,15 +27,12 @@ const AdminVehicleViewPage = () => {
 
   const handleDeleteVehicle = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
-      setActionLoading(true);
       try {
         await deleteVehicle(id);
         fetchAllVehicles(); // Refresh list
       } catch (err) {
         console.error('Could not delete vehicle:', err);
         alert('Failed to delete vehicle.');
-      } finally {
-        setActionLoading(false);
       }
     }
   };

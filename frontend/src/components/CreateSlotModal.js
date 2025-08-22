@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'; // Import useEffect
 import { getVehicleIcon } from './VehicleIcons';
-import { createSlot, getSlots } from '../services/api'; // Import getSlots
+import { getSlots } from '../services/api'; // Import getSlots
 
 // Icon component for better visual appeal
 const PlusIcon = () => (
