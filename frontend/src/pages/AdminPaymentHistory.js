@@ -249,23 +249,21 @@ const AdminPaymentHistory = () => {
 
       {/* Invoice Modal */}
       {selectedInvoice && (
-        <div className="slot-modal-overlay"> {/* Changed class */}
-          <div className="slot-modal-card" onClick={(e) => e.stopPropagation()}> {/* Changed class */}
-            <button onClick={closeInvoiceModal} className="slot-modal-close">×</button> {/* Changed class */}
-            <div className="slot-modal-header"> {/* Changed class */}
-              <div className="slot-modal-icon-wrapper"> {/* Added div */}
-                <InvoiceIcon /> {/* Added icon */}
+        <div className="modal-overlay">
+          <div className="invoice-modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <InvoiceIcon />
+                <h2>Payment Invoice</h2>
               </div>
-              <h3 className="slot-modal-title">Payment Invoice</h3> {/* Changed class */}
-              <p className="slot-modal-subtitle">Details of the selected payment</p> {/* Added subtitle */}
+              <button onClick={closeInvoiceModal} className="close-button">×</button>
             </div>
-            <div className="slot-modal-form"> {/* Changed class */}
+            <div className="modal-content">
               <div className="invoice-details">
                 <div className="invoice-header-info">
                   <h3>Invoice #{selectedInvoice.invoiceNumber}</h3>
                   <p>Payment Date: {formatDateTime(selectedInvoice.paymentDate)}</p>
                 </div>
-
                 <div className="invoice-section">
                   <h4>User Details</h4>
                   <p><strong>Name:</strong> {selectedInvoice.userName}</p>
@@ -274,14 +272,12 @@ const AdminPaymentHistory = () => {
                     <p><strong>Contact:</strong> {selectedInvoice.userContact}</p>
                   )}
                 </div>
-
                 <div className="invoice-section">
                   <h4>Vehicle Details</h4>
                   <p><strong>License Plate:</strong> {selectedInvoice.vehiclePlate}</p>
                   <p><strong>Model:</strong> {selectedInvoice.vehicleModel}</p>
-                  <p><strong>Type:</strong> {formatVehicleType(selectedInvoice.vehicleType)}</p> {/* Used formatVehicleType */}
+                  <p><strong>Type:</strong> {formatVehicleType(selectedInvoice.vehicleType)}</p>
                 </div>
-
                 <div className="invoice-section">
                   <h4>Parking Details</h4>
                   <p><strong>Slot Location:</strong> {selectedInvoice.slotLocation}</p>
@@ -289,7 +285,6 @@ const AdminPaymentHistory = () => {
                   <p><strong>Check-out:</strong> {formatDateTime(selectedInvoice.checkOutTime)}</p>
                   <p><strong>Duration:</strong> {formatDuration(selectedInvoice.duration)}</p>
                 </div>
-
                 <div className="invoice-section">
                   <h4>Payment Breakdown</h4>
                   <div className="fee-breakdown">
@@ -307,21 +302,20 @@ const AdminPaymentHistory = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="invoice-section">
                   <h4>Payment Information</h4>
                   <p><strong>Payment Method:</strong> {selectedInvoice.paymentMethod}</p>
                   <p><strong>Payment Status:</strong> <span className="status-paid">{selectedInvoice.paymentStatus}</span></p>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button
-                  className="download-invoice-button"
-                  onClick={() => alert(`Admin: Downloading invoice for ${selectedInvoice.id}`)} // Placeholder
-                >
-                  Download Invoice
-                </button>
-              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="download-invoice-button"
+                onClick={() => alert(`Admin: Downloading invoice for ${selectedInvoice.id}`)}
+              >
+                Download Invoice
+              </button>
             </div>
           </div>
         </div>
