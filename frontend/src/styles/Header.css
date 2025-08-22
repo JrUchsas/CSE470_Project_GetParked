@@ -166,16 +166,19 @@
 
 .user-details {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.25rem;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.user-name-wrapper {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .user-name {
   font-weight: 600;
   color: #1e293b;
   font-size: 0.875rem;
-  white-space: nowrap;
 }
 
 .user-role {

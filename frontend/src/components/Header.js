@@ -75,7 +75,9 @@ const Header = ({ user, onLogout }) => {
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="user-details">
-                <span className="user-name">{user.name}</span>
+                <div className="user-name-wrapper">
+                  <span className="user-name">{user.name}</span>
+                </div>
                 <span className="user-role">{user.role}</span>
               </div>
             </div>
