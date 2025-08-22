@@ -249,16 +249,24 @@ const AdminPaymentHistory = () => {
 
       {/* Invoice Modal */}
       {selectedInvoice && (
-        <div className="modal-overlay">
-          <div className="invoice-modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <InvoiceIcon />
-                <h2>Payment Invoice</h2>
+        <div className="slot-modal-overlay" onClick={closeInvoiceModal}>
+          <div className="slot-modal-card" onClick={e => e.stopPropagation()}>
+            <button onClick={closeInvoiceModal} className="slot-modal-close" aria-label="Close modal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="slot-modal-content">
+              {/* Header Section */}
+              <div className="slot-modal-header">
+                <div className="slot-modal-icon-wrapper" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', boxShadow: '0 8px 16px rgba(59,130,246,0.2)' }}>
+                  <InvoiceIcon />
+                </div>
+                <h3 className="slot-modal-title">Payment Invoice</h3>
+                <p className="slot-modal-subtitle">Details of the selected payment</p>
               </div>
-              <button onClick={closeInvoiceModal} className="close-button">×</button>
-            </div>
-            <div className="modal-content">
+              {/* Invoice Details Section */}
               <div className="invoice-details">
                 <div className="invoice-header-info">
                   <h3>Invoice #{selectedInvoice.invoiceNumber}</h3>
@@ -308,14 +316,15 @@ const AdminPaymentHistory = () => {
                   <p><strong>Payment Status:</strong> <span className="status-paid">{selectedInvoice.paymentStatus}</span></p>
                 </div>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="download-invoice-button"
-                onClick={() => alert(`Admin: Downloading invoice for ${selectedInvoice.id}`)}
-              >
-                Download Invoice
-              </button>
+              {/* Action Buttons */}
+              <div className="slot-modal-actions" style={{ marginTop: '2rem' }}>
+                <button
+                  className="slot-modal-btn primary"
+                  onClick={() => alert(`Admin: Downloading invoice for ${selectedInvoice.id}`)}
+                >
+                  Download Invoice
+                </button>
+              </div>
             </div>
           </div>
         </div>
