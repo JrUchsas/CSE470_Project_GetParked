@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getAllPaymentInvoices, getPaymentStatistics } from '../services/api';
 import '../styles/custom-admin.css';
-import { getVehicleIcon } from '../components/VehicleIcons'; // Import getVehicleIcon
+import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 
-// Icon component for invoice modal header
 const InvoiceIcon = () => (
   <svg className="slot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -13,30 +12,6 @@ const InvoiceIcon = () => (
     <polyline points="10 9 9 9 8 9"></polyline>
   </svg>
 );
-
-const formatVehicleType = (type) => {
-  let formattedType = type;
-  switch (type) {
-    case 'car':
-      formattedType = 'Car';
-      break;
-    case 'bike':
-      formattedType = 'Bike';
-      break;
-    case 'suv':
-      formattedType = 'SUV';
-      break;
-    case 'van':
-      formattedType = 'Van';
-      break;
-    case 'minibus':
-      formattedType = 'Minibus';
-      break;
-    default:
-      formattedType = type.charAt(0).toUpperCase() + type.slice(1);
-  }
-  return formattedType;
-};
 
 const AdminPaymentHistory = () => {
   const [paymentInvoices, setPaymentInvoices] = useState([]);
@@ -61,7 +36,6 @@ const AdminPaymentHistory = () => {
       setStatistics(statsData);
       setError('');
     } catch (err) {
-      console.error('Error fetching payment data:', err);
       setError('Failed to load payment data. Please try again.');
     } finally {
       setLoading(false);
@@ -104,9 +78,9 @@ const AdminPaymentHistory = () => {
 
   if (loading) {
     return (
-      <div className="modern-homepage-container"> {/* Changed class */}
+      <div className="admin-dashboard-container">
         <div className="loading-container">
-          <div className="loading-spinner-modern"></div> {/* Changed class */}
+          <div className="loading-spinner-modern"></div>
           <span className="loading-text">Loading payment history...</span>
         </div>
       </div>
@@ -115,7 +89,7 @@ const AdminPaymentHistory = () => {
 
   if (error) {
     return (
-      <div className="modern-homepage-container"> {/* Changed class */}
+      <div className="admin-dashboard-container">
         <div className="error-container">
           <div className="error-icon">⚠️</div>
           <h3 className="error-title">Error</h3>
@@ -129,14 +103,14 @@ const AdminPaymentHistory = () => {
   }
 
   return (
-    <div className="modern-homepage-container"> {/* Changed class */}
-      <div className="homepage-header"> {/* Changed class */}
-        <div className="header-content"> {/* Added div */}
-          <h1 className="homepage-title"> {/* Changed class */}
-            <span className="title-icon">🧾</span> {/* Changed class and icon */}
+    <div className="admin-dashboard-container">
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">🧾</span>
             Payment History
           </h1>
-          <p className="homepage-subtitle"> {/* Changed class */}
+          <p className="homepage-subtitle">
             View and manage payment invoices
           </p>
         </div>
@@ -179,7 +153,7 @@ const AdminPaymentHistory = () => {
         <div className="search-container">
           <input
             type="text"
-            placeholder="Search by invoice number, user name, vehicle plate, or slot location..."
+            placeholder="Search by invoice, user, vehicle, or slot..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -188,63 +162,66 @@ const AdminPaymentHistory = () => {
       </div>
 
       {/* Payment Invoices Table */}
-      <div className="admin-table-container">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Invoice #</th>
-              <th>User</th>
-              <th>Vehicle</th>
-              <th>Slot</th>
-              <th>Duration</th>
-              <th>Amount</th>
-              <th>Payment Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredInvoices.length === 0 ? (
+      <div className="admin-card">
+        <div className="overflow-x-auto w-full">
+          <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
+            <thead>
               <tr>
-                <td colSpan="8" className="no-data">
-                  {searchTerm ? 'No invoices match your search.' : 'No payment invoices found.'}
-                </td>
+                <th>Invoice #</th>
+                <th>User</th>
+                <th>Vehicle</th>
+                <th>Slot</th>
+                <th>Duration</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Actions</th>
               </tr>
-            ) : (
-              filteredInvoices.map((invoice) => (
-                <tr key={invoice.id}>
-                  <td className="invoice-number">{invoice.invoiceNumber}</td>
-                  <td>
-                    <div className="user-info">
-                      <div className="user-name">{invoice.userName}</div>
-                      <div className="user-email">{invoice.userEmail}</div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="vehicle-info">
-                      <div className="vehicle-plate">{invoice.vehiclePlate}</div>
-                      <div className="vehicle-details">
-                        {getVehicleIcon(invoice.vehicleType, 'w-4 h-4 mr-1')} {/* Added icon */}
-                        {formatVehicleType(invoice.vehicleType)} {/* Used formatVehicleType */}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="slot-location">{invoice.slotLocation}</td>
-                  <td className="duration">{formatDuration(invoice.duration)}</td>
-                  <td className="amount">{invoice.totalAmount} Taka</td>
-                  <td className="payment-date">{formatDateTime(invoice.paymentDate)}</td>
-                  <td>
-                    <button
-                      onClick={() => handleViewInvoice(invoice)}
-                      className="action-button view-button"
-                    >
-                      View Invoice
-                    </button>
+            </thead>
+            <tbody>
+              {filteredInvoices.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="no-data">
+                    {searchTerm ? 'No invoices match your search.' : 'No payment invoices found.'}
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredInvoices.map((invoice) => (
+                  <tr key={invoice.id}>
+                    <td className="font-semibold text-gray-800">{invoice.invoiceNumber}</td>
+                    <td>
+                      <div className="flex flex-col items-center">
+                        <div className="font-medium text-gray-800">{invoice.userName}</div>
+                        <div className="text-sm text-gray-500">{invoice.userEmail}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex flex-col items-center">
+                        <div className="font-medium text-gray-800">{invoice.vehiclePlate}</div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          {getVehicleIcon(invoice.vehicleType, 'w-4 h-4 mr-1')}
+                          {formatVehicleType(invoice.vehicleType)}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="font-medium text-gray-800">{invoice.slotLocation}</td>
+                    <td className="text-sm text-gray-600">{formatDuration(invoice.duration)}</td>
+                    <td className="font-semibold text-green-600">{invoice.totalAmount} Taka</td>
+                    <td className="text-sm text-gray-600">{formatDateTime(invoice.paymentDate)}</td>
+                    <td>
+                      <button
+                        onClick={() => handleViewInvoice(invoice)}
+                        className="slot-modal-btn primary"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', width: 'auto' }}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Invoice Modal */}
@@ -258,7 +235,6 @@ const AdminPaymentHistory = () => {
               </svg>
             </button>
             <div className="slot-modal-content">
-              {/* Header Section */}
               <div className="slot-modal-header">
                 <div className="slot-modal-icon-wrapper" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', boxShadow: '0 8px 16px rgba(59,130,246,0.2)' }}>
                   <InvoiceIcon />
@@ -266,7 +242,6 @@ const AdminPaymentHistory = () => {
                 <h3 className="slot-modal-title">Payment Invoice</h3>
                 <p className="slot-modal-subtitle">Details of the selected payment</p>
               </div>
-              {/* Invoice Details Section */}
               <div className="invoice-details">
                 <div className="invoice-header-info">
                   <h3>Invoice #{selectedInvoice.invoiceNumber}</h3>
@@ -316,7 +291,6 @@ const AdminPaymentHistory = () => {
                   <p><strong>Payment Status:</strong> <span className="status-paid">{selectedInvoice.paymentStatus}</span></p>
                 </div>
               </div>
-              {/* Action Buttons */}
               <div className="slot-modal-actions" style={{ marginTop: '2rem' }}>
                 <button
                   className="slot-modal-btn primary"
