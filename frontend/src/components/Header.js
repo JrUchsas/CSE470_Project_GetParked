@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GetParkedLogo from '../assets/GetParked Logo.jpg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Header.css';
 
@@ -42,7 +43,9 @@ const Header = ({ user, onLogout }) => {
       <div className="header-container">
         {/* Logo Section */}
         <div className="logo-section" onClick={() => navigate('/')}>
-          <div className="logo-icon">🅿️</div>
+          <div className="logo-icon">
+            <img src={GetParkedLogo} alt="GetParked Logo" className="h-8 w-8" />
+          </div>
           <div className="logo-content">
             <h1 className="logo-title">GetParked</h1>
             <p className="logo-subtitle">Smart Parking System</p>
