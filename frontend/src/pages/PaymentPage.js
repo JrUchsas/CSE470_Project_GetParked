@@ -19,10 +19,7 @@ const PaymentPage = () => {
         const data = await getReservationHistoryById(id);
         setHistory(data);
         setError('');
-        console.log('Frontend: History data received:', data);
-        console.log('Frontend: History fee received:', data?.fee);
       } catch (err) {
-        console.error('Error fetching reservation history for payment:', err);
         setError('Failed to load payment details. Please try again.');
       } finally {
         setLoading(false);
@@ -40,7 +37,6 @@ const PaymentPage = () => {
       alert('Payment successful! Redirecting to reservation history.');
       navigate('/reservation-history'); // Redirect back to history page
     } catch (err) {
-      console.error('Error processing payment:', err);
       setError('Failed to process payment. Please try again.');
     } finally {
       setPaymentProcessing(false);
@@ -123,12 +119,6 @@ const PaymentPage = () => {
   const ratePerMinute = hourlyRate / 60;
   const calculatedParkingFee = Math.ceil(ratePerMinute * durationMinutes);
   const calculatedTotalFee = calculatedParkingFee + onlineReservationFee;
-
-  console.log('Frontend: totalAmountDue (history.fee):', totalAmountDue);
-  console.log('Frontend: parkingFeeDisplay:', parkingFeeDisplay);
-  console.log('Frontend: calculatedTotalFee:', calculatedTotalFee);
-  console.log('Frontend: duration in minutes:', durationMinutes);
-  console.log('Frontend: hourlyRate:', hourlyRate);
 
 
   return (

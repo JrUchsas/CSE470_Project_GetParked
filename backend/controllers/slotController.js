@@ -82,7 +82,6 @@ const updateSlot = async (req, res) => {
 // @access  Private/Admin
 const deleteSlot = async (req, res) => {
   const { id } = req.params;
-  console.log('Attempting to delete slot with ID:', id);
   try {
     // First, delete all ParkingSession records associated with this slot
     await prisma.parkingSession.deleteMany({
@@ -92,10 +91,8 @@ const deleteSlot = async (req, res) => {
     const deletedSlot = await prisma.slot.delete({
       where: { id },
     });
-    console.log('Prisma delete operation successful:', deletedSlot);
     res.json({ message: 'Slot removed' });
   } catch (error) {
-    console.error('Prisma delete operation failed:', error);
     res.status(404).json({ message: 'Slot not found', error: error.message });
   }
 };

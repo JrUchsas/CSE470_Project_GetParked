@@ -16,32 +16,25 @@ const ReservationHistoryPage = () => {
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
-    console.log('Raw user data from localStorage:', loggedInUser);
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
-      console.log('Parsed user data:', foundUser);
       setUser(foundUser);
     } else {
-      console.log('No user found in localStorage');
     }
   }, []);
 
   useEffect(() => {
     const fetchReservationHistory = async () => {
       if (!user || !user.id) {
-        console.log('No user found, skipping history fetch');
         return;
       }
 
-      console.log('Fetching reservation history for user:', user.id);
       setLoading(true);
       setError('');
       try {
         const history = await getReservationHistoryByUser(user.id);
-        console.log('Received history data:', history);
         setReservationHistory(history || []);
       } catch (err) {
-        console.error('Error fetching reservation history:', err);
         setError(`Failed to load reservation history: ${err.message}`);
       } finally {
         setLoading(false);
