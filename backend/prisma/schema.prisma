@@ -15,10 +15,13 @@ model User {
   contact   String?  // Optional contact number
   password  String
   role      String   @default("user") // 'user' or 'admin'
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
   createdAt DateTime @default(now())
   slots     Slot[]   @relation("Slot_user")
   vehicles  Vehicle[] @relation("User_vehicles")
   reservationHistory ReservationHistory[]
+  feedback           Feedback[]
 }
 
 model Vehicle {
@@ -86,8 +89,11 @@ model ReservationHistory {
   duration        Int      // Duration in minutes
   fee             Int?     // Calculated parking fee
   paymentStatus   String   @default("Not Paid") // Payment status: "Paid" or "Not Paid"
+  violationType   String?  // e.g., 'Overstay', 'Improper Parking'
+  penaltyFee      Int?     // Penalty fee in addition to parking fee
   createdAt       DateTime @default(now())
   paymentInvoice  PaymentInvoice? // Link to payment invoice when paid
+  feedback        Feedback? // Link to feedback
 }
 
 model PaymentInvoice {
@@ -124,4 +130,15 @@ model PaymentInvoice {
   paymentStatus         String   @default("Paid")
 
   createdAt             DateTime @default(now())
+}
+
+model Feedback {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating               Int
+  comment              String?
+  userId               String   @db.ObjectId
+  user                 User     @relation(fields: [userId], references: [id])
+  reservationHistoryId String   @unique @db.ObjectId
+  reservationHistory   ReservationHistory @relation(fields: [reservationHistoryId], references: [id])
+  createdAt            DateTime @default(now())
 }

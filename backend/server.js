@@ -8,6 +8,9 @@ const parkingRoutes = require('./routes/parkingRoutes');
 const reservationHistoryRoutes = require('./routes/reservationHistoryRoutes');
 const userRoutes = require('./routes/userRoutes');
 const paymentInvoiceRoutes = require('./routes/paymentInvoiceRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const { startScheduler } = require('./services/scheduler');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
 dotenv.config();
 
@@ -28,6 +31,10 @@ app.use('/api/parking', parkingRoutes);
 app.use('/api/reservation-history', reservationHistoryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/payment-invoices', paymentInvoiceRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);
+
+startScheduler();

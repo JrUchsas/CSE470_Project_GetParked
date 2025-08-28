@@ -1,10 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSlots, updateSlot, checkIn } from '../services/api';
+import { getSlots, updateSlot, checkIn, getReservationHistoryByUser } from '../services/api';
 import SlotModal from '../components/SlotModal';
 import CheckInConfirmationModal from '../components/CheckInConfirmationModal';
 import ErrorModal from '../components/ErrorModal';
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
+
+const ViolationAlertBanner = ({ onNavigate }) => (
+  <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md shadow-md" role="alert">
+    <div className="flex">
+      <div className="py-1"><span className="font-bold text-xl mr-3">⚠️</span></div>
+      <div>
+        <p className="font-bold">Outstanding Violation</p>
+        <p className="text-sm">You have an unpaid penalty. Please go to your reservation history to resolve it.</p>
+      </div>
+      <div className="ml-auto pl-3">
+        <button onClick={onNavigate} className="bg-red-600 text-white font-bold py-1 px-3 rounded hover:bg-red-700">View History</button>
+      </div>
+    </div>
+  </div>
+);
 
 
 const HomePage = ({ user }) => {
@@ -15,6 +30,25 @@ const HomePage = ({ user }) => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [checkInSlot, setCheckInSlot] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [hasViolation, setHasViolation] = useState(false);
+
+  useEffect(() => {
+    const checkViolations = async () => {
+      if (user?.id) {
+        try {
+          const history = await getReservationHistoryByUser(user.id);
+          const unpaidViolation = history.some(
+            (h) => h.violationType && h.paymentStatus !== 'Paid'
+          );
+          setHasViolation(unpaidViolation);
+        } catch (err) {
+          console.error("Failed to check for violations", err);
+        }
+      }
+    };
+
+    checkViolations();
+  }, [user]);
 
   useEffect(() => {
     const fetchSlots = async () => {
@@ -138,6 +172,8 @@ const HomePage = ({ user }) => {
           </p>
         </div>
       </div>
+
+      {hasViolation && <ViolationAlertBanner onNavigate={() => navigate('/reservation-history')} />}
 
       {/* Statistics Cards */}
       <div className="stats-grid">

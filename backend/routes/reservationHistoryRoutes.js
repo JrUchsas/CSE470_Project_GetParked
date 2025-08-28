@@ -5,8 +5,10 @@ const {
   createReservationHistory,
   getAllReservationHistory,
     updatePaymentStatus,
-  getReservationHistoryById
+  getReservationHistoryById,
+  reportViolation
 } = require('../controllers/reservationHistoryController');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
 // Get reservation history by ID
 router.get('/:id', getReservationHistoryById);
@@ -22,5 +24,8 @@ router.get('/', getAllReservationHistory);
 
 // Update payment status for a reservation history entry
 router.put('/:id/payment', updatePaymentStatus);
+
+// Report a violation for a reservation
+router.post('/:id/violation', protect, authorize('admin'), reportViolation);
 
 module.exports = router;

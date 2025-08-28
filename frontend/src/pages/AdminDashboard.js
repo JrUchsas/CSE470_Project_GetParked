@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateSlotModal from '../components/CreateSlotModal';
+import AdminStatistics from '../components/AdminStatistics';
 import '../styles/custom-admin.css';
 import { createSlot } from '../services/api'; // <--- ADD THIS IMPORT
 
@@ -30,6 +31,8 @@ const AdminDashboard = ({ onLogout }) => {
 
   return (
     <div className="admin-dashboard-container">
+      <AdminStatistics />
+
       {error && (
         <div className="md:col-span-3 mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
           {error}
@@ -51,6 +54,13 @@ const AdminDashboard = ({ onLogout }) => {
           <p className="tile-description">View, edit, or delete parking slots.</p>
         </div>
 
+        {/* Manage Reservations Tile */}
+        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/manage-reservations')}>
+          <span className="tile-icon">📅</span>
+          <h3 className="tile-title">Manage Reservations</h3>
+          <p className="tile-description">View all reservations and report violations.</p>
+        </div>
+
         {/* Manage Users Tile */}
         <div className="admin-dashboard-tile" onClick={() => navigate('/admin/manage-users')}>
           <span className="tile-icon">👥</span>
@@ -63,6 +73,13 @@ const AdminDashboard = ({ onLogout }) => {
           <span className="tile-icon">🚗</span>
           <h3 className="tile-title">Manage Registered Vehicles</h3>
           <p className="tile-description">View and manage all registered vehicles.</p>
+        </div>
+
+        {/* User Feedback Tile */}
+        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/feedback')}>
+          <span className="tile-icon">⭐</span>
+          <h3 className="tile-title">User Feedback</h3>
+          <p className="tile-description">View and analyze user ratings and comments.</p>
         </div>
 
         {/* Payment History Tile */}

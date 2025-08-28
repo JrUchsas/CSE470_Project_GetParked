@@ -13,6 +13,7 @@ const getReservationHistoryByUser = async (req, res) => {
       include: {
         slot: true,
         vehicle: true,
+        feedback: true,
       },
       orderBy: {
         checkOutTime: 'desc', // Order by most recent
@@ -140,10 +141,39 @@ const getReservationHistoryById = async (req, res) => {
   }
 };
 
+// @desc    Report a violation for a reservation
+// @route   POST /api/reservation-history/:id/violation
+// @access  Private/Admin
+const reportViolation = async (req, res) => {
+  const { id } = req.params;
+  const { violationType, penaltyFee } = req.body;
+
+  if (!violationType || !penaltyFee) {
+    return res.status(400).json({ message: 'Violation type and penalty fee are required.' });
+  }
+
+  try {
+    const updatedHistory = await prisma.reservationHistory.update({
+      where: { id: id },
+      data: {
+        violationType,
+        penaltyFee,
+        paymentStatus: 'Not Paid', // Ensure payment status reflects the new penalty
+      },
+    });
+
+    res.json(updatedHistory);
+  } catch (error) {
+    console.error('Error reporting violation:', error);
+    res.status(500).json({ message: 'Failed to report violation.' });
+  }
+};
+
 module.exports = {
   getReservationHistoryByUser,
   createReservationHistory,
   getAllReservationHistory,
   updatePaymentStatus,
   getReservationHistoryById,
+  reportViolation,
 };

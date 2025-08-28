@@ -9,12 +9,16 @@ import AdminVehicleViewPage from './pages/AdminVehicleViewPage';
 import AdminSlotManagementPage from './pages/AdminSlotManagementPage';
 import AdminUserManagementPage from './pages/AdminUserManagementPage';
 import AdminPaymentHistory from './pages/AdminPaymentHistory';
+import AdminReservationManagement from './pages/AdminReservationManagement';
 import VehiclePage from './pages/VehiclePage';
 import Header from './components/Header';
 
 import EntryExitPage from './pages/EntryExitPage';
 import ReservationHistoryPage from './pages/ReservationHistoryPage';
 import PaymentPage from './pages/PaymentPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import AdminFeedback from './pages/AdminFeedback';
 
 import './styles/custom-slotmodal.css';
 import './styles/custom-vehicleformmodal.css';
@@ -73,12 +77,16 @@ function App() {
         <main className="w-full p-4 md:p-8">
           <Routes>
             <Route path="/auth" element={user ? <Navigate to="/" /> : <AuthPage onLogin={handleLogin} />} />
+            <Route path="/forgot-password" element={user ? <Navigate to="/" /> : <ForgotPassword />} />
+            <Route path="/reset-password/:token" element={user ? <Navigate to="/" /> : <ResetPassword />} />
             <Route path="/" element={user ? <HomePage user={user} /> : <Navigate to="/auth" />} />
             <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/admin/vehicles" element={user && user.role === 'admin' ? <AdminVehicleViewPage /> : <Navigate to="/" />} />
             <Route path="/admin/manage-slots" element={user && user.role === 'admin' ? <AdminSlotManagementPage /> : <Navigate to="/" />} />
             <Route path="/admin/manage-users" element={user && user.role === 'admin' ? <AdminUserManagementPage onLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/admin/payment-history" element={user && user.role === 'admin' ? <AdminPaymentHistory /> : <Navigate to="/" />} />
+            <Route path="/admin/manage-reservations" element={user && user.role === 'admin' ? <AdminReservationManagement /> : <Navigate to="/" />} />
+            <Route path="/admin/feedback" element={user && user.role === 'admin' ? <AdminFeedback /> : <Navigate to="/" />} />
             <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />
             <Route path="/entry-exit" element={user ? <EntryExitPage /> : <Navigate to="/auth" />} />
             <Route path="/reservation-history" element={user ? <ReservationHistoryPage /> : <Navigate to="/auth" />} />

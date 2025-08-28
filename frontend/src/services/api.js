@@ -168,3 +168,35 @@ export const deleteUser = async (id) => {
   const { data } = await API.delete(`/users/${id}`);
   return data;
 };
+
+// --- ADMIN API CALLS ---
+export const getAdminStatistics = async () => {
+  const { data } = await API.get('/admin/statistics');
+  return data;
+};
+
+export const reportViolation = async (id, violationData) => {
+  const { data } = await API.post(`/reservation-history/${id}/violation`, violationData);
+  return data;
+};
+
+export const forgotPassword = async (email) => {
+  const { data } = await API.post('/auth/forgot-password', { email });
+  return data;
+};
+
+export const resetPassword = async (token, password) => {
+  const { data } = await API.post(`/auth/reset-password/${token}`, { password });
+  return data;
+};
+
+// --- FEEDBACK API CALLS ---
+export const leaveFeedback = async (feedbackData) => {
+  const { data } = await API.post('/feedback', feedbackData);
+  return data;
+};
+
+export const getAllFeedback = async () => {
+  const { data } = await API.get('/feedback');
+  return data;
+};

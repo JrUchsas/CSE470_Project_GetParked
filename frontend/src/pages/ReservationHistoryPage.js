@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getReservationHistoryByUser } from '../services/api';
+import { getReservationHistoryByUser, leaveFeedback } from '../services/api';
+import FeedbackModal from '../components/FeedbackModal';
 import '../styles/custom-styles.css';
 
 const ReservationHistoryPage = () => {
@@ -9,9 +10,42 @@ const ReservationHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [selectedHistory, setSelectedHistory] = useState(null);
 
   const handlePayment = (historyId) => {
     navigate(`/payment/${historyId}`);
+  };
+
+  const handleFeedbackClick = (history) => {
+    setSelectedHistory(history);
+    setIsFeedbackModalOpen(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setIsFeedbackModalOpen(false);
+    setSelectedHistory(null);
+  };
+
+  const handleFeedbackSubmit = async (feedbackData) => {
+    await leaveFeedback(feedbackData);
+    // Refresh the history to show that feedback has been submitted
+    const fetchReservationHistory = async () => {
+      if (!user || !user.id) {
+        return;
+      }
+      setLoading(true);
+      setError('');
+      try {
+        const history = await getReservationHistoryByUser(user.id);
+        setReservationHistory(history || []);
+      } catch (err) {
+        setError(`Failed to load reservation history: ${err.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReservationHistory();
   };
 
   useEffect(() => {
@@ -194,7 +228,27 @@ const ReservationHistoryPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="history-card-footer">
+
+              {history.violationType && (
+                <div className="violation-section bg-red-50 border-l-4 border-red-500 p-4 my-4 rounded">
+                  <h4 className="section-subtitle text-red-800 font-bold flex items-center">
+                    <span className="mr-2">⚠️</span>
+                    Violation Reported
+                  </h4>
+                  <div className="detail-grid mt-2">
+                    <div className="detail-item">
+                      <span className="detail-label text-red-700">Type</span>
+                      <span className="detail-value font-semibold">{history.violationType}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-label text-red-700">Penalty Fee</span>
+                      <span className="detail-value font-semibold">${history.penaltyFee}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="history-card-footer flex justify-end space-x-2">
                 {history.paymentStatus !== "Paid" && history.fee ? (
                   <button
                     className="pay-now-button"
@@ -203,17 +257,37 @@ const ReservationHistoryPage = () => {
                     Pay Now
                   </button>
                 ) : (
-                  <button
-                    className="download-invoice-button"
-                    onClick={() => alert(`Downloading invoice for ${history.id}`)} // Placeholder
-                  >
-                    Download Invoice
-                  </button>
+                  <>
+                    {history.paymentStatus === 'Paid' && !history.feedback && (
+                      <button
+                        className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+                        onClick={() => handleFeedbackClick(history)}
+                      >
+                        Leave Feedback
+                      </button>
+                    )}
+                    {history.paymentStatus === 'Paid' && (
+                      <button
+                        className="download-invoice-button"
+                        onClick={() => alert(`Downloading invoice for ${history.id}`)} // Placeholder
+                      >
+                        Download Invoice
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {isFeedbackModalOpen && selectedHistory && (
+        <FeedbackModal 
+          reservation={selectedHistory}
+          onClose={handleFeedbackClose}
+          onSubmit={handleFeedbackSubmit}
+        />
       )}
     </div>
   );
