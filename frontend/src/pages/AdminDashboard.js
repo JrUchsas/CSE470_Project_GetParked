@@ -30,12 +30,23 @@ const AdminDashboard = ({ onLogout }) => {
   };
 
   return (
-    <div className="admin-dashboard-container">
+    <div className="admin-container"> {/* Changed class name */}
+      <div className="homepage-header"> {/* Added header */}
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">⚙️</span> Admin Dashboard
+          </h1>
+          <p className="homepage-subtitle">Manage your parking system with ease.</p>
+        </div>
+      </div>
+
       <AdminStatistics />
 
       {error && (
-        <div className="md:col-span-3 mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
+        <div className="error-container"> {/* Changed class name */}
+          <div className="error-icon">❌</div>
+          <h3 className="error-title">Error!</h3>
+          <p className="error-message">{error}</p>
         </div>
       )}
 

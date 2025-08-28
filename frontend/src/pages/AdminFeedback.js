@@ -7,8 +7,7 @@ const StarRating = ({ rating }) => (
     {[...Array(5)].map((_, i) => (
       <svg
         key={i}
-        className={`w-5 h-5 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
-        fill="currentColor"
+        width="24" height="24" fill={i < rating ? '#f1d045' : '#ccc'}
         viewBox="0 0 20 20"
       >
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -67,12 +66,46 @@ const AdminFeedback = () => {
     return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
   };
 
-  if (loading) return <div className="text-center p-10">Loading feedback...</div>;
-  if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
+  if (loading) {
+    return (
+      <div className="admin-container">
+        <div className="loading-container">
+          <div className="loading-spinner-modern"></div>
+          <span className="loading-text">Loading feedback...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="admin-container">
+        <div className="error-container">
+          <div className="error-icon">❌</div>
+          <h3 className="error-title">Error loading feedback</h3>
+          <p className="error-message">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="admin-dashboard-container">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">User Feedback</h2>
+    <div className="admin-container">
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">⭐</span> User Feedback
+          </h1>
+          <p className="homepage-subtitle">View and manage user feedback.</p>
+        </div>
+      </div>
+
       <div className="admin-card">
         <div className="overflow-x-auto w-full">
           <table className="admin-table min-w-full bg-white">
@@ -87,7 +120,7 @@ const AdminFeedback = () => {
             <tbody>
               {sortedFeedback.map((item) => (
                 <tr key={item.id}>
-                  <td><StarRating rating={item.rating} /></td>
+                  <td><div className="w-20"><StarRating rating={item.rating} /></div></td>
                   <td className="text-left">{item.comment || <span className="text-gray-400">No comment</span>}</td>
                   <td>{item.user?.name || 'N/A'}</td>
                   <td>{new Date(item.createdAt).toLocaleDateString()}</td>

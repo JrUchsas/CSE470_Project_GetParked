@@ -18,6 +18,7 @@ const ReservationHistoryPage = () => {
   };
 
   const handleFeedbackClick = (history) => {
+    console.log('Leave Feedback button clicked for history:', history);
     setSelectedHistory(history);
     setIsFeedbackModalOpen(true);
   };
@@ -260,7 +261,7 @@ const ReservationHistoryPage = () => {
                   <>
                     {history.paymentStatus === 'Paid' && !history.feedback && (
                       <button
-                        className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+                        className="leave-feedback-button"
                         onClick={() => handleFeedbackClick(history)}
                       >
                         Leave Feedback

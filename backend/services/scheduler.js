@@ -2,8 +2,6 @@ const cron = require('node-cron');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-console.log('Scheduler service initialized.');
-
 // This cron job runs every hour
 const startScheduler = () => {
   cron.schedule('0 * * * *', async () => { // Run every hour

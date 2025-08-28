@@ -409,10 +409,14 @@ const HomePage = ({ user }) => {
             onCancel={handleCancel}
             onCheckIn={handleCheckIn}
             actionLoading={actionLoading}
-            onShareRequestClick={(slot) => { // New prop
+            onShareRequestClick={(slot) => {
               setSlotToShare(slot);
               setIsShareRequestModalOpen(true);
             }}
+            pendingShareRequests={pendingShareRequests} // Pass pending share requests
+            onViewShareRequestNotification={(request) => {
+              setCurrentShareRequest(request);
+            }} // Handle viewing a specific share request
           />
         </div>
       )}

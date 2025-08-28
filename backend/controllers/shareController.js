@@ -142,6 +142,7 @@ const acceptShareRequest = async (req, res) => {
 // @access  Private (Original User Only)
 const rejectShareRequest = async (req, res) => {
   const { id } = req.params;
+  const { message } = req.body; // Get message from body
   const userId = req.user.id; // User rejecting the request
 
   try {
@@ -158,19 +159,192 @@ const rejectShareRequest = async (req, res) => {
     }
 
     if (shareRequest.status !== 'PENDING') {
+      // If already rejected, allow updating the message, but not changing status again
+      if (shareRequest.status === 'REJECTED') {
+        const updatedRequest = await prisma.shareRequest.update({
+          where: { id },
+          data: { rejectionMessage: message || null }, // Update message, allow null
+        });
+        return res.json({ message: 'Rejection message updated.', updatedRequest });
+      }
       return res.status(400).json({ message: 'Request is not pending.' });
     }
 
     const updatedRequest = await prisma.shareRequest.update({
       where: { id },
-      data: { status: 'REJECTED' },
+      data: {
+        status: 'REJECTED',
+        rejectionMessage: message || null, // Set message when rejecting
+      },
     });
 
-    // Optionally, notify the requester
     res.json({ message: 'Share request rejected.', updatedRequest });
   } catch (error) {
     console.error('Error rejecting share request:', error);
     res.status(500).json({ message: 'Server error while rejecting share request.' });
+  }
+};
+
+// @desc    Send a rejection message for a share request
+// @route   POST /api/share/requests/:id/reject-message
+// @access  Private (Original User Only)
+const sendShareRejectionMessage = async (req, res) => {
+  const { id } = req.params;
+  let { message } = req.body;
+  const userId = req.user.id; // User sending the rejection message
+
+  // Ensure message is a string, even if empty or null from frontend
+  if (message === undefined || message === null) {
+    message = '';
+  }
+
+  try {
+    const shareRequest = await prisma.shareRequest.findUnique({
+      where: { id },
+    });
+
+    if (!shareRequest) {
+      return res.status(404).json({ message: 'Share request not found.' });
+    }
+
+    // Ensure the user sending the message is the original user of the slot
+    if (shareRequest.originalUserId !== userId) {
+      return res.status(403).json({ message: 'Not authorized to send rejection message for this request.' });
+    }
+
+    // Update the share request with the rejection message
+    const updatedRequest = await prisma.shareRequest.update({
+      where: { id },
+      data: { rejectionMessage: message },
+    });
+
+    res.json({ message: 'Rejection message sent successfully.', updatedRequest });
+  } catch (error) {
+    console.error('Error sending rejection message:', error);
+    res.status(500).json({ message: 'Server error while sending rejection message.' });
+  }
+};
+
+// @desc    Get relevant pending share request for a specific slot and the authenticated user
+// @route   GET /api/share/requests/relevant/:slotId
+// @access  Private
+const getRelevantPendingShareRequest = async (req, res) => {
+  const { slotId } = req.params;
+  const currentUserId = req.user.id; // User making the request
+
+  console.log(`Backend: Fetching relevant pending share request for slotId: ${slotId}, currentUserId: ${currentUserId}`); // Added log
+
+  try {
+    const shareRequest = await prisma.shareRequest.findFirst({
+      where: {
+        slotId: slotId,
+        status: 'PENDING',
+        OR: [
+          { originalUserId: currentUserId }, // Current user is the owner of the slot
+          { requesterId: currentUserId },    // Current user is the one who sent the request
+        ],
+      },
+      include: {
+        slot: { select: { location: true, type: true } },
+        originalUser: { select: { name: true, email: true } },
+        requester: { select: { name: true, email: true } },
+      },
+    });
+
+    if (!shareRequest) {
+      return res.status(404).json({ message: 'No relevant pending share request found.' });
+    }
+
+    res.json(shareRequest);
+  } catch (error) {
+    console.error('Error fetching relevant pending share request:', error);
+    res.status(500).json({ message: 'Server error while fetching relevant pending share request.' });
+  }
+};
+
+// @desc    Accept a share request and cancel the original user's overlapping reservation
+// @route   PUT /api/share/requests/:id/accept-and-cancel
+// @access  Private (Original User Only)
+const acceptShareRequestAndCancelMyReservation = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id; // User accepting the request
+
+  try {
+    const shareRequest = await prisma.shareRequest.findUnique({
+      where: { id },
+    });
+
+    if (!shareRequest) {
+      return res.status(404).json({ message: 'Share request not found.' });
+    }
+
+    if (shareRequest.originalUserId !== userId) {
+      return res.status(403).json({ message: 'Not authorized to accept this request.' });
+    }
+
+    if (shareRequest.status !== 'PENDING') {
+      return res.status(400).json({ message: 'Request is not pending.' });
+    }
+
+    // Logic to cancel the original user's overlapping reservation and apply fine
+    // This is a complex business logic that needs to be implemented based on specific rules.
+    // Placeholder for now:
+    // 1. Find overlapping reservation for originalUser and slotId
+    // 2. Calculate fine based on cancellation policy
+    // 3. Update reservation status to cancelled and record fine
+
+    const updatedRequest = await prisma.shareRequest.update({
+      where: { id },
+      data: { status: 'ACCEPTED' },
+    });
+
+    res.json({ message: 'Share request accepted and reservation cancelled.', updatedRequest });
+  } catch (error) {
+    console.error('Error accepting share request and cancelling reservation:', error);
+    res.status(500).json({ message: 'Server error while accepting share request and cancelling reservation.' });
+  }
+};
+
+// @desc    Accept a share request and edit the original user's overlapping reservation
+// @route   PUT /api/share/requests/:id/accept-and-edit
+// @access  Private (Original User Only)
+const acceptShareRequestAndEditMyReservation = async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user.id; // User accepting the request
+
+  try {
+    const shareRequest = await prisma.shareRequest.findUnique({
+      where: { id },
+    });
+
+    if (!shareRequest) {
+      return res.status(404).json({ message: 'Share request not found.' });
+    }
+
+    if (shareRequest.originalUserId !== userId) {
+      return res.status(403).json({ message: 'Not authorized to accept this request.' });
+    }
+
+    if (shareRequest.status !== 'PENDING') {
+      return res.status(400).json({ message: 'Request is not pending.' });
+    }
+
+    // Logic to edit the original user's overlapping reservation to match share timing
+    // This is a complex business logic that needs to be implemented based on specific rules.
+    // Placeholder for now:
+    // 1. Find overlapping reservation for originalUser and slotId
+    // 2. Adjust reservation bookingStart/bookingEnd to accommodate the shared time.
+    //    This might involve splitting the reservation into two parts if the share time is in the middle.
+
+    const updatedRequest = await prisma.shareRequest.update({
+      where: { id },
+      data: { status: 'ACCEPTED' },
+    });
+
+    res.json({ message: 'Share request accepted and reservation edited.', updatedRequest });
+  } catch (error) {
+    console.error('Error accepting share request and editing reservation:', error);
+    res.status(500).json({ message: 'Server error while accepting share request and editing reservation.' });
   }
 };
 
@@ -250,6 +424,8 @@ module.exports = {
   getShareRequestsForUser,
   acceptShareRequest,
   rejectShareRequest,
-  sendShareMessage,
-  getShareMessages,
+  sendShareRejectionMessage,
+  acceptShareRequestAndCancelMyReservation,
+  acceptShareRequestAndEditMyReservation,
+  getRelevantPendingShareRequest,
 };

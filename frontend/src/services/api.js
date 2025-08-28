@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API = axios.create({
+  baseURL: 'http://localhost:5000/api',
+  timeout: 10000, // Increase timeout to 10 seconds (10000 ms)
+});
 
 // Add interceptor to include token in headers for future protected routes
 API.interceptors.request.use((req) => {
@@ -171,7 +174,10 @@ export const deleteUser = async (id) => {
 
 // --- ADMIN API CALLS ---
 export const getAdminStatistics = async (month, year) => {
-  const { data } = await API.get('/admin/statistics', { params: { month, year } });
+  const { data } = await API.get('/admin/statistics', {
+    params: { month, year },
+    headers: { 'Cache-Control': 'no-cache' } // Prevent caching
+  });
   return data;
 };
 
@@ -212,13 +218,33 @@ export const getShareRequests = async () => {
   return data;
 };
 
+export const getRelevantPendingShareRequest = async (slotId) => {
+  const { data } = await API.get(`/share/requests/relevant/${slotId}`);
+  return data;
+};
+
 export const acceptShareRequest = async (id) => {
   const { data } = await API.put(`/share/requests/${id}/accept`);
   return data;
 };
 
-export const rejectShareRequest = async (id) => {
-  const { data } = await API.put(`/share/requests/${id}/reject`);
+export const acceptShareRequestAndCancelMyReservation = async (id) => {
+  const { data } = await API.put(`/share/requests/${id}/accept-and-cancel`);
+  return data;
+};
+
+export const acceptShareRequestAndEditMyReservation = async (id) => {
+  const { data } = await API.put(`/share/requests/${id}/accept-and-edit`);
+  return data;
+};
+
+export const rejectShareRequest = async (id, messageData) => {
+  const { data } = await API.put(`/share/requests/${id}/reject`, messageData);
+  return data;
+};
+
+export const sendShareRejectionMessage = async (id, messageData) => {
+  const { data } = await API.post(`/share/requests/${id}/reject-message`, messageData);
   return data;
 };
 

@@ -474,6 +474,17 @@
   min-height: 100vh;
 }
 
+.modern-modal-card {
+  background: white;
+  border-radius: 1rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  margin-top: 2rem; /* Adjust as needed for vertical alignment */
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1368,6 +1379,36 @@ span.slot-icon {
   transform: translateY(0);
 }
 
+/* Leave Feedback Button */
+.leave-feedback-button {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%); /* Indigo-like gradient */
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  min-width: 5.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+
+.leave-feedback-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.leave-feedback-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.leave-feedback-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 /* Download Invoice Button */
 .download-invoice-button {
   background: linear-gradient(135deg, #607d8b 0%, #455a64 100%); /* Grayish blue */
@@ -1388,3 +1429,57 @@ span.slot-icon {
   box-shadow: 0 4px 12px rgba(96, 125, 139, 0.35);
   background: linear-gradient(135deg, #455a64 0%, #37474f 100%);
 }
+
+/* Modal Buttons */
+.modal-cancel-button {
+  padding: 0.6rem 1.2rem;
+  background: #e2e8f0;
+  color: #475569;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-cancel-button:hover {
+  background: #cbd5e1;
+}
+
+.modal-submit-button {
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+.modal-submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.modal-submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Star component styles for FeedbackModal */
+.star-icon {
+  cursor: pointer;
+  color: #ccc; /* Default empty star color */
+  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.star-icon:hover {
+  transform: scale(1.1);
+}
+
+.star-icon.star-filled {
+  color: #f1d045; /* Filled star color (yellow/gold) */
+}
+

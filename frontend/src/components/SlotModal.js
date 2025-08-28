@@ -1,7 +1,7 @@
-
-import React, { useState, useEffect } from 'react';
-import { getVehiclesByOwner } from '../services/api';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getVehiclesByOwner, getRelevantPendingShareRequest } from '../services/api';
 import ErrorModal from './ErrorModal';
+import ShareRequestNotificationModal from './ShareRequestNotificationModal';
 import { getVehicleIcon, formatVehicleType } from './VehicleIcons';
 import DateTimePicker from './DateTimePicker';
 import '../styles/custom-slotmodal.css';
@@ -29,7 +29,7 @@ const ClockIcon = () => (
 
 
 
-const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onCheckIn, actionLoading, onShareRequestClick }) => {
+const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onCheckIn, actionLoading, onShareRequestClick, pendingShareRequests, onViewShareRequestNotification }) => {
   const isReserved = slot.status === 'Reserved';
   const isReservedByUser = user && slot.user && slot.user.id === user.id;
   const isAdmin = user && user.role === 'admin';
@@ -40,7 +40,28 @@ const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onC
   
   const [selectedVehicleId, setSelectedVehicleId] = useState('');
 
-  
+  const [relevantPendingShareRequest, setRelevantPendingShareRequest] = useState(null);
+  const [showShareRequestNotification, setShowShareRequestNotification] = useState(false); // Added this line
+
+  const fetchRelevantPendingShareRequest = useCallback(async () => {
+    console.log("Fetching relevant pending share request..."); // Added log
+    if (slot?.id && user?.id) {
+      try {
+        const response = await getRelevantPendingShareRequest(slot.id);
+        setRelevantPendingShareRequest(response.data);
+        console.log("Relevant pending share request fetched:", response.data); // Added log
+      } catch (error) {
+        console.error("Error fetching relevant pending share request:", error);
+        setRelevantPendingShareRequest(null);
+      }
+    } else {
+      console.log("Skipping fetch: slot or user ID is missing."); // Added log
+    }
+  }, [slot?.id, user?.id]);
+
+  useEffect(() => {
+    fetchRelevantPendingShareRequest();
+  }, [fetchRelevantPendingShareRequest]);
 
   const handleReserveClick = () => {
 
@@ -200,22 +221,47 @@ const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onC
             {isReserved && (
               <div className="action-buttons-group">
                 {isReservedByUser && (
-                  <button
-                    onClick={() => onCheckIn(slot)}
-                    className="slot-modal-btn success"
-                    disabled={actionLoading}
-                  >
-                    {actionLoading ? (
-                      <>
-                        <div className="loading-spinner"></div>
-                        Checking In...
-                      </>
-                    ) : (
-                      'Check In'
+                  <>
+                    <button
+                      onClick={() => onCheckIn(slot)}
+                      className="slot-modal-btn success"
+                      disabled={actionLoading}
+                    >
+                      {actionLoading ? (
+                        <>
+                          <div className="loading-spinner"></div>
+                          Checking In...
+                        </>
+                      ) : (
+                        'Check In'
+                      )}
+                    </button>
+                    <button
+                      onClick={() => onCancel(slot)}
+                      className="slot-modal-btn danger"
+                      disabled={actionLoading}
+                    >
+                      {actionLoading ? (
+                        <>
+                          <div className="loading-spinner"></div>
+                          Cancelling...
+                        </>
+                      ) : (
+                        'Cancel Reservation'
+                      )}
+                    </button>
+                    {/* New button for viewing share request notification */}
+                    {relevantPendingShareRequest && (
+                      <button
+                        onClick={() => setShowShareRequestNotification(true)} // Modified this line
+                        className="slot-modal-btn primary"
+                      >
+                        View Share Request
+                      </button>
                     )}
-                  </button>
+                  </>
                 )}
-                {(isReservedByUser || isAdmin) && (
+                {!isReservedByUser && isAdmin && (
                   <button
                     onClick={() => onCancel(slot)}
                     className="slot-modal-btn danger"
@@ -257,6 +303,17 @@ const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onC
         <ErrorModal
           errorMessage={error}
           onClose={() => setError('')}
+        />
+      )}
+      {isReservedByUser && slot && (
+        <ShareRequestNotificationModal
+          show={showShareRequestNotification} // Modified this line
+          request={relevantPendingShareRequest}
+          onClose={() => {
+            setShowShareRequestNotification(false);
+            setRelevantPendingShareRequest(null); // Keep this to clear the request from state
+          }}
+          onUpdateRequests={fetchRelevantPendingShareRequest}
         />
       )}
     </div>
