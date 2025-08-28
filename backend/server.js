@@ -11,6 +11,7 @@ const paymentInvoiceRoutes = require('./routes/paymentInvoiceRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const { startScheduler } = require('./services/scheduler');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const shareRoutes = require('./routes/shareRoutes');
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/payment-invoices', paymentInvoiceRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/share', shareRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);

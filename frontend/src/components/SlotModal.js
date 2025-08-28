@@ -29,7 +29,7 @@ const ClockIcon = () => (
 
 
 
-const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, actionLoading }) => {
+const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onCheckIn, actionLoading, onShareRequestClick }) => {
   const isReserved = slot.status === 'Reserved';
   const isReservedByUser = user && slot.user && slot.user.id === user.id;
   const isAdmin = user && user.role === 'admin';
@@ -37,25 +37,10 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
   const [error, setError] = useState('');
   const [bookingStart, setBookingStart] = useState("");
   const [bookingEnd, setBookingEnd] = useState("");
-  const [userVehicles, setUserVehicles] = useState([]);
+  
   const [selectedVehicleId, setSelectedVehicleId] = useState('');
 
-  useEffect(() => {
-    const fetchUserVehicles = async () => {
-      if (user && user.id) {
-        try {
-          const vehicles = await getVehiclesByOwner(user.id);
-          setUserVehicles(vehicles);
-          if (vehicles.length > 0) {
-            setSelectedVehicleId(vehicles[0].id); // Select first vehicle by default
-          }
-        } catch (error) {
-          console.error('Failed to fetch user vehicles:', error);
-        }
-      }
-    };
-    fetchUserVehicles();
-  }, [user]);
+  
 
   const handleReserveClick = () => {
 
@@ -129,7 +114,7 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
                   onChange={(e) => setSelectedVehicleId(e.target.value)}
                   required
                 >
-                  {userVehicles.length > 0 ? (
+                  {userVehicles && userVehicles.length > 0 ? (
                     userVehicles.map((vehicle) => (
                       <option key={vehicle.id} value={vehicle.id}>
                         {vehicle.licensePlate} ({vehicle.model} - {formatVehicleType(vehicle.type)})
@@ -250,9 +235,20 @@ const SlotModal = ({ slot, user, onClose, onReserve, onCancel, onCheckIn, action
             )}
 
             {isReserved && !isReservedByUser && !isAdmin && (
-              <button className="slot-modal-btn disabled" disabled>
-                Slot Reserved
-              </button>
+              <>
+                {userVehicles && userVehicles.some(v => v.type === slot.type) ? (
+                  <button
+                    onClick={() => onShareRequestClick(slot)}
+                    className="slot-modal-btn primary" // Use a primary style for share request
+                  >
+                    Send Share Request
+                  </button>
+                ) : (
+                  <button className="slot-modal-btn disabled" disabled>
+                    Slot Reserved (Vehicle Mismatch)
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

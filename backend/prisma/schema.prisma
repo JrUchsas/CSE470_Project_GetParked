@@ -22,6 +22,9 @@ model User {
   vehicles  Vehicle[] @relation("User_vehicles")
   reservationHistory ReservationHistory[]
   feedback           Feedback[]
+  originalUserShareRequests ShareRequest[] @relation("OriginalUserShareRequests")
+  requesterShareRequests    ShareRequest[] @relation("RequesterShareRequests")
+  sentShareMessages         ShareMessage[] @relation("ShareMessageSender")
 }
 
 model Vehicle {
@@ -68,6 +71,7 @@ model Slot {
   updatedAt       DateTime         @updatedAt
   parkingSessions ParkingSession[]
   reservationHistory ReservationHistory[]
+  shareRequests      ShareRequest[]
 }
 
 model ReservationHistory {
@@ -141,4 +145,38 @@ model Feedback {
   reservationHistoryId String   @unique @db.ObjectId
   reservationHistory   ReservationHistory @relation(fields: [reservationHistoryId], references: [id])
   createdAt            DateTime @default(now())
+}
+
+enum ShareRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+model ShareRequest {
+  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
+  slotId             String             @db.ObjectId
+  slot               Slot               @relation(fields: [slotId], references: [id])
+  originalUserId     String             @db.ObjectId
+  originalUser       User               @relation("OriginalUserShareRequests", fields: [originalUserId], references: [id])
+  requesterId        String             @db.ObjectId
+  requester          User               @relation("RequesterShareRequests", fields: [requesterId], references: [id])
+  status             ShareRequestStatus @default(PENDING)
+  requestedStartTime DateTime
+  requestedEndTime   DateTime
+  initialMessage     String?
+  messages           ShareMessage[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model ShareMessage {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  shareRequestId String     @db.ObjectId
+  shareRequest  ShareRequest @relation(fields: [shareRequestId], references: [id])
+  senderId      String     @db.ObjectId
+  sender        User       @relation("ShareMessageSender", fields: [senderId], references: [id])
+  content       String
+  createdAt     DateTime   @default(now())
 }

@@ -9,9 +9,11 @@ const protect = async (req, res, next) => {
     try {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
+      console.log('Token received:', token);
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Decoded token:', decoded);
 
       // Get user from the token
       req.user = await prisma.user.findUnique({
@@ -20,6 +22,7 @@ const protect = async (req, res, next) => {
       });
 
       if (!req.user) {
+        console.log('User not found for decoded ID:', decoded.id);
         return res.status(401).json({ message: 'Not authorized, user not found' });
       }
 

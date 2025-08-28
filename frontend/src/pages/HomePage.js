@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSlots, updateSlot, checkIn, getReservationHistoryByUser } from '../services/api';
+import { getSlots, updateSlot, checkIn, getReservationHistoryByUser, getVehiclesByOwner, getShareRequests } from '../services/api';
 import SlotModal from '../components/SlotModal';
+import ShareRequestModal from '../components/ShareRequestModal';
 import CheckInConfirmationModal from '../components/CheckInConfirmationModal';
 import ErrorModal from '../components/ErrorModal';
+import ShareRequestNotificationModal from '../components/ShareRequestNotificationModal'; // New Import
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
 
 const ViolationAlertBanner = ({ onNavigate }) => (
@@ -28,9 +30,14 @@ const HomePage = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [isShareRequestModalOpen, setIsShareRequestModalOpen] = useState(false);
+  const [slotToShare, setSlotToShare] = useState(null);
   const [checkInSlot, setCheckInSlot] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [hasViolation, setHasViolation] = useState(false);
+  const [userVehicles, setUserVehicles] = useState([]);
+  const [pendingShareRequests, setPendingShareRequests] = useState([]);
+  const [currentShareRequest, setCurrentShareRequest] = useState(null);
 
   useEffect(() => {
     const checkViolations = async () => {
@@ -65,6 +72,63 @@ const HomePage = ({ user }) => {
     };
     fetchSlots();
   }, []);
+
+  useEffect(() => {
+    const fetchUserVehicles = async () => {
+      if (user?.id) {
+        try {
+          const vehicles = await getVehiclesByOwner(user.id);
+          setUserVehicles(vehicles);
+        } catch (err) {
+          console.error("Failed to fetch user vehicles:", err);
+        }
+      }
+    };
+    fetchUserVehicles();
+  }, [user]); // Dependency on user to refetch if user changes
+
+  // Fetch pending share requests for the current user
+  const fetchPendingShareRequests = async () => {
+    console.log('Fetching pending share requests...');
+    if (user?.id) {
+      console.log('User ID for fetching requests:', user.id);
+      try {
+        const allRequests = await getShareRequests();
+        console.log('All share requests fetched:', allRequests);
+        const requestsForMe = allRequests.filter(
+          (req) => req.originalUserId === user.id && req.status === 'PENDING'
+        );
+        console.log('Filtered pending requests for current user:', requestsForMe);
+        setPendingShareRequests(requestsForMe);
+        if (requestsForMe.length > 0) {
+          setCurrentShareRequest(requestsForMe[0]);
+          console.log('Setting currentShareRequest:', requestsForMe[0]);
+        } else {
+          setCurrentShareRequest(null);
+          console.log('No pending requests for current user.');
+        }
+      } catch (err) {
+        console.error("Failed to fetch share requests:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingShareRequests();
+  }, [user]); // Refetch when user changes
+
+  // Function to handle closing the notification modal and showing next if any
+  const handleCloseShareNotification = () => {
+    setPendingShareRequests((prevRequests) => prevRequests.slice(1)); // Remove the current one
+  };
+
+  useEffect(() => {
+    if (pendingShareRequests.length > 0) {
+      setCurrentShareRequest(pendingShareRequests[0]);
+    } else {
+      setCurrentShareRequest(null);
+    }
+  }, [pendingShareRequests]);
 
   // Only show available slots
   const availableSlots = slots.filter((slot) => slot.status === 'Available');
@@ -345,11 +409,16 @@ const HomePage = ({ user }) => {
           <SlotModal
             slot={selectedSlot}
             user={user}
+            userVehicles={userVehicles} // New prop
             onClose={() => setSelectedSlot(null)}
             onReserve={handleReserve}
             onCancel={handleCancel}
             onCheckIn={handleCheckIn}
             actionLoading={actionLoading}
+            onShareRequestClick={(slot) => { // New prop
+              setSlotToShare(slot);
+              setIsShareRequestModalOpen(true);
+            }}
           />
         </div>
       )}
@@ -362,6 +431,30 @@ const HomePage = ({ user }) => {
             onClose={() => setCheckInSlot(null)}
             onConfirmCheckIn={handleConfirmCheckIn}
             actionLoading={actionLoading}
+          />
+        </div>
+      )}
+
+      {isShareRequestModalOpen && slotToShare && (
+        <div className="modern-modal-overlay">
+          <ShareRequestModal
+            slot={slotToShare}
+            requesterId={user.id}
+            onClose={() => {
+              setIsShareRequestModalOpen(false);
+              setSlotToShare(null);
+            }}
+          />
+        </div>
+      )}
+
+      {/* Share Request Notification Modal */}
+      {currentShareRequest && (
+        <div className="modern-modal-overlay">
+          <ShareRequestNotificationModal
+            request={currentShareRequest}
+            onClose={handleCloseShareNotification}
+            onUpdateRequests={fetchPendingShareRequests} // Callback to refresh the list after action
           />
         </div>
       )}

@@ -200,3 +200,34 @@ export const getAllFeedback = async () => {
   const { data } = await API.get('/feedback');
   return data;
 };
+
+// --- SHARE API CALLS ---
+export const createShareRequest = async (requestData) => {
+  const { data } = await API.post('/share/request', requestData);
+  return data;
+};
+
+export const getShareRequests = async () => {
+  const { data } = await API.get('/share/requests');
+  return data;
+};
+
+export const acceptShareRequest = async (id) => {
+  const { data } = await API.put(`/share/requests/${id}/accept`);
+  return data;
+};
+
+export const rejectShareRequest = async (id) => {
+  const { data } = await API.put(`/share/requests/${id}/reject`);
+  return data;
+};
+
+export const sendShareMessage = async (id, messageData) => {
+  const { data } = await API.post(`/share/requests/${id}/message`, messageData);
+  return data;
+};
+
+export const getShareMessages = async (id) => {
+  const { data } = await API.get(`/share/requests/${id}/messages`);
+  return data;
+};
