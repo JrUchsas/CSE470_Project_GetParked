@@ -9,7 +9,7 @@ import AdminVehicleViewPage from './pages/AdminVehicleViewPage';
 import AdminSlotManagementPage from './pages/AdminSlotManagementPage';
 import AdminUserManagementPage from './pages/AdminUserManagementPage';
 import AdminPaymentHistory from './pages/AdminPaymentHistory';
-import AdminReservationManagement from './pages/AdminReservationManagement';
+
 import VehiclePage from './pages/VehiclePage';
 import Header from './components/Header';
 
@@ -83,7 +83,7 @@ function App() {
             <Route path="/admin/manage-slots" element={user && user.role === 'admin' ? <AdminSlotManagementPage /> : <Navigate to="/" />} />
             <Route path="/admin/manage-users" element={user && user.role === 'admin' ? <AdminUserManagementPage onLogout={handleLogout} /> : <Navigate to="/" />} />
             <Route path="/admin/payment-history" element={user && user.role === 'admin' ? <AdminPaymentHistory /> : <Navigate to="/" />} />
-            <Route path="/admin/manage-reservations" element={user && user.role === 'admin' ? <AdminReservationManagement /> : <Navigate to="/" />} />
+            
             <Route path="/admin/feedback" element={user && user.role === 'admin' ? <AdminFeedback /> : <Navigate to="/" />} />
             
             <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />

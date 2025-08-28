@@ -64,12 +64,7 @@ const AdminDashboard = ({ onLogout }) => {
           <p className="tile-description">View, edit, or delete parking slots.</p>
         </div>
 
-        {/* Manage Reservations Tile */}
-        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/manage-reservations')}>
-          <span className="tile-icon">📅</span>
-          <h3 className="tile-title">Manage Reservations</h3>
-          <p className="tile-description">View all reservations and report violations.</p>
-        </div>
+        
 
         {/* Manage Users Tile */}
         <div className="admin-dashboard-tile" onClick={() => navigate('/admin/manage-users')}>
