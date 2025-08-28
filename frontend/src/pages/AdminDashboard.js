@@ -82,6 +82,13 @@ const AdminDashboard = ({ onLogout }) => {
           <p className="tile-description">View and analyze user ratings and comments.</p>
         </div>
 
+        {/* Booking Statistics Tile */}
+        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/booking-statistics')}>
+          <span className="tile-icon">📊</span>
+          <h3 className="tile-title">Booking Statistics</h3>
+          <p className="tile-description">View monthly booking trends and calendar.</p>
+        </div>
+
         {/* Payment History Tile */}
         <div className="admin-dashboard-tile" onClick={() => navigate('/admin/payment-history')}>
           <span className="tile-icon">💰</span>

@@ -170,8 +170,8 @@ export const deleteUser = async (id) => {
 };
 
 // --- ADMIN API CALLS ---
-export const getAdminStatistics = async () => {
-  const { data } = await API.get('/admin/statistics');
+export const getAdminStatistics = async (month, year) => {
+  const { data } = await API.get('/admin/statistics', { params: { month, year } });
   return data;
 };
 

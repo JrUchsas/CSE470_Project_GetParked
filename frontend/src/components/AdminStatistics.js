@@ -63,44 +63,7 @@ const AdminStatistics = () => {
         />
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        {/* Monthly Summary */}
-        {stats.bookingsThisMonth && stats.bookingsThisMonth.length > 0 && (
-          <div className="mb-6 text-center">
-            <h3 className="text-2xl font-bold text-gray-800">
-              {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-            </h3>
-            <p className="text-lg text-gray-600">
-              Total Bookings: {stats.bookingsThisMonth.reduce((acc, day) => acc + day.count, 0)}
-            </p>
-          </div>
-        )}
-        <h3 className="text-lg font-semibold mb-4">Bookings This Month</h3>
-        <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-600 mb-2">
-          <div>Sun</div>
-          <div>Mon</div>
-          <div>Tue</div>
-          <div>Wed</div>
-          <div>Thu</div>
-          <div>Fri</div>
-          <div>Sat</div>
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {/* Render empty cells for days before the 1st of the month */}
-          {stats.bookingsThisMonth && stats.bookingsThisMonth.length > 0 && Array.from({ length: new Date(stats.bookingsThisMonth[0].date).getDay() }).map((_, i) => (
-            <div key={`empty-${i}`} className="p-2"></div>
-          ))}
-          {stats.bookingsThisMonth.map((dayData) => (
-            <div key={dayData.date} className="p-2 border rounded-md flex flex-col items-center justify-center"
-                 style={{ backgroundColor: dayData.count > 0 ? '#DBEAFE' : '#F9FAFB', borderColor: dayData.count > 0 ? '#93C5FD' : '#E5E7EB' }}>
-              <span className="text-xs text-gray-500">{new Date(dayData.date).getDate()}</span>
-              {dayData.count > 0 && (
-                <span className="font-bold text-lg text-blue-700">Booking: {dayData.count}</span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      
     </div>
   );
 };

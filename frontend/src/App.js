@@ -19,6 +19,7 @@ import PaymentPage from './pages/PaymentPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AdminFeedback from './pages/AdminFeedback';
+import AdminBookingStatistics from './pages/AdminBookingStatistics';
 
 import './styles/custom-slotmodal.css';
 import './styles/custom-vehicleformmodal.css';
@@ -87,6 +88,7 @@ function App() {
             <Route path="/admin/payment-history" element={user && user.role === 'admin' ? <AdminPaymentHistory /> : <Navigate to="/" />} />
             <Route path="/admin/manage-reservations" element={user && user.role === 'admin' ? <AdminReservationManagement /> : <Navigate to="/" />} />
             <Route path="/admin/feedback" element={user && user.role === 'admin' ? <AdminFeedback /> : <Navigate to="/" />} />
+            <Route path="/admin/booking-statistics" element={user && user.role === 'admin' ? <AdminBookingStatistics /> : <Navigate to="/" />} />
             <Route path="/vehicles" element={user ? <VehiclePage /> : <Navigate to="/auth" />} />
             <Route path="/entry-exit" element={user ? <EntryExitPage /> : <Navigate to="/auth" />} />
             <Route path="/reservation-history" element={user ? <ReservationHistoryPage /> : <Navigate to="/auth" />} />

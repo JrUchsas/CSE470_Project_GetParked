@@ -35,9 +35,12 @@ const getStatistics = async (req, res) => {
     const slotOccupancyRate = totalSlots > 0 ? (occupiedSlots / totalSlots) * 100 : 0;
 
     // Bookings for the current month
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    const { month, year } = req.query;
+    let targetMonth = month ? parseInt(month, 10) - 1 : new Date().getMonth(); // month is 0-indexed in JS Date
+    let targetYear = year ? parseInt(year, 10) : new Date().getFullYear();
+
+    const startOfMonth = new Date(targetYear, targetMonth, 1);
+    const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999);
 
     const monthlyBookingsRaw = await prisma.reservationHistory.groupBy({
       by: ['createdAt'],
