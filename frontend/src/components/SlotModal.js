@@ -308,7 +308,7 @@ const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onC
           onClose={() => setError('')}
         />
       )}
-      {isReservedByUser && slot && (
+      {isReservedByUser && slot && showShareRequestNotification && relevantPendingShareRequest && ( // Added relevantPendingShareRequest and showShareRequestNotification
         <ShareRequestNotificationModal
           show={showShareRequestNotification} // Modified this line
           request={relevantPendingShareRequest}

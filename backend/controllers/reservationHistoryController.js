@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 // Get reservation history for a user
 const getReservationHistoryByUser = async (req, res) => {
   const { userId } = req.params;
-  console.log(`Attempting to fetch reservation history for userId: ${userId}`); // Added logging
   try {
     const reservationHistory = await prisma.reservationHistory.findMany({
       where: {

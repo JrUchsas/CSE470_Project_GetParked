@@ -420,7 +420,7 @@ const HomePage = ({ user }) => {
 
       {/* Check-In Confirmation Modal */}
       {checkInSlot && (
-        <div className="modern-modal-overlay">
+        <div className="modern-modal-overlay checkin-modal-overlay">
           <CheckInConfirmationModal
             slot={checkInSlot}
             onClose={() => setCheckInSlot(null)}

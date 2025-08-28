@@ -474,6 +474,10 @@
   min-height: 100vh;
 }
 
+.checkin-modal-overlay {
+  z-index: 1101; /* Higher than modern-modal-overlay */
+}
+
 .modern-modal-card {
   background: white;
   border-radius: 1rem;
