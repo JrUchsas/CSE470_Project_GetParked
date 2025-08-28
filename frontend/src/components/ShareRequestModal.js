@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DateTimePicker from './DateTimePicker';
 import { createShareRequest } from '../services/api';
 
-const ShareRequestModal = ({ slot, requesterId, onClose }) => {
+const ShareRequestModal = ({ slot, requesterId, originalUserId, onClose }) => {
   const navigate = useNavigate();
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -27,10 +27,10 @@ const ShareRequestModal = ({ slot, requesterId, onClose }) => {
     try {
       const shareRequestData = {
         slotId: slot.id,
-        requesterId: requesterId,
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
-        message: message,
+        originalUserId: originalUserId,
+        requestedStartTime: new Date(startTime).toISOString(),
+        requestedEndTime: new Date(endTime).toISOString(),
+        initialMessage: message,
       };
       await createShareRequest(shareRequestData);
       onClose();

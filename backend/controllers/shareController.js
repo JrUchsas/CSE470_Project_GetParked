@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 // @route   POST /api/share/request
 // @access  Private
 const createShareRequest = async (req, res) => {
-  console.log('createShareRequest function hit!');
   const { slotId, originalUserId, requestedStartTime, requestedEndTime, initialMessage } = req.body;
   const requesterId = req.user.id; // User sending the request
 

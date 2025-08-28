@@ -89,23 +89,17 @@ const HomePage = ({ user }) => {
 
   // Fetch pending share requests for the current user
   const fetchPendingShareRequests = async () => {
-    console.log('Fetching pending share requests...');
     if (user?.id) {
-      console.log('User ID for fetching requests:', user.id);
       try {
         const allRequests = await getShareRequests();
-        console.log('All share requests fetched:', allRequests);
         const requestsForMe = allRequests.filter(
           (req) => req.originalUserId === user.id && req.status === 'PENDING'
         );
-        console.log('Filtered pending requests for current user:', requestsForMe);
         setPendingShareRequests(requestsForMe);
         if (requestsForMe.length > 0) {
           setCurrentShareRequest(requestsForMe[0]);
-          console.log('Setting currentShareRequest:', requestsForMe[0]);
         } else {
           setCurrentShareRequest(null);
-          console.log('No pending requests for current user.');
         }
       } catch (err) {
         console.error("Failed to fetch share requests:", err);
@@ -440,6 +434,7 @@ const HomePage = ({ user }) => {
           <ShareRequestModal
             slot={slotToShare}
             requesterId={user.id}
+            originalUserId={slotToShare.reservedBy} // Pass the original user ID
             onClose={() => {
               setIsShareRequestModalOpen(false);
               setSlotToShare(null);

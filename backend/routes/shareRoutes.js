@@ -12,19 +12,6 @@ const { protect } = require('../middleware/authMiddleware');
 
 // All share routes are private
 router.use(protect);
-console.log('Share Routes hit!');
-
-// Diagnostic: Log req.path for all requests hitting this router
-router.use((req, res, next) => {
-  console.log(`Share Router - Incoming Path: ${req.path}, Method: ${req.method}`);
-  next();
-});
-
-// Diagnostic: Catch-all POST for /api/share
-router.post('/', (req, res) => {
-  console.log('Generic POST to /api/share hit!');
-  res.status(200).json({ message: 'Generic POST handler hit.' });
-});
 
 // @route   POST /api/share/request
 // @desc    Create a new share request
