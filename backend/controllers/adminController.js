@@ -34,16 +34,17 @@ const getStatistics = async (req, res) => {
     });
     const slotOccupancyRate = totalSlots > 0 ? (occupiedSlots / totalSlots) * 100 : 0;
 
-    // Bookings for the last 7 days
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    sevenDaysAgo.setHours(0, 0, 0, 0);
+    // Bookings for the current month
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    const dailyBookings = await prisma.reservationHistory.groupBy({
+    const monthlyBookingsRaw = await prisma.reservationHistory.groupBy({
       by: ['createdAt'],
       where: {
         createdAt: {
-          gte: sevenDaysAgo,
+          gte: startOfMonth,
+          lte: endOfMonth,
         },
       },
       _count: {
@@ -54,17 +55,18 @@ const getStatistics = async (req, res) => {
       },
     });
 
-    // Format daily bookings for the chart
-    const bookingsLast7Days = Array(7).fill(0).map((_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const day = d.toISOString().split('T')[0];
-        return { date: day, count: 0 };
-    }).reverse();
+    // Format monthly bookings for calendar view
+    const bookingsThisMonth = [];
+    let currentDate = new Date(startOfMonth);
+    while (currentDate <= endOfMonth) {
+      const dateString = currentDate.toISOString().split('T')[0];
+      bookingsThisMonth.push({ date: dateString, count: 0 });
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
 
-    dailyBookings.forEach(item => {
+    monthlyBookingsRaw.forEach(item => {
         const itemDate = item.createdAt.toISOString().split('T')[0];
-        const dayData = bookingsLast7Days.find(d => d.date === itemDate);
+        const dayData = bookingsThisMonth.find(d => d.date === itemDate);
         if (dayData) {
             dayData.count += item._count.id;
         }
@@ -80,7 +82,7 @@ const getStatistics = async (req, res) => {
         total: totalSlots,
         percentage: slotOccupancyRate.toFixed(2),
       },
-      bookingsLast7Days,
+      bookingsThisMonth,
     });
   } catch (error) {
     console.error('Error fetching admin statistics:', error);

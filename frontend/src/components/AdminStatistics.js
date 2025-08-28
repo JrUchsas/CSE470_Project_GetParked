@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAdminStatistics } from '../services/api'; // We will add this to api.js next
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+
 import { FaUsers, FaCar, FaDollarSign, FaChartPie } from 'react-icons/fa';
 
 const StatCard = ({ icon, title, value, subValue }) => (
@@ -56,10 +47,7 @@ const AdminStatistics = () => {
 
   if (!stats) return null;
 
-  const chartData = stats.bookingsLast7Days.map(item => ({
-      name: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
-      Bookings: item.count
-  }));
+  
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -76,17 +64,42 @@ const AdminStatistics = () => {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">Bookings This Week</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="Bookings" fill="#3B82F6" />
-          </BarChart>
-        </ResponsiveContainer>
+        {/* Monthly Summary */}
+        {stats.bookingsThisMonth && stats.bookingsThisMonth.length > 0 && (
+          <div className="mb-6 text-center">
+            <h3 className="text-2xl font-bold text-gray-800">
+              {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+            </h3>
+            <p className="text-lg text-gray-600">
+              Total Bookings: {stats.bookingsThisMonth.reduce((acc, day) => acc + day.count, 0)}
+            </p>
+          </div>
+        )}
+        <h3 className="text-lg font-semibold mb-4">Bookings This Month</h3>
+        <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-600 mb-2">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {/* Render empty cells for days before the 1st of the month */}
+          {stats.bookingsThisMonth && stats.bookingsThisMonth.length > 0 && Array.from({ length: new Date(stats.bookingsThisMonth[0].date).getDay() }).map((_, i) => (
+            <div key={`empty-${i}`} className="p-2"></div>
+          ))}
+          {stats.bookingsThisMonth.map((dayData) => (
+            <div key={dayData.date} className="p-2 border rounded-md flex flex-col items-center justify-center"
+                 style={{ backgroundColor: dayData.count > 0 ? '#DBEAFE' : '#F9FAFB', borderColor: dayData.count > 0 ? '#93C5FD' : '#E5E7EB' }}>
+              <span className="text-xs text-gray-500">{new Date(dayData.date).getDate()}</span>
+              {dayData.count > 0 && (
+                <span className="font-bold text-lg text-blue-700">Booking: {dayData.count}</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
