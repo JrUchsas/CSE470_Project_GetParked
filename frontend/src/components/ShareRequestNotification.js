@@ -31,7 +31,6 @@ const ShareRequestNotification = ({ user }) => {
       }
     } catch (err) {
       setError('Failed to fetch share requests.');
-      console.error(err);
     } finally {
       setLoading(false);
     }

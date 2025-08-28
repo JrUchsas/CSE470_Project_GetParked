@@ -25,7 +25,6 @@ const startScheduler = () => {
         await Promise.all(updatePromises);
       }
     } catch (error) {
-      console.error('Error in overstay check scheduler:', error);
     }
   });
 };
@@ -34,4 +33,4 @@ module.exports = {
   startScheduler,
 };
 
-module.exports = { startScheduler };
+

@@ -61,7 +61,6 @@ const VehicleForm = ({ vehicle, ownerId, onSave, onCancel }) => {
       onSave();
     } catch (err) {
       setError('Failed to save vehicle. Please check your input.');
-      console.error('Error saving vehicle:', err);
     }
   };
 

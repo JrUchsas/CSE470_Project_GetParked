@@ -83,7 +83,12 @@ const updateSlot = async (req, res) => {
 const deleteSlot = async (req, res) => {
   const { id } = req.params;
   try {
-    // First, delete all ParkingSession records associated with this slot
+    // First, delete all ReservationHistory records associated with this slot
+    await prisma.reservationHistory.deleteMany({
+      where: { slotId: id },
+    });
+
+    // Then, delete all ParkingSession records associated with this slot
     await prisma.parkingSession.deleteMany({
       where: { slotId: id },
     });

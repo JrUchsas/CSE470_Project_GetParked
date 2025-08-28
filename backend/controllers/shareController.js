@@ -59,7 +59,6 @@ const createShareRequest = async (req, res) => {
 
     res.status(201).json({ message: 'Share request sent successfully.', shareRequest });
   } catch (error) {
-    console.error('Error creating share request:', error);
     res.status(500).json({ message: 'Server error while creating share request.' });
   }
 };
@@ -88,7 +87,6 @@ const getShareRequestsForUser = async (req, res) => {
 
     res.json(requests);
   } catch (error) {
-    console.error('Error fetching share requests:', error);
     res.status(500).json({ message: 'Server error while fetching share requests.' });
   }
 };
@@ -132,7 +130,6 @@ const acceptShareRequest = async (req, res) => {
     // Optionally, notify the requester
     res.json({ message: 'Share request accepted.', updatedRequest });
   } catch (error) {
-    console.error('Error accepting share request:', error);
     res.status(500).json({ message: 'Server error while accepting share request.' });
   }
 };
@@ -180,7 +177,6 @@ const rejectShareRequest = async (req, res) => {
 
     res.json({ message: 'Share request rejected.', updatedRequest });
   } catch (error) {
-    console.error('Error rejecting share request:', error);
     res.status(500).json({ message: 'Server error while rejecting share request.' });
   }
 };
@@ -220,7 +216,6 @@ const sendShareRejectionMessage = async (req, res) => {
 
     res.json({ message: 'Rejection message sent successfully.', updatedRequest });
   } catch (error) {
-    console.error('Error sending rejection message:', error);
     res.status(500).json({ message: 'Server error while sending rejection message.' });
   }
 };
@@ -232,7 +227,7 @@ const getRelevantPendingShareRequest = async (req, res) => {
   const { slotId } = req.params;
   const currentUserId = req.user.id; // User making the request
 
-  console.log(`Backend: Fetching relevant pending share request for slotId: ${slotId}, currentUserId: ${currentUserId}`); // Added log
+  
 
   try {
     const shareRequest = await prisma.shareRequest.findFirst({
@@ -257,7 +252,6 @@ const getRelevantPendingShareRequest = async (req, res) => {
 
     res.json(shareRequest);
   } catch (error) {
-    console.error('Error fetching relevant pending share request:', error);
     res.status(500).json({ message: 'Server error while fetching relevant pending share request.' });
   }
 };
@@ -300,7 +294,6 @@ const acceptShareRequestAndCancelMyReservation = async (req, res) => {
 
     res.json({ message: 'Share request accepted and reservation cancelled.', updatedRequest });
   } catch (error) {
-    console.error('Error accepting share request and cancelling reservation:', error);
     res.status(500).json({ message: 'Server error while accepting share request and cancelling reservation.' });
   }
 };
@@ -343,7 +336,6 @@ const acceptShareRequestAndEditMyReservation = async (req, res) => {
 
     res.json({ message: 'Share request accepted and reservation edited.', updatedRequest });
   } catch (error) {
-    console.error('Error accepting share request and editing reservation:', error);
     res.status(500).json({ message: 'Server error while accepting share request and editing reservation.' });
   }
 };
@@ -380,7 +372,6 @@ const sendShareMessage = async (req, res) => {
 
     res.status(201).json({ message: 'Message sent.', message });
   } catch (error) {
-    console.error('Error sending share message:', error);
     res.status(500).json({ message: 'Server error while sending message.' });
   }
 };
@@ -414,7 +405,6 @@ const getShareMessages = async (req, res) => {
 
     res.json(messages);
   } catch (error) {
-    console.error('Error fetching share messages:', error);
     res.status(500).json({ message: 'Server error while fetching messages.' });
   }
 };

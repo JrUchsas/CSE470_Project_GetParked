@@ -45,17 +45,8 @@ const AdminVehicleViewPage = () => {
       ) : (
         <div className="admin-card"> {/* Re-using admin-card for consistent styling */}
           <div className="overflow-x-auto w-full">
-            <table className="admin-table min-w-full bg-white mx-auto"> {/* Removed conflicting classes */}
-              <thead>
-                <tr>
-                  <th>License Plate</th>
-                  <th>Model</th>
-                  <th>Type</th>
-                  <th>Color</th>
-                  <th>Owner Name</th>
-                  <th>Owner Email</th>
-                  <th>Actions</th> {/* Added Actions column */}
-                </tr>
+            <table className="admin-table min-w-full bg-white mx-auto"><thead><tr>
+                  <th>License Plate</th><th>Model</th><th>Type</th><th>Color</th><th>Owner Name</th><th>Owner Email</th><th>Actions</th> {/* Added Actions column */}</tr>
               </thead>
               <tbody>
                 {vehicles.map((vehicle) => (

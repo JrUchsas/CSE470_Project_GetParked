@@ -40,22 +40,25 @@ const SlotModal = ({ slot, user, userVehicles, onClose, onReserve, onCancel, onC
   
   const [selectedVehicleId, setSelectedVehicleId] = useState('');
 
+  // Add this useEffect to set the default selected vehicle
+  useEffect(() => {
+    if (userVehicles && userVehicles.length > 0 && !selectedVehicleId) {
+      setSelectedVehicleId(userVehicles[0].id);
+    }
+  }, [userVehicles, selectedVehicleId]);
+
   const [relevantPendingShareRequest, setRelevantPendingShareRequest] = useState(null);
   const [showShareRequestNotification, setShowShareRequestNotification] = useState(false); // Added this line
 
   const fetchRelevantPendingShareRequest = useCallback(async () => {
-    console.log("Fetching relevant pending share request..."); // Added log
     if (slot?.id && user?.id) {
       try {
         const response = await getRelevantPendingShareRequest(slot.id);
         setRelevantPendingShareRequest(response.data);
-        console.log("Relevant pending share request fetched:", response.data); // Added log
       } catch (error) {
-        console.error("Error fetching relevant pending share request:", error);
         setRelevantPendingShareRequest(null);
       }
     } else {
-      console.log("Skipping fetch: slot or user ID is missing."); // Added log
     }
   }, [slot?.id, user?.id]);
 

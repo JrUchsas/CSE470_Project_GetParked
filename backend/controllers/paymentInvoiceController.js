@@ -80,7 +80,6 @@ const createPaymentInvoice = async (reservationHistoryId) => {
 
     return paymentInvoice;
   } catch (error) {
-    console.error('Error creating payment invoice:', error);
     throw error;
   }
 };
@@ -95,9 +94,7 @@ const getPaymentInvoiceByReservationId = async (req, res) => {
       include: {
         reservationHistory: {
           include: {
-            user: true,
-            vehicle: true,
-            slot: true
+            user: true
           }
         }
       }
@@ -109,7 +106,6 @@ const getPaymentInvoiceByReservationId = async (req, res) => {
 
     res.json(paymentInvoice);
   } catch (error) {
-    console.error('Error fetching payment invoice:', error);
     res.status(500).json({ error: 'Failed to fetch payment invoice' });
   }
 };
@@ -121,9 +117,7 @@ const getAllPaymentInvoices = async (req, res) => {
       include: {
         reservationHistory: {
           include: {
-            user: true,
-            vehicle: true,
-            slot: true
+            user: true
           }
         }
       },
@@ -149,9 +143,7 @@ const getPaymentInvoiceByNumber = async (req, res) => {
       include: {
         reservationHistory: {
           include: {
-            user: true,
-            vehicle: true,
-            slot: true
+            user: true
           }
         }
       }
@@ -163,7 +155,6 @@ const getPaymentInvoiceByNumber = async (req, res) => {
 
     res.json(paymentInvoice);
   } catch (error) {
-    console.error('Error fetching payment invoice:', error);
     res.status(500).json({ error: 'Failed to fetch payment invoice' });
   }
 };

@@ -135,6 +135,16 @@ export const getReservationHistoryById = async (id) => {
   return data;
 };
 
+export const updateReservation = async (id, reservationData) => {
+  const { data } = await API.put(`/reservation-history/${id}`, reservationData);
+  return data;
+};
+
+export const deleteReservation = async (id) => {
+  const { data } = await API.delete(`/reservation-history/${id}`);
+  return data;
+};
+
 // --- PAYMENT INVOICE API CALLS ---
 export const getPaymentInvoiceByReservationId = async (reservationHistoryId) => {
   const { data } = await API.get(`/payment-invoices/reservation/${reservationHistoryId}`);
@@ -173,28 +183,7 @@ export const deleteUser = async (id) => {
 };
 
 // --- ADMIN API CALLS ---
-export const getAdminStatistics = async (month, year) => {
-  const { data } = await API.get('/admin/statistics', {
-    params: { month, year },
-    headers: { 'Cache-Control': 'no-cache' } // Prevent caching
-  });
-  return data;
-};
 
-export const reportViolation = async (id, violationData) => {
-  const { data } = await API.post(`/reservation-history/${id}/violation`, violationData);
-  return data;
-};
-
-export const forgotPassword = async (email) => {
-  const { data } = await API.post('/auth/forgot-password', { email });
-  return data;
-};
-
-export const resetPassword = async (token, password) => {
-  const { data } = await API.post(`/auth/reset-password/${token}`, { password });
-  return data;
-};
 
 // --- FEEDBACK API CALLS ---
 export const leaveFeedback = async (feedbackData) => {

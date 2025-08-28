@@ -37,7 +37,6 @@ const ShareRequestModal = ({ slot, requesterId, originalUserId, onClose }) => {
       // Optionally, navigate to a success page or show a success message
     } catch (err) {
       setError('Failed to send share request. Please try again.');
-      console.error('Share request error:', err);
     }
   };
 

@@ -121,11 +121,7 @@ const AuthPage = ({ onLogin, onLogout }) => {
           </button>
         </form>
                 <div className="auth-switch" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-          {isLoginView && (
-            <div className="text-center mb-2">
-              <Link to="/forgot-password" className="auth-link">Forgot Password?</Link>
-            </div>
-          )}
+          
           {isLoginView ? 'Need an account?' : 'Already have an account?'}
           <span onClick={() => setIsLoginView(!isLoginView)}>
             {isLoginView ? 'Sign Up' : 'Login'}

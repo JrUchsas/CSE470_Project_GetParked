@@ -19,7 +19,6 @@ const AdminUserManagementPage = ({ onLogout }) => {
       const response = await getAllUsers();
       setUsers(response || []);
     } catch (err) {
-      console.error('Failed to fetch users:', err);
       setError('Could not fetch users.');
     }
   };
@@ -53,7 +52,6 @@ const AdminUserManagementPage = ({ onLogout }) => {
       }
 
     } catch (err) {
-      console.error('Error updating user:', err);
       setError(err.response?.data?.message || 'An error occurred while updating user.');
     } finally {
       setActionLoading(false);
@@ -68,7 +66,6 @@ const AdminUserManagementPage = ({ onLogout }) => {
         await deleteUser(id);
         fetchUsers(); // Refresh list
       } catch (err) {
-        console.error('Error deleting user:', err);
         setError(err.response?.data?.message || 'An error occurred while deleting user.');
       } finally {
         setActionLoading(false);

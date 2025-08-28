@@ -19,7 +19,6 @@ const ShareRequestDetailsModal = ({ request, user, onClose }) => {
       const msgs = await getShareMessages(request.id);
       setMessages(msgs);
     } catch (err) {
-      console.error('Failed to fetch messages:', err);
       setError('Failed to load messages.');
     } finally {
       setLoadingMessages(false);
@@ -46,7 +45,6 @@ const ShareRequestDetailsModal = ({ request, user, onClose }) => {
       setNewMessage('');
       fetchMessages(); // Refresh messages after sending
     } catch (err) {
-      console.error('Failed to send message:', err);
       setError('Failed to send message.');
     } finally {
       setSendingMessage(false);
@@ -60,7 +58,6 @@ const ShareRequestDetailsModal = ({ request, user, onClose }) => {
       alert('Share request accepted!');
       onClose(); // Close modal and refresh parent list
     } catch (err) {
-      console.error('Failed to accept request:', err);
       setError(err.response?.data?.message || 'Failed to accept request.');
     } finally {
       setActionLoading(false);
@@ -74,7 +71,6 @@ const ShareRequestDetailsModal = ({ request, user, onClose }) => {
       alert('Share request rejected.');
       onClose(); // Close modal and refresh parent list
     } catch (err) {
-      console.error('Failed to reject request:', err);
       setError(err.response?.data?.message || 'Failed to reject request.');
     } finally {
       setActionLoading(false);

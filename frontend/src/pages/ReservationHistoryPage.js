@@ -18,7 +18,6 @@ const ReservationHistoryPage = () => {
   };
 
   const handleFeedbackClick = (history) => {
-    console.log('Leave Feedback button clicked for history:', history);
     setSelectedHistory(history);
     setIsFeedbackModalOpen(true);
   };

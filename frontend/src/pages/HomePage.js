@@ -49,7 +49,6 @@ const HomePage = ({ user }) => {
           );
           setHasViolation(unpaidViolation);
         } catch (err) {
-          console.error("Failed to check for violations", err);
         }
       }
     };
@@ -80,7 +79,6 @@ const HomePage = ({ user }) => {
           const vehicles = await getVehiclesByOwner(user.id);
           setUserVehicles(vehicles);
         } catch (err) {
-          console.error("Failed to fetch user vehicles:", err);
         }
       }
     };
@@ -102,7 +100,6 @@ const HomePage = ({ user }) => {
           setCurrentShareRequest(null);
         }
       } catch (err) {
-        console.error("Failed to fetch share requests:", err);
       }
     }
   };

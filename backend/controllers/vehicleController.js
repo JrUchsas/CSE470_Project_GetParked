@@ -16,7 +16,6 @@ const createVehicle = async (req, res) => {
     });
     res.status(201).json(newVehicle);
   } catch (error) {
-    console.error('Error creating vehicle:', error);
     res.status(500).json({ error: 'Failed to create vehicle' });
   }
 };
@@ -102,7 +101,12 @@ const updateVehicle = async (req, res) => {
 const deleteVehicle = async (req, res) => {
   const { id } = req.params;
   try {
-    // Find all active ParkingSession records associated with this vehicle
+    // First, delete all ReservationHistory records associated with this vehicle
+    await prisma.reservationHistory.deleteMany({
+      where: { vehicleId: id },
+    });
+
+    // Then, find all active ParkingSession records associated with this vehicle
     const activeParkingSessions = await prisma.parkingSession.findMany({
       where: { vehicleId: id, checkOutTime: null },
       include: { slot: true },

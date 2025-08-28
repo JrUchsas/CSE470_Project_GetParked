@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateSlotModal from '../components/CreateSlotModal';
-import AdminStatistics from '../components/AdminStatistics';
+
 import '../styles/custom-admin.css';
 import { createSlot } from '../services/api'; // <--- ADD THIS IMPORT
 
@@ -24,7 +24,6 @@ const AdminDashboard = ({ onLogout }) => {
       // You might want to trigger a refresh of the slot list here if there's one
       // For now, we'll just close the modal.
     } catch (error) {
-      console.error('Error creating slot:', error);
       setError('Failed to create slot. Please check console for details.'); // Display error to user
     }
   };
@@ -40,7 +39,7 @@ const AdminDashboard = ({ onLogout }) => {
         </div>
       </div>
 
-      <AdminStatistics />
+      
 
       {error && (
         <div className="error-container"> {/* Changed class name */}
@@ -93,12 +92,7 @@ const AdminDashboard = ({ onLogout }) => {
           <p className="tile-description">View and analyze user ratings and comments.</p>
         </div>
 
-        {/* Booking Statistics Tile */}
-        <div className="admin-dashboard-tile" onClick={() => navigate('/admin/booking-statistics')}>
-          <span className="tile-icon">📊</span>
-          <h3 className="tile-title">Booking Statistics</h3>
-          <p className="tile-description">View monthly booking trends and calendar.</p>
-        </div>
+        
 
         {/* Payment History Tile */}
         <div className="admin-dashboard-tile" onClick={() => navigate('/admin/payment-history')}>

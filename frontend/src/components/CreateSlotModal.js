@@ -32,7 +32,6 @@ const CreateSlotModal = ({ onClose, onCreateSlot }) => {
         const response = await getSlots();
         setExistingSlotLocations(response.map(slot => slot.location));
       } catch (error) {
-        console.error('Error fetching existing slots:', error);
         // Optionally, set a form error here if fetching fails
       }
     };

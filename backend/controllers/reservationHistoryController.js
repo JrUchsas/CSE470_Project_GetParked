@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 // Get reservation history for a user
 const getReservationHistoryByUser = async (req, res) => {
   const { userId } = req.params;
+  console.log(`Attempting to fetch reservation history for userId: ${userId}`); // Added logging
   try {
     const reservationHistory = await prisma.reservationHistory.findMany({
       where: {
         userId: userId,
       },
       include: {
-        slot: true,
         vehicle: true,
         feedback: true,
       },
@@ -21,7 +21,9 @@ const getReservationHistoryByUser = async (req, res) => {
     });
     res.json(reservationHistory);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to get reservation history for user' });
+    console.error('Error fetching reservation history for user:', error);
+    // It's good practice to send more specific error details in development, but be careful in production
+    res.status(500).json({ error: 'Failed to get reservation history for user', details: error.message }); // Added error details
   }
 };
 
@@ -76,17 +78,30 @@ const createReservationHistory = async (req, res) => {
 const getAllReservationHistory = async (req, res) => {
   try {
     const reservationHistory = await prisma.reservationHistory.findMany({
+      where: {
+        OR: [
+          {
+            checkInTime: { not: null }, // Has been checked in
+            checkOutTime: null,         // But not yet checked out (currently active)
+          },
+          {
+            reservedStart: { lte: new Date() }, // Reservation started or is starting now
+            reservedEnd: { gte: new Date() },   // Reservation ends in the future or is ending now
+            checkInTime: null,                  // And has not been checked in yet (upcoming active)
+          },
+        ],
+      },
       include: {
         user: true,
         slot: true,
-        vehicle: true,
       },
       orderBy: {
-        checkOutTime: 'desc',
+        checkInTime: 'desc', // Order by most recent check-in or reserved start
       },
     });
     res.json(reservationHistory);
   } catch (error) {
+    console.error('Error fetching all reservation history:', error);
     res.status(500).json({ error: 'Failed to get reservation history' });
   }
 };
@@ -127,7 +142,6 @@ const getReservationHistoryById = async (req, res) => {
       include: {
         user: true,
         slot: true,
-        vehicle: true,
       },
     });
 
@@ -164,8 +178,74 @@ const reportViolation = async (req, res) => {
 
     res.json(updatedHistory);
   } catch (error) {
-    console.error('Error reporting violation:', error);
     res.status(500).json({ message: 'Failed to report violation.' });
+  }
+};
+
+// @desc    Update a reservation
+// @route   PUT /api/reservation-history/:id
+// @access  Private/Admin
+const updateReservation = async (req, res) => {
+  const { id } = req.params;
+  const {
+    userId,
+    slotId,
+    vehicleId,
+    slotLocation,
+    vehiclePlate,
+    vehicleModel,
+    vehicleType,
+    reservedStart,
+    reservedEnd,
+    checkInTime,
+    checkOutTime,
+    duration,
+    fee,
+    paymentStatus,
+    violationType,
+    penaltyFee,
+  } = req.body;
+
+  try {
+    const updatedReservation = await prisma.reservationHistory.update({
+      where: { id },
+      data: {
+        userId,
+        slotId,
+        vehicleId,
+        slotLocation,
+        vehiclePlate,
+        vehicleModel,
+        vehicleType,
+        reservedStart: reservedStart ? new Date(reservedStart) : undefined,
+        reservedEnd: reservedEnd ? new Date(reservedEnd) : undefined,
+        checkInTime: checkInTime ? new Date(checkInTime) : undefined,
+        checkOutTime: checkOutTime ? new Date(checkOutTime) : undefined,
+        duration,
+        fee,
+        paymentStatus,
+        violationType,
+        penaltyFee,
+      },
+    });
+    res.json(updatedReservation);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update reservation', details: error.message });
+  }
+};
+
+// @desc    Delete a reservation
+// @route   DELETE /api/reservation-history/:id
+// @access  Private/Admin
+const deleteReservation = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.reservationHistory.delete({
+      where: { id },
+    });
+    res.json({ message: 'Reservation deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete reservation', details: error.message });
   }
 };
 
@@ -176,4 +256,6 @@ module.exports = {
   updatePaymentStatus,
   getReservationHistoryById,
   reportViolation,
+  updateReservation,
+  deleteReservation,
 };

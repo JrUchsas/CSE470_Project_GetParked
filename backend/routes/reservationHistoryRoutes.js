@@ -6,7 +6,9 @@ const {
   getAllReservationHistory,
     updatePaymentStatus,
   getReservationHistoryById,
-  reportViolation
+  reportViolation,
+  updateReservation,
+  deleteReservation
 } = require('../controllers/reservationHistoryController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -27,5 +29,11 @@ router.put('/:id/payment', updatePaymentStatus);
 
 // Report a violation for a reservation
 router.post('/:id/violation', protect, authorize('admin'), reportViolation);
+
+// Update a reservation
+router.put('/:id', protect, authorize('admin'), updateReservation);
+
+// Delete a reservation
+router.delete('/:id', protect, authorize('admin'), deleteReservation);
 
 module.exports = router;

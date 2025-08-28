@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getAllReservationHistory, reportViolation } from '../services/api';
-import ReportViolationModal from '../components/ReportViolationModal';
+import { getAllReservationHistory, updateReservation, deleteReservation } from '../services/api';
+import EditReservationModal from '../components/EditReservationModal';
+
 import '../styles/custom-admin.css';
 
 const AdminReservationManagement = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const [editingReservation, setEditingReservation] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const fetchReservations = async () => {
     try {
@@ -17,7 +21,6 @@ const AdminReservationManagement = () => {
       setError('');
     } catch (err) {
       setError('Failed to load reservation data.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -27,29 +30,51 @@ const AdminReservationManagement = () => {
     fetchReservations();
   }, []);
 
-  const handleReportClick = (reservation) => {
-    setSelectedReservation(reservation);
-  };
+  
 
   const handleCloseModal = () => {
     setSelectedReservation(null);
   };
 
-  const handleReportSubmit = async (id, violationData) => {
-    await reportViolation(id, violationData);
-    fetchReservations(); // Refresh data after reporting
+  const handleEdit = (reservation) => {
+    setEditingReservation(reservation);
+    setIsEditModalOpen(true);
   };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this reservation?')) {
+      try {
+        await deleteReservation(id);
+        fetchReservations(); // Refresh list
+      } catch (error) {
+        alert('Failed to delete reservation.');
+      }
+    }
+  };
+
+  const handleUpdate = async (updatedReservation) => {
+    try {
+      await updateReservation(updatedReservation.id, updatedReservation);
+      setIsEditModalOpen(false);
+      setEditingReservation(null);
+      fetchReservations(); // Refresh list
+    } catch (error) {
+      alert('Failed to update reservation.');
+    }
+  };
+
+  
 
   const formatDateTime = (dateStr) => new Date(dateStr).toLocaleString();
 
   return (
-    <div className="admin-dashboard-container">
+    <div className="admin-container">
       <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Manage Reservations</h2>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       
       <div className="admin-card">
         <div className="overflow-x-auto w-full">
-          <table className="admin-table min-w-full bg-white">
+          <table className="admin-table min-w-full bg-white rounded-lg overflow-hidden shadow text-center mx-auto">
             <thead>
               <tr>
                 <th>User</th>
@@ -71,7 +96,7 @@ const AdminReservationManagement = () => {
                   <td>{res.slotLocation}</td>
                   <td>{formatDateTime(res.reservedStart)} to {formatDateTime(res.reservedEnd)}</td>
                   <td>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${res.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    <span className={`px-3 py-1.5 text-sm font-semibold rounded-full ${res.paymentStatus === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                       {res.paymentStatus}
                     </span>
                   </td>
@@ -85,13 +110,20 @@ const AdminReservationManagement = () => {
                     )}
                   </td>
                   <td>
-                    <button 
-                      onClick={() => handleReportClick(res)}
-                      className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
-                      disabled={!!res.violationType} // Disable if violation already exists
-                    >
-                      {res.violationType ? 'Reported' : 'Report'}
-                    </button>
+                    <div className="flex gap-2 justify-center whitespace-nowrap">
+                      <button
+                        onClick={() => handleEdit(res)}
+                        className="admin-btn update"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(res.id)}
+                        className="admin-btn delete"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -100,12 +132,14 @@ const AdminReservationManagement = () => {
         </div>
       </div>
 
-      {selectedReservation && (
-        <ReportViolationModal 
-          reservation={selectedReservation}
-          onClose={handleCloseModal}
-          onReport={handleReportSubmit}
-        />
+      {isEditModalOpen && editingReservation && (
+        <>
+          <EditReservationModal
+            reservation={editingReservation}
+            onClose={() => setIsEditModalOpen(false)}
+            onUpdate={handleUpdate}
+          />
+        </>
       )}
     </div>
   );

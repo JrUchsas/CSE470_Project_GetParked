@@ -235,37 +235,7 @@ const checkOutBySlot = async (req, res) => {
   const { slotId } = req.params;
   try {
 
-    // First, let's see all parking sessions (active and inactive)
-    const allSessions = await prisma.parkingSession.findMany({
-      include: { vehicle: true, slot: true },
-      orderBy: { checkInTime: 'desc' },
-      take: 5 // Get last 5 sessions
-    });
-
-    // Now check active sessions with different query approaches
-    const allActiveSessions1 = await prisma.parkingSession.findMany({
-      where: { checkOutTime: null },
-      include: { vehicle: true, slot: true }
-    });
-
-    const allActiveSessions2 = await prisma.parkingSession.findMany({
-      where: {
-        OR: [
-          { checkOutTime: null },
-          { checkOutTime: { equals: null } }
-        ]
-      },
-      include: { vehicle: true, slot: true }
-    });
-
-    const allActiveSessions3 = await prisma.parkingSession.findMany({
-      where: {
-        NOT: {
-          checkOutTime: { not: null }
-        }
-      },
-      include: { vehicle: true, slot: true }
-    });
+    
 
     // Get all sessions for this specific slot and filter for active ones
     const allSessionsForSlot = await prisma.parkingSession.findMany({
