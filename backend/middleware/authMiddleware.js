@@ -9,25 +9,15 @@ const protect = async (req, res, next) => {
     try {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
-      console.log('Token received:', token);
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Decoded token:', decoded);
 
       // Get user from the token
       req.user = await prisma.user.findUnique({
         where: { id: decoded.id },
         select: { id: true, name: true, email: true, role: true },
       });
-
-      if (!token) {
-      return res.status(401).json({ message: 'No token, authorization denied' });
-    }
-
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
       if (!req.user) {
         return res.status(401).json({ message: 'User not found, authorization denied' });
@@ -37,8 +27,9 @@ const protect = async (req, res, next) => {
     } catch (error) {
       res.status(401).json({ message: 'Token is not valid' });
     }
+  } else {
+    return res.status(401).json({ message: 'No token, authorization denied' });
   }
-);
 };
 
 const authorize = (roles = []) => {
