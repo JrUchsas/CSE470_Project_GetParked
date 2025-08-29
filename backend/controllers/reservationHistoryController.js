@@ -121,6 +121,7 @@ const updatePaymentStatus = async (req, res) => {
       try {
         const paymentInvoice = await createPaymentInvoice(id);
       } catch (invoiceError) {
+        console.error('Error creating payment invoice during status update:', invoiceError);
         // Don't fail the payment status update if invoice creation fails
         // The payment is still successful, just log the error
       }

@@ -17,10 +17,7 @@ const createPaymentInvoice = async (reservationHistoryId) => {
       include: {
         user: true,
         vehicle: true,
-        slot: true,
-        // Include violation details
-        violationType: true,
-        penaltyFee: true
+        slot: true
       }
     });
 
@@ -85,6 +82,7 @@ const createPaymentInvoice = async (reservationHistoryId) => {
 
     return paymentInvoice;
   } catch (error) {
+    console.error('Error creating payment invoice:', error);
     throw error;
   }
 };

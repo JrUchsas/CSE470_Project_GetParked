@@ -279,6 +279,12 @@ const AdminPaymentHistory = () => {
                       <span>Online Reservation Fee:</span>
                       <span>{selectedInvoice.onlineReservationFee} Taka</span>
                     </div>
+                    {selectedInvoice.penaltyFee > 0 && (
+                      <div className="fee-row text-red-600 font-semibold">
+                        <span>Violation Fee:</span>
+                        <span>{selectedInvoice.penaltyFee} Taka</span>
+                      </div>
+                    )}
                     <div className="fee-row total">
                       <span><strong>Total Amount:</strong></span>
                       <span><strong>{selectedInvoice.totalAmount} Taka</strong></span>

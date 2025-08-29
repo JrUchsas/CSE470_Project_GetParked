@@ -11,7 +11,7 @@ const ViolationNotificationModal = ({ isOpen, onClose, onNavigateToHistory }) =>
 
   return (
     <div className="slot-modal-overlay" onClick={onClose}>
-      <div className="slot-modal-card" onClick={(e) => e.stopPropagation()}>
+      <div className="slot-modal-card shadow-lg rounded-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           className="slot-modal-close"
@@ -26,7 +26,7 @@ const ViolationNotificationModal = ({ isOpen, onClose, onNavigateToHistory }) =>
         <div className="slot-modal-content">
           {/* Header Section */}
           <div className="slot-modal-header">
-            <div className="slot-modal-icon-wrapper">
+            <div className="slot-modal-icon-wrapper bg-red-100 rounded-full p-3">
               <ViolationIcon />
             </div>
             <div className="slot-location-container">
