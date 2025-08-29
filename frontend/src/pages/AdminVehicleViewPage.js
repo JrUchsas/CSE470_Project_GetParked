@@ -38,10 +38,26 @@ const AdminVehicleViewPage = () => {
   };
 
   return (
-    <div className="admin-dashboard-container"> {/* Re-using admin-dashboard-container for consistent padding/width */}
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Manage Registered Vehicles</h2>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">🚗</span>
+            Manage Registered Vehicles
+          </h1>
+          <p className="homepage-subtitle">
+            View and manage all registered vehicles in the system
+          </p>
+        </div>
+      </div>
+
       {vehicles.length === 0 ? (
-        <p className="text-center text-gray-600">No vehicles registered yet.</p>
+        <div className="empty-state">
+          <div className="empty-icon">🤷‍♂️</div>
+          <h3 className="empty-title">No vehicles registered yet.</h3>
+          <p className="empty-description">There are no vehicles currently registered in the system.</p>
+        </div>
       ) : (
         <div className="admin-card"> {/* Re-using admin-card for consistent styling */}
           <div className="overflow-x-auto w-full">
@@ -56,15 +72,7 @@ const AdminVehicleViewPage = () => {
                     <td>
                       <div className="flex items-center justify-center gap-2">
                         {vehicle.type && (
-                          <span style={{
-                            width: '1.2em',
-                            height: '1.2em',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0
-                          }}>
-                            {/* Assuming getVehicleIcon and formatVehicleType are available globally or imported */}
+                          <span className="w-5 h-5 inline-flex items-center justify-center flex-shrink-0">
                             {getVehicleIcon(vehicle.type, 'w-full h-full')}
                           </span>
                         )}
@@ -78,23 +86,13 @@ const AdminVehicleViewPage = () => {
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                         <button
                           onClick={() => handleEditVehicle(vehicle)}
-                          className="slot-modal-btn primary" // Re-using existing button styles
-                          style={{
-                            padding: '0.5rem 1rem',
-                            fontSize: '0.875rem',
-                            width: 'auto'
-                          }}
+                          className="admin-btn update"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteVehicle(vehicle.id)}
-                          className="slot-modal-btn danger" // Re-using existing button styles
-                          style={{
-                            padding: '0.5rem 1rem',
-                            fontSize: '0.875rem',
-                            width: 'auto'
-                          }}
+                          className="admin-btn delete"
                         >
                           Delete
                         </button>

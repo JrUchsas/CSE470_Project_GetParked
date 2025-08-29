@@ -74,17 +74,33 @@ const AdminUserManagementPage = ({ onLogout }) => {
   };
 
   return (
-    <div className="admin-dashboard-container">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Manage Users</h2>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">👥</span>
+            Manage Users
+          </h1>
+          <p className="homepage-subtitle">
+            View, edit, and delete user accounts
+          </p>
+        </div>
+      </div>
+
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <h3 className="error-title">Error</h3>
+          <p className="error-message">{error}</p>
         </div>
       )}
 
       {users.length === 0 ? (
-        <div className="admin-card">
-          <p className="text-center text-gray-600">No users found.</p>
+        <div className="empty-state">
+          <div className="empty-icon">🤷‍♂️</div>
+          <h3 className="empty-title">No users found</h3>
+          <p className="empty-description">There are no registered users in the system.</p>
         </div>
       ) : (
         <div className="admin-card">
@@ -110,15 +126,13 @@ const AdminUserManagementPage = ({ onLogout }) => {
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                         <button
                           onClick={() => handleEdit(user)}
-                          className="slot-modal-btn primary"
-                          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', width: 'auto' }}
+                          className="admin-btn update"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteUser(user.id)}
-                          className="slot-modal-btn danger"
-                          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', width: 'auto' }}
+                          className="admin-btn delete"
                         >
                           Delete
                         </button>

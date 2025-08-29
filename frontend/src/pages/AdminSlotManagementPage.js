@@ -62,11 +62,25 @@ const AdminSlotManagementPage = () => {
   };
 
   return (
-    <div className="admin-dashboard-container"> {/* Re-using admin-dashboard-container for consistent padding/width */}
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Manage Parking Slots</h2>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">🅿️</span>
+            Manage Parking Slots
+          </h1>
+          <p className="homepage-subtitle">
+            View, edit, and delete parking slot configurations
+          </p>
+        </div>
+      </div>
+
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <h3 className="error-title">Error</h3>
+          <p className="error-message">{error}</p>
         </div>
       )}
 
@@ -85,86 +99,55 @@ const AdminSlotManagementPage = () => {
             </thead>
             <tbody>
               {slots.map((slot) => (
-                <tr key={slot.id} style={{
-                  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                  borderRadius: '0.75rem',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)';
-                }}>
-                  <td className="h-full align-middle" style={{ padding: '1rem' }}>
-                    <div className="flex flex-col items-center justify-center h-full w-full">
-                      <div className="flex items-center justify-center gap-2 w-full">
+                <tr key={slot.id}>
+                  <td className="py-4 px-6 align-middle">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="flex items-center justify-center gap-2">
                         <div className={`w-3 h-3 rounded-full inline-block mr-2 align-middle ${
                           slot.status === 'Available' ? 'bg-green-500' :
                           slot.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-400'
-                        }`} style={{
-                          boxShadow: slot.status === 'Available' ? '0 2px 4px rgba(34, 197, 94, 0.3)' :
-                                    slot.status === 'Occupied' ? '0 2px 4px rgba(239, 68, 68, 0.3)' :
-                                    '0 2px 4px rgba(251, 191, 36, 0.3)'
-                        }}></div>
+                        }`}></div>
                         <span className='text-lg'>🅿️</span>
-                        <span className="block w-full text-center font-semibold text-gray-800">{slot.location}</span>
+                        <span className="block font-semibold text-gray-800">{slot.location}</span>
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '1rem', fontWeight: '500', color: '#374151' }}>
+                  <td className="py-4 px-6 font-medium text-gray-700">
                     <div className="flex items-center justify-center gap-2">
                       {slot.type && (
-                        <span style={{
-                          width: '1.2em',
-                          height: '1.2em',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0
-                        }}>
+                        <span className="w-5 h-5 inline-flex items-center justify-center flex-shrink-0">
                           {getVehicleIcon(slot.type, 'w-full h-full')}
                         </span>
                       )}
                       {slot.type ? formatVehicleType(slot.type) : ''}
                     </div>
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                  <td className="py-4 px-6">
                     <span className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
                       slot.status === 'Available' ? 'bg-green-100 text-green-700' :
                       slot.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                    }`} style={{
-                      background: slot.status === 'Available' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' :
-                                 slot.status === 'Occupied' ? 'linear-gradient(135deg, #fee2e2 0%, #fecaca 100%)' :
-                                 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
-                    }}>
+                    }`}>
                       {slot.status}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                  <td className="py-4 px-6">
                     {slot.bookingStart && slot.bookingEnd ? (
                       <div className="text-sm space-y-1">
                         <div className="font-medium text-gray-700">
-                          <svg style={{ width: '1rem', height: '1rem', display: 'inline', marginRight: '0.25rem', color: '#3b82f6' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg className="w-4 h-4 inline-block mr-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12,6 12,12 16,14"/>
                           </svg>
                           Start: {new Date(slot.bookingStart).toLocaleString()}
                         </div>
                         <div className="font-medium text-gray-700">
-                          <svg style={{ width: '1rem', height: '1rem', display: 'inline', marginRight: '0.25rem', color: '#3b82f6' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg className="w-4 h-4 inline-block mr-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12,6 12,12 16,14"/>
                           </svg>
                           End: {new Date(slot.bookingEnd).toLocaleString()}
                         </div>
-                        <div className="text-blue-700 font-semibold text-center mt-2" style={{
-                          fontSize: '0.875rem'
-                        }}>
+                        <div className="text-blue-700 font-semibold text-center mt-2">
                           Duration: {(() => {
                             const start = new Date(slot.bookingStart);
                             const end = new Date(slot.bookingEnd);
@@ -180,7 +163,7 @@ const AdminSlotManagementPage = () => {
                       <span className="text-gray-400 text-sm font-medium">No booking</span>
                     )}
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                  <td className="py-4 px-6">
                     {slot.user && (slot.status === 'Reserved' || slot.status === 'Occupied') ? (
                       <div className="flex flex-col">
                         <span className={`font-medium ${slot.status === 'Reserved' ? 'text-green-700' : 'text-red-700'}`}>
@@ -194,27 +177,17 @@ const AdminSlotManagementPage = () => {
                       <span className="text-gray-400 text-sm font-medium">No user</span>
                     )}
                   </td>
-                  <td style={{ padding: '1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                  <td className="py-4 px-6">
+                    <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => handleEdit(slot)}
-                        className="slot-modal-btn primary"
-                        style={{
-                          padding: '0.5rem 1rem',
-                          fontSize: '0.875rem',
-                          width: 'auto'
-                        }}
+                        className="admin-btn update"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteSlot(slot.id)}
-                        className="slot-modal-btn danger"
-                        style={{
-                          padding: '0.5rem 1rem',
-                          fontSize: '0.875rem',
-                          width: 'auto'
-                        }}
+                        className="admin-btn delete"
                       >
                         Delete
                       </button>
