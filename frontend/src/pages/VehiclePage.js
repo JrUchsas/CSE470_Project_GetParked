@@ -56,21 +56,25 @@ const VehiclePage = () => {
   }
 
   return (
-    <div className="flex flex-col w-full mx-auto">
-      <h1 className="text-2xl font-bold mb-4 mx-auto">My Vehicles</h1>
+    <div className="modern-homepage-container">
+      {/* Header Section */}
+      <div className="homepage-header">
+        <div className="header-content">
+          <h1 className="homepage-title">
+            <span className="title-icon">🚗</span>
+            My Vehicles
+          </h1>
+          <p className="homepage-subtitle">
+            Manage your registered vehicles
+          </p>
+        </div>
+      </div>
 
       {/* Modern Add Vehicle Button */}
       <div className="mb-6 flex justify-center">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="slot-modal-btn primary"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            width: 'auto',
-            padding: '0.875rem 1.5rem'
-          }}
+          className="retry-button flex items-center gap-2"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '1.2rem', height: '1.2rem' }}>
             <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.6-1.6-1.6L18 10.5l-2-3c-.3-.5-.8-.5-1.3-.5H9.3c-.5 0-1 0-1.3.5l-2 3-2.4 1.4C2.7 11.4 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
@@ -121,23 +125,13 @@ const VehiclePage = () => {
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                     <button
                       onClick={() => handleEdit(vehicle)}
-                      className="slot-modal-btn primary"
-                      style={{
-                        padding: '0.5rem 1rem',
-                        fontSize: '0.875rem',
-                        width: 'auto'
-                      }}
+                      className="admin-btn update"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(vehicle.id)}
-                      className="slot-modal-btn danger"
-                      style={{
-                        padding: '0.5rem 1rem',
-                        fontSize: '0.875rem',
-                        width: 'auto'
-                      }}
+                      className="admin-btn delete"
                     >
                       Delete
                     </button>

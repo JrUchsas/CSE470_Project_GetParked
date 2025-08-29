@@ -10,35 +10,28 @@ const ViolationNotificationModal = ({ isOpen, onClose, onNavigateToHistory }) =>
   if (!isOpen) return null;
 
   return (
-    <div className="slot-modal-overlay" onClick={onClose}>
-      <div className="slot-modal-card shadow-lg rounded-lg border border-gray-200" onClick={(e) => e.stopPropagation()}>
+    <div className="modern-modal-overlay" onClick={onClose}>
+      <div className="modern-modal-card" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
-          className="slot-modal-close"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
           aria-label="Close modal"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          &times;
         </button>
 
-        <div className="slot-modal-content">
+        <div className="p-6">
           {/* Header Section */}
-          <div className="slot-modal-header">
-            <div className="slot-modal-icon-wrapper bg-red-100 rounded-full p-3">
+          <div className="flex flex-col items-center mb-4">
+            <div className="bg-red-100 rounded-full p-3 mb-4">
               <ViolationIcon />
             </div>
-            <div className="slot-location-container">
-              <h3 className="slot-modal-title text-red-600">Outstanding Violation!</h3>
-            </div>
-            <p className="slot-modal-subtitle">
-              Action Required
-            </p>
+            <h3 className="text-2xl font-bold text-red-600 mb-2">Outstanding Violation!</h3>
+            <p className="text-gray-600 text-center">Action Required</p>
           </div>
 
           {/* Content Section */}
-          <div className="slot-modal-form"> {/* Using form for consistent padding/margin */}
+          <div className="text-center mb-6">
             <p className="text-lg text-gray-700 mb-4">
               You have an unpaid parking violation. Please review your reservation history to resolve this issue.
             </p>
@@ -48,21 +41,19 @@ const ViolationNotificationModal = ({ isOpen, onClose, onNavigateToHistory }) =>
           </div>
 
           {/* Action Buttons */}
-          <div className="slot-modal-actions">
-            <div className="action-buttons-group">
-              <button
-                className="slot-modal-btn disabled"
-                onClick={onClose}
-              >
-                Dismiss
-              </button>
-              <button
-                className="slot-modal-btn primary bg-red-600 hover:bg-red-700"
-                onClick={onNavigateToHistory}
-              >
-                View History
-              </button>
-            </div>
+          <div className="flex justify-center space-x-4">
+            <button
+              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200"
+              onClick={onClose}
+            >
+              Dismiss
+            </button>
+            <button
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200"
+              onClick={onNavigateToHistory}
+            >
+              View History
+            </button>
           </div>
         </div>
       </div>
