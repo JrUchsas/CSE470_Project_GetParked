@@ -7,21 +7,7 @@ import CheckInConfirmationModal from '../components/CheckInConfirmationModal';
 import ErrorModal from '../components/ErrorModal';
 import ShareRequestNotificationModal from '../components/ShareRequestNotificationModal'; // New Import
 import { getVehicleIcon, formatVehicleType } from '../components/VehicleIcons';
-
-const ViolationAlertBanner = ({ onNavigate }) => (
-  <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md shadow-md" role="alert">
-    <div className="flex">
-      <div className="py-1"><span className="font-bold text-xl mr-3">⚠️</span></div>
-      <div>
-        <p className="font-bold">Outstanding Violation</p>
-        <p className="text-sm">You have an unpaid penalty. Please go to your reservation history to resolve it.</p>
-      </div>
-      <div className="ml-auto pl-3">
-        <button onClick={onNavigate} className="bg-red-600 text-white font-bold py-1 px-3 rounded hover:bg-red-700">View History</button>
-      </div>
-    </div>
-  </div>
-);
+import ViolationNotificationModal from '../components/ViolationNotificationModal';
 
 
 const HomePage = ({ user }) => {
@@ -35,6 +21,7 @@ const HomePage = ({ user }) => {
   const [checkInSlot, setCheckInSlot] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [hasViolation, setHasViolation] = useState(false);
+  const [isViolationModalOpen, setIsViolationModalOpen] = useState(false);
   const [userVehicles, setUserVehicles] = useState([]);
   const [pendingShareRequests, setPendingShareRequests] = useState([]);
   const [currentShareRequest, setCurrentShareRequest] = useState(null);
@@ -48,6 +35,7 @@ const HomePage = ({ user }) => {
             (h) => h.violationType && h.paymentStatus !== 'Paid'
           );
           setHasViolation(unpaidViolation);
+          setIsViolationModalOpen(unpaidViolation);
         } catch (err) {
         }
       }
@@ -228,7 +216,16 @@ const HomePage = ({ user }) => {
         </div>
       </div>
 
-      {hasViolation && <ViolationAlertBanner onNavigate={() => navigate('/reservation-history')} />}
+      {hasViolation && (
+        <ViolationNotificationModal
+          isOpen={isViolationModalOpen}
+          onClose={() => setIsViolationModalOpen(false)}
+          onNavigateToHistory={() => {
+            setIsViolationModalOpen(false);
+            navigate('/reservation-history');
+          }}
+        />
+      )}
 
       {/* Statistics Cards */}
       <div className="stats-grid">

@@ -230,19 +230,19 @@ const ReservationHistoryPage = () => {
               </div>
 
               {history.violationType && (
-                <div className="violation-section bg-red-50 border-l-4 border-red-500 p-4 my-4 rounded">
-                  <h4 className="section-subtitle text-red-800 font-bold flex items-center">
-                    <span className="mr-2">⚠️</span>
+                <div className="violation-section">
+                  <h4 className="section-subtitle text-red-700">
+                    <span className="vehicle-icon">⚠️</span>
                     Violation Reported
                   </h4>
-                  <div className="detail-grid mt-2">
+                  <div className="detail-grid">
                     <div className="detail-item">
-                      <span className="detail-label text-red-700">Type</span>
-                      <span className="detail-value font-semibold">{history.violationType}</span>
+                      <span className="detail-label">Type</span>
+                      <span className="detail-value font-semibold text-red-800">{history.violationType}</span>
                     </div>
                     <div className="detail-item">
-                      <span className="detail-label text-red-700">Penalty Fee</span>
-                      <span className="detail-value font-semibold">${history.penaltyFee}</span>
+                      <span className="detail-label">Penalty Fee</span>
+                      <span className="detail-value font-semibold text-red-800">{history.penaltyFee} Taka</span>
                     </div>
                   </div>
                 </div>
