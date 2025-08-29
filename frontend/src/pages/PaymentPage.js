@@ -108,18 +108,7 @@ const PaymentPage = () => {
   const totalAmountDue = history.fee || 0;
 
   // Calculate parking fee properly - ensure it's never negative
-  const parkingFeeDisplay = Math.max(0, totalAmountDue - onlineReservationFee);
-
-  // Recalculate the fee if it seems incorrect (for debugging/validation)
-  const hourlyRate = history.vehicleType.toLowerCase() === 'car' || history.vehicleType.toLowerCase() === 'suv' ? 120 :
-                     history.vehicleType.toLowerCase() === 'van' || history.vehicleType.toLowerCase() === 'minibus' ? 140 :
-                     history.vehicleType.toLowerCase() === 'bike' ? 100 : 0;
-
-  const durationMinutes = history.duration || 0;
-  const ratePerMinute = hourlyRate / 60;
-  const calculatedParkingFee = Math.ceil(ratePerMinute * durationMinutes);
-  const calculatedTotalFee = calculatedParkingFee + onlineReservationFee;
-
+  const parkingFeeDisplay = Math.max(0, totalAmountDue - onlineReservationFee - (history.penaltyFee || 0));
 
   return (
     <div className="modern-homepage-container">
@@ -187,6 +176,12 @@ const PaymentPage = () => {
             <span className="detail-label">Online Reservation Fee:</span>
             <span className="detail-value">{onlineReservationFee} Taka</span>
           </div>
+          {history.penaltyFee > 0 && (
+            <div className="detail-row text-red-600 font-semibold">
+              <span className="detail-label">Violation Fee:</span>
+              <span className="detail-value">{history.penaltyFee} Taka</span>
+            </div>
+          )}
           <div className="detail-row total-row">
             <span className="detail-label">Total Amount Due:</span>
             <span className="detail-value">{totalAmountDue} Taka</span>

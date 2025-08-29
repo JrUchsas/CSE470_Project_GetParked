@@ -127,6 +127,8 @@ model PaymentInvoice {
   parkingFee            Int      // Calculated parking fee (rate * duration)
   onlineReservationFee  Int      // Online reservation fee (20 taka)
   totalAmount           Int      // Total amount paid
+  violationType         String?  // e.g., 'Overstay', 'Improper Parking'
+  penaltyFee            Int?     // Penalty fee in addition to parking fee
 
   // Payment details
   paymentMethod         String   @default("Online") // Payment method

@@ -117,10 +117,26 @@ const checkOut = async (req, res) => {
     }
 
     const onlineReservationFee = 20;
-    const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
+    let calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
 
     // Round to nearest integer since database expects Int
-    const finalCalculatedFee = Math.round(calculatedFee);
+    let finalCalculatedFee = Math.round(calculatedFee);
+
+    // Violation detection
+    let violationType = null;
+    let penaltyFee = 0;
+    const bookingEnd = new Date(parkingSession.slot.bookingEnd);
+
+    if (checkOutTime > bookingEnd) {
+      const overstayMinutes = Math.ceil((checkOutTime - bookingEnd) / (1000 * 60));
+      if (overstayMinutes > 0) {
+        violationType = 'Overstay';
+        const penaltyRatePerMinute = 1; // 1 Taka per minute for violation
+        const penalty = penaltyRatePerMinute * overstayMinutes;
+        penaltyFee = Math.round(penalty);
+        finalCalculatedFee += penaltyFee;
+      }
+    }
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -149,6 +165,8 @@ const checkOut = async (req, res) => {
         duration: durationMinutes, // Store duration in minutes
         fee: finalCalculatedFee, // Store the calculated fee
         paymentStatus: "Not Paid", // Default status
+        violationType: violationType,
+        penaltyFee: penaltyFee,
       },
     });
 
@@ -312,10 +330,26 @@ const checkOutBySlot = async (req, res) => {
     }
 
     const onlineReservationFee = 20;
-    const calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
+    let calculatedFee = (ratePerMinute * durationMinutes) + onlineReservationFee;
 
     // Round to nearest integer since database expects Int
-    const finalCalculatedFee = Math.round(calculatedFee);
+    let finalCalculatedFee = Math.round(calculatedFee);
+
+    // Violation detection
+    let violationType = null;
+    let penaltyFee = 0;
+    const bookingEnd = new Date(parkingSession.slot.bookingEnd);
+
+    if (checkOutTime > bookingEnd) {
+      const overstayMinutes = Math.ceil((checkOutTime - bookingEnd) / (1000 * 60));
+      if (overstayMinutes > 0) {
+        violationType = 'Overstay';
+        const penaltyRatePerMinute = 1; // 1 Taka per minute for violation
+        const penalty = penaltyRatePerMinute * overstayMinutes;
+        penaltyFee = Math.round(penalty);
+        finalCalculatedFee += penaltyFee;
+      }
+    }
 
     // Update the parking session with check-out details
     const updatedParkingSession = await prisma.parkingSession.update({
@@ -344,6 +378,8 @@ const checkOutBySlot = async (req, res) => {
         duration: durationMinutes,
         fee: finalCalculatedFee,
         paymentStatus: "Not Paid",
+        violationType: violationType,
+        penaltyFee: penaltyFee,
       },
     });
 

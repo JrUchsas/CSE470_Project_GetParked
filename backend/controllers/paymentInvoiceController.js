@@ -17,7 +17,10 @@ const createPaymentInvoice = async (reservationHistoryId) => {
       include: {
         user: true,
         vehicle: true,
-        slot: true
+        slot: true,
+        // Include violation details
+        violationType: true,
+        penaltyFee: true
       }
     });
 
@@ -41,7 +44,7 @@ const createPaymentInvoice = async (reservationHistoryId) => {
     const ratePerMinute = hourlyRate / 60;
     const parkingFee = Math.ceil(ratePerMinute * durationMinutes);
     const onlineReservationFee = 20;
-    const totalAmount = parkingFee + onlineReservationFee;
+    const totalAmount = parkingFee + onlineReservationFee + (reservationHistory.penaltyFee || 0);
 
     // Create payment invoice
     const paymentInvoice = await prisma.paymentInvoice.create({
@@ -70,6 +73,8 @@ const createPaymentInvoice = async (reservationHistoryId) => {
         parkingFee: parkingFee,
         onlineReservationFee: onlineReservationFee,
         totalAmount: totalAmount,
+        violationType: reservationHistory.violationType,
+        penaltyFee: reservationHistory.penaltyFee || 0,
         
         // Payment details
         paymentMethod: 'Online',
