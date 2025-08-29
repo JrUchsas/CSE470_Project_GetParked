@@ -55,7 +55,7 @@ const createSlot = async (req, res) => {
 // @access  Private/Admin or Authenticated (for reservation)
 const updateSlot = async (req, res) => {
   const { id } = req.params;
-  const { location, status, reservedBy, bookingStart, bookingEnd, vehicleType, vehicleId } = req.body;
+  const { location, status, reservedBy, bookingStart, bookingEnd, type, vehicleId } = req.body;
 
   try {
     const updatedSlot = await prisma.slot.update({
@@ -63,7 +63,7 @@ const updateSlot = async (req, res) => {
       data: {
         ...(location && { location }),
         ...(status && { status }),
-        ...(vehicleType && { type: vehicleType }), // Assign 'vehicleType' to 'type' field in Prisma
+        ...(type && { type }), // Assign 'vehicleType' to 'type' field in Prisma
         reservedBy: reservedBy === undefined ? undefined : reservedBy,
         bookingStart: bookingStart === undefined ? undefined : bookingStart,
         bookingEnd: bookingEnd === undefined ? undefined : bookingEnd,
