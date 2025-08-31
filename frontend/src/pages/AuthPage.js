@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { signupUser, loginUser } from '../services/api';
 import '../styles/custom-auth.css';
 
-const AuthPage = ({ onLogin, onLogout }) => {
+const AuthPage = ({ onLogin }) => {
   // Auto logout on tab/browser close: clear user from storage
   React.useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -48,10 +48,13 @@ const AuthPage = ({ onLogin, onLogout }) => {
       let data;
       if (isLoginView) {
         data = await loginUser({ email, password });
+        onLogin(data);
       } else {
-        data = await signupUser({ name, email, contact, password });
+        await signupUser({ name, email, contact, password });
+        alert('Account created successfully! Please login to continue.');
+        setIsLoginView(true);
+        setFormData({ name: '', email: '', contact: '', password: '' });
       }
-      onLogin(data);
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred. Please try again.');
     } finally {
