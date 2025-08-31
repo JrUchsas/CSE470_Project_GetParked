@@ -134,17 +134,9 @@ const AdminSlotManagementPage = () => {
                     {slot.bookingStart && slot.bookingEnd ? (
                       <div className="text-sm space-y-1">
                         <div className="font-medium text-gray-700">
-                          <svg className="w-4 h-4 inline-block mr-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12,6 12,12 16,14"/>
-                          </svg>
                           Start: {new Date(slot.bookingStart).toLocaleString()}
                         </div>
                         <div className="font-medium text-gray-700">
-                          <svg className="w-4 h-4 inline-block mr-1 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12,6 12,12 16,14"/>
-                          </svg>
                           End: {new Date(slot.bookingEnd).toLocaleString()}
                         </div>
                         <div className="text-blue-700 font-semibold text-center mt-2">

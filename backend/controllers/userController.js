@@ -93,14 +93,6 @@ const updateUser = async (req, res) => {
 // @access  Admin
 const deleteUser = async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.params.id },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
     await prisma.user.delete({
       where: { id: req.params.id },
     });

@@ -83,49 +83,6 @@ const updateSlot = async (req, res) => {
 const deleteSlot = async (req, res) => {
   const { id } = req.params;
   try {
-    // First, delete all Feedback records associated with ReservationHistory records linked to this slot
-    // This needs to be done before deleting ReservationHistory
-    const reservationHistoriesToDelete = await prisma.reservationHistory.findMany({
-      where: { slotId: id },
-      select: { id: true } // Only select the IDs
-    });
-
-    const reservationHistoryIds = reservationHistoriesToDelete.map(rh => rh.id);
-
-    if (reservationHistoryIds.length > 0) {
-      await prisma.feedback.deleteMany({
-        where: {
-          reservationHistoryId: {
-            in: reservationHistoryIds
-          }
-        }
-      });
-
-      // Add this: Delete all PaymentInvoice records associated with ReservationHistory records linked to this slot
-      await prisma.paymentInvoice.deleteMany({
-        where: {
-          reservationHistoryId: {
-            in: reservationHistoryIds
-          }
-        }
-      });
-    }
-
-    // Then, delete all ReservationHistory records associated with this slot
-    await prisma.reservationHistory.deleteMany({
-      where: { slotId: id },
-    });
-
-    // Then, delete all ParkingSession records associated with this slot
-    await prisma.parkingSession.deleteMany({
-      where: { slotId: id },
-    });
-
-    // Add this: Delete all ShareRequest records associated with this slot
-    await prisma.shareRequest.deleteMany({
-      where: { slotId: id },
-    });
-
     const deletedSlot = await prisma.slot.delete({
       where: { id },
     });

@@ -101,43 +101,10 @@ const updateVehicle = async (req, res) => {
 const deleteVehicle = async (req, res) => {
   const { id } = req.params;
   try {
-    // First, delete all ReservationHistory records associated with this vehicle
-    await prisma.reservationHistory.deleteMany({
-      where: { vehicleId: id },
-    });
-
-    // Then, find all active ParkingSession records associated with this vehicle
-    const activeParkingSessions = await prisma.parkingSession.findMany({
-      where: { vehicleId: id, checkOutTime: null },
-      include: { slot: true },
-    });
-
-    // For each active ParkingSession, close it and free up the slot
-    for (const session of activeParkingSessions) {
-      const checkOutTime = new Date();
-      const checkInTime = new Date(session.checkInTime);
-      const duration = Math.ceil((checkOutTime - checkInTime) / (1000 * 60)); // Duration in minutes
-      const fee = Math.ceil(duration / 60); // $1 per hour, rounded up
-
-      await prisma.parkingSession.update({
-        where: { id: session.id },
-        data: {
-          checkOutTime,
-          duration,
-          fee,
-        },
-      });
-
-      await prisma.slot.update({
-        where: { id: session.slot.id },
-        data: { status: 'Available' },
-      });
-    }
-
     await prisma.vehicle.delete({
       where: { id },
     });
-    res.status(200).json({ message: 'Vehicle deleted and associated active parking sessions closed.' });
+    res.status(200).json({ message: 'Vehicle deleted.' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete vehicle' });
   }

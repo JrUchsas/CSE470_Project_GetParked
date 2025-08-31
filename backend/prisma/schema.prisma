@@ -31,7 +31,7 @@ model Vehicle {
   color        String
   type         String // New field for vehicle type
   ownerId      String   @db.ObjectId
-  owner        User     @relation("User_vehicles", fields: [ownerId], references: [id])
+  owner        User     @relation("User_vehicles", fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   slots            Slot[]           @relation("Slot_vehicle")
@@ -61,7 +61,7 @@ model Slot {
   reservedBy      String?          @db.ObjectId
   user            User?            @relation("Slot_user", fields: [reservedBy], references: [id])
   vehicleId       String?          @db.ObjectId
-  vehicle         Vehicle?         @relation("Slot_vehicle", fields: [vehicleId], references: [id])
+  vehicle         Vehicle?         @relation("Slot_vehicle", fields: [vehicleId], references: [id], onDelete: Cascade)
   bookingStart    DateTime?
   bookingEnd      DateTime?
   createdAt       DateTime         @default(now())
@@ -99,7 +99,7 @@ model ReservationHistory {
 model PaymentInvoice {
   id                    String   @id @default(auto()) @map("_id") @db.ObjectId
   reservationHistoryId  String   @unique @db.ObjectId
-  reservationHistory    ReservationHistory @relation(fields: [reservationHistoryId], references: [id])
+  reservationHistory    ReservationHistory @relation(fields: [reservationHistoryId], references: [id], onDelete: Cascade)
   invoiceNumber         String   @unique // Auto-generated invoice number
 
   // User details at time of payment
