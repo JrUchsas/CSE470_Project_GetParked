@@ -21,8 +21,7 @@ const getReservationHistoryByUser = async (req, res) => {
     res.json(reservationHistory);
   } catch (error) {
     console.error('Error fetching reservation history for user:', error);
-    // It's good practice to send more specific error details in development, but be careful in production
-    res.status(500).json({ error: 'Failed to get reservation history for user', details: error.message }); // Added error details
+    res.status(500).json({ error: 'Failed to get reservation history for user' });
   }
 };
 
@@ -122,8 +121,6 @@ const updatePaymentStatus = async (req, res) => {
         const paymentInvoice = await createPaymentInvoice(id);
       } catch (invoiceError) {
         console.error('Error creating payment invoice during status update:', invoiceError);
-        // Don't fail the payment status update if invoice creation fails
-        // The payment is still successful, just log the error
       }
     }
 

@@ -69,7 +69,6 @@ const checkIn = async (req, res) => {
       where: { id: slotId },
       data: {
         status: 'Occupied'
-        // Keep reservedBy, vehicleId, bookingStart, bookingEnd intact
       },
     });
 
